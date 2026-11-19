@@ -36,6 +36,10 @@
   --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
   --nav-h:60px;
 }
+/* Colour palettes (Settings > Colours). Felt is the default and uses the plain :root values. */
+:root[data-pal="navy"]{--bg:#eaeff6; --surface:#ffffff; --surface-2:#f3f6fa; --ink:#121c2c; --muted:#536079; --line:#cbd4e1; --track:#d3dbe7; --felt:#1d3a5e; --felt-2:#2a5283; --felt-3:#132845; --gold:#c9973f; --cell-fold:#dde4ee; --cell-fold-ink:#67748a; --good:#1d6b48; --good-bg:#dcefe4}
+:root[data-pal="oxblood"]{--bg:#f2ece3; --surface:#fffdf9; --surface-2:#f8f2e9; --ink:#2a1715; --muted:#6f5a52; --line:#e0d2c1; --track:#e7dccd; --felt:#6b1e2a; --felt-2:#8a2a39; --felt-3:#4b131c; --gold:#c39236; --cell-fold:#ece3d6; --cell-fold-ink:#85726a; --good:#1f6045}
+:root[data-pal="teal"]{--bg:#e9eff0; --surface:#ffffff; --surface-2:#f3f7f7; --ink:#13201f; --muted:#536668; --line:#c9d7d8; --track:#d2dfe0; --felt:#0e6464; --felt-2:#13807f; --felt-3:#094646; --gold:#e07a5f; --gold-ink:#3a1408; --cell-fold:#dbe6e6; --cell-fold-ink:#66797a}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
@@ -56,6 +60,12 @@
   --cell-fold:#1d3328; --cell-fold-ink:#7f9a8b;
   --hud-green:#5fd38a; --hud-red:#ff7a6e; --hud-blue:#6aa6ff; --hud-purple:#b68cff; --hud-pink:#ff7cc3;
 }
+@media (prefers-color-scheme: dark){:root[data-pal="navy"]:not([data-theme="light"]){--bg:#0a111d; --surface:#121c2c; --surface-2:#0e1726; --ink:#e6ecf5; --muted:#98a6bd; --line:#22324b; --track:#2a3a55; --felt:#1f4673; --felt-2:#2c5d93; --felt-3:#12294a; --gold:#d9a84c; --cell-fold:#19253a; --cell-fold-ink:#7d8ca5}}
+:root[data-pal="navy"][data-theme="dark"]{--bg:#0a111d; --surface:#121c2c; --surface-2:#0e1726; --ink:#e6ecf5; --muted:#98a6bd; --line:#22324b; --track:#2a3a55; --felt:#1f4673; --felt-2:#2c5d93; --felt-3:#12294a; --gold:#d9a84c; --cell-fold:#19253a; --cell-fold-ink:#7d8ca5}
+@media (prefers-color-scheme: dark){:root[data-pal="oxblood"]:not([data-theme="light"]){--bg:#150c0d; --surface:#211416; --surface-2:#1b1012; --ink:#f2e8e3; --muted:#b59f98; --line:#3b2427; --track:#452b2f; --felt:#7a2534; --felt-2:#9a3343; --felt-3:#521820; --gold:#d6a64a; --cell-fold:#2b1b1d; --cell-fold-ink:#9a8580}}
+:root[data-pal="oxblood"][data-theme="dark"]{--bg:#150c0d; --surface:#211416; --surface-2:#1b1012; --ink:#f2e8e3; --muted:#b59f98; --line:#3b2427; --track:#452b2f; --felt:#7a2534; --felt-2:#9a3343; --felt-3:#521820; --gold:#d6a64a; --cell-fold:#2b1b1d; --cell-fold-ink:#9a8580}
+@media (prefers-color-scheme: dark){:root[data-pal="teal"]:not([data-theme="light"]){--bg:#0b1415; --surface:#132022; --surface-2:#0f1b1c; --ink:#e5f0ef; --muted:#95abab; --line:#223637; --track:#2a4142; --felt:#127070; --felt-2:#188c8b; --felt-3:#0b4a4a; --gold:#ee8c70; --gold-ink:#3a1408; --cell-fold:#192a2b; --cell-fold-ink:#7d9696}}
+:root[data-pal="teal"][data-theme="dark"]{--bg:#0b1415; --surface:#132022; --surface-2:#0f1b1c; --ink:#e5f0ef; --muted:#95abab; --line:#223637; --track:#2a4142; --felt:#127070; --felt-2:#188c8b; --felt-3:#0b4a4a; --gold:#ee8c70; --gold-ink:#3a1408; --cell-fold:#192a2b; --cell-fold-ink:#7d9696}
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -101,9 +111,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .box{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
 .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:16px;line-height:1.2;padding:0 20px;min-height:52px;border-radius:14px;border:0;
-  background:linear-gradient(180deg,var(--felt-2),var(--felt));color:var(--felt-ink);box-shadow:0 6px 16px rgba(31,96,69,.25);text-decoration:none}
+  background:linear-gradient(180deg,var(--felt-2),var(--felt));color:var(--felt-ink);box-shadow:0 6px 16px color-mix(in srgb,var(--felt) 30%,transparent);text-decoration:none}
 .btn.alt{background:var(--surface);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
-.btn.gold{background:var(--gold);color:var(--gold-ink);box-shadow:0 6px 16px rgba(217,165,58,.25)}
+.btn.gold{background:var(--gold);color:var(--gold-ink);box-shadow:0 6px 16px color-mix(in srgb,var(--gold) 25%,transparent)}
 .btn.wide{width:100%}
 .btn.sm{min-height:44px;min-width:96px;font-size:14.5px;font-weight:600;padding:0 16px;border-radius:12px}
 .btn:disabled{opacity:.45;cursor:default;box-shadow:none}
@@ -172,7 +182,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .block p{margin:0 0 12px} .block p:last-child{margin-bottom:0}
 .block ul,.block ol{margin:0 0 12px;padding-left:22px} .block li{margin-bottom:6px}
 .block li::marker{color:var(--muted)}
-.key{border:1.5px solid var(--gold);background:rgba(217,165,58,.1);padding:10px 14px;border-radius:12px;margin:12px 0;font-weight:500}
+.key{border:1.5px solid var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent);padding:10px 14px;border-radius:12px;margin:12px 0;font-weight:500}
 .key>b:first-child{font-size:11px;letter-spacing:.08em;text-transform:uppercase;display:block;color:var(--muted);margin-bottom:2px}
 .formula{font-family:var(--mono);background:var(--surface-2);border:1px solid var(--line);padding:8px 12px;border-radius:10px;display:inline-block;font-size:14px}
 .tbl{overflow-x:auto;margin:8px 0 14px;border:1px solid var(--line);border-radius:12px}
@@ -217,7 +227,6 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .qt{font-family:var(--serif);font-weight:500;font-size:20px;line-height:1.35;margin:10px 0 14px}
 .opts{display:grid;gap:8px}
 .opt{font-size:16px;text-align:left;padding:11px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);min-height:52px;display:flex;gap:12px;align-items:center;transition:transform .08s,border-color .15s,background .15s;line-height:1.35}
-.opt:active{transform:scale(.985)}
 .opt .k{flex:none;font-size:12.5px;font-weight:700;color:var(--muted);background:var(--surface);border:1.5px solid var(--line);border-radius:8px;width:26px;height:26px;display:grid;place-items:center}
 .opt.right{border-color:var(--good);background:var(--good-bg)} .opt.right .k{border-color:var(--good);color:var(--good)}
 .opt.wrong{border-color:var(--bad);background:var(--bad-bg)} .opt.wrong .k{border-color:var(--bad);color:var(--bad)}
@@ -249,7 +258,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .ptable{position:relative;height:190px;margin-top:4px}
 .oval{position:absolute;left:5%;right:5%;top:13%;bottom:13%;border-radius:999px;
   background:radial-gradient(90% 120% at 50% 35%,var(--felt-2) 0%,var(--felt) 55%,var(--felt-3) 100%);
-  box-shadow:0 0 0 5px #3b2a1a,0 0 0 6.5px rgba(217,165,58,.45),inset 0 0 26px rgba(0,0,0,.35)}
+  box-shadow:0 0 0 5px #3b2a1a,0 0 0 6.5px color-mix(in srgb,var(--gold) 45%,transparent),inset 0 0 26px rgba(0,0,0,.35)}
 .oval::after{content:"";position:absolute;inset:14px 18%;border-radius:999px;border:1px solid rgba(255,255,255,.07)}
 .tcenter{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
 .pot{display:flex;flex-direction:column;align-items:center;line-height:1;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.6)}
@@ -276,7 +285,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .pc .ten{letter-spacing:-1.5px}
 .pc small{font-size:22px;font-family:var(--sans);font-weight:500}
 @keyframes deal{from{opacity:0;transform:translateY(-8px) rotate(-3deg)}to{opacity:1;transform:none}}
-.badge{font-family:var(--serif);font-weight:700;font-size:16px;color:var(--gold);border:1.5px solid rgba(217,165,58,.6);border-radius:8px;padding:1px 8px;margin-left:4px}
+.badge{font-family:var(--serif);font-weight:700;font-size:16px;color:var(--gold);border:1.5px solid color-mix(in srgb,var(--gold) 60%,transparent);border-radius:8px;padding:1px 8px;margin-left:4px}
 .sinfo{text-align:center;font-size:14.5px;color:var(--muted);margin-top:10px;line-height:1.4}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .acts .opt{position:relative;justify-content:center;font-weight:700;font-size:17px;min-height:52px;padding:0 44px}
@@ -287,6 +296,20 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .acts .opt.go.right{background:var(--good-bg);border-color:var(--good);color:var(--good)}
 .acts .opt.go.right .k,.acts .opt.go.wrong .k{border-color:currentColor;color:inherit}
 
+/* Press feedback: every tappable control shrinks a little while pressed; the picked answer pops back in. */
+.opt,.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.prow,.iconbtn,.pill,.swatch{touch-action:manipulation}
+.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.swatch{transition:transform .1s ease,filter .1s,background .15s,border-color .15s}
+.opt:active:not(:disabled),.btn:active:not(:disabled),.grades button:active,.peek:active,.chip:active,.tile:active,.lrow:active,.swatch:active{transform:scale(.96)}
+.opt:active:not(:disabled){border-color:var(--felt-2);background:var(--track)}
+.acts .opt.go:active:not(:disabled){background:linear-gradient(180deg,var(--felt),var(--felt-3))}
+.btn:active:not(:disabled){filter:brightness(.92)}
+.opt.picked{animation:pick .34s cubic-bezier(.3,1.6,.5,1)}
+.opt.wrong.picked{animation:shake .36s ease-out}
+@keyframes pick{from{transform:scale(.94)}to{transform:none}}
+@keyframes shake{0%{transform:scale(.96)}25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-2px)}100%{transform:none}}
+/* Touch screens: no keyboard hints */
+@media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt{padding:0 12px}.kbd-only{display:none!important}}
+
 /* Range chart */
 .rg{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;user-select:none}
 .rc{font-size:8.5px;font-weight:600;text-align:center;padding:5px 0;border-radius:3px;line-height:1.1;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;font-variant-numeric:tabular-nums;background:var(--cell-fold);color:var(--cell-fold-ink)}
@@ -294,7 +317,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .rc.in{background:var(--felt);color:var(--felt-ink)}
 .rc.t2{background:var(--cell-t2);color:var(--cell-t2-ink)}
 .rc.t3{background:var(--cell-t3);color:#fff}
-.rc.cur{outline:2.5px solid var(--gold);outline-offset:0;position:relative;z-index:1;box-shadow:0 0 0 4px rgba(217,165,58,.35)}
+.rc.cur{outline:2.5px solid var(--gold);outline-offset:0;position:relative;z-index:1;box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;margin-top:10px;align-items:center;color:var(--muted)}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .legend .tag{margin-left:auto}
@@ -360,6 +383,10 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .srow small{display:block;font-size:13px;color:var(--muted);line-height:1.35}
 .srow .seg{flex:none}
 .srow .seg button{min-height:38px;font-size:13px;padding:0 12px}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:4px 0 14px}
+.swatch{display:flex;flex-direction:column;align-items:center;gap:6px;min-height:44px;padding:8px 2px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:12.5px;font-weight:600}
+.swatch[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.swatch i{width:40px;height:40px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 .danger{color:var(--bad)!important;border-color:var(--bad)!important}
 .ver{font-size:13px;color:var(--muted);margin-top:18px;text-align:center;line-height:1.6}
 
@@ -871,13 +898,13 @@ const MATH={
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.0.3",at:"2026-11-19T10:57Z"};
+var BUILD={v:"2.1.0",at:"2026-11-19T11:02Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- storage (same key and shape as v1, so existing progress carries over) ---------- */
 const KEY='gm-trainer-v1';
-const BLANK=()=>({lessons:{},quiz:{},drills:{},cards:{},days:[],math:{},theme:'auto'});
+const BLANK=()=>({lessons:{},quiz:{},drills:{},cards:{},days:[],math:{},theme:'auto',pal:'felt'});
 let S=BLANK();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(BLANK(),JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
@@ -891,9 +918,12 @@ const mqDark=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
 function applyTheme(){
   const t=S.theme,root=document.documentElement;
   if(t==='light'||t==='dark')root.dataset.theme=t;else delete root.dataset.theme;
-  const dark=t==='dark'||(t!=='light'&&mqDark&&mqDark.matches);
-  $('meta[name="theme-color"]').setAttribute('content',dark?'#0c1a13':'#e9f0eb');
+  if(S.pal&&S.pal!=='felt')root.dataset.pal=S.pal;else delete root.dataset.pal;
+  $('meta[name="theme-color"]').setAttribute('content',getComputedStyle(root).getPropertyValue('--bg').trim()||'#0c1a13');
 }
+const PALETTES=[['felt','Felt','#1f6045','#d9a53a'],['navy','Midnight','#1d3a5e','#c9973f'],['oxblood','Oxblood','#6b1e2a','#c39236'],['teal','Slate','#0e6464','#e07a5f']];
+/* iOS Safari only shows :active press styles when the page has a touchstart listener. */
+document.addEventListener('touchstart',()=>{},{passive:true});
 if(mqDark&&mqDark.addEventListener)mqDark.addEventListener('change',applyTheme);
 
 /* ---------- routing ---------- */
@@ -1013,7 +1043,7 @@ function quizHTML(l){
   const dots=l.quiz.map((_,i)=>`<i class="${LS.res[i]===true?'r':LS.res[i]===false?'w':''}${i===LS.qi?' c':''}"></i>`).join('');
   return `<div class="box qcard"><div class="qmeta"><span>Question ${LS.qi+1} of ${t}</span><span class="dots" aria-label="${LS.score} right so far">${dots}</span></div>
     <div class="qt">${q[0]}</div>
-    <div class="opts">${q[1].map((o,i)=>optHTML(o,i,a===null?'':i===q[2]?'right':i===a?'wrong':'dim')).join('')}</div>
+    <div class="opts">${q[1].map((o,i)=>optHTML(o,i,a===null?'':(i===q[2]?'right':i===a?'wrong':'dim')+(i===a?' picked':''))).join('')}</div>
     ${a!==null?whyHTML(a===q[2],' '+q[3]):''}</div>
     <div class="actions"><button class="btn alt" id="backRead">Reread</button>${a!==null?`<button class="btn" id="qnext">${LS.qi===t-1?'See result →':'Next question →'}</button>`:''}</div>`;
 }
@@ -1111,7 +1141,7 @@ function renderRanges(){
 function drawSpot(){
   const m=RT.cur,md=MODES[m],a=RT.answered,st=S.drills[m]||{c:0,n:0};
   const ok=a!==null&&a===inSet(m,RT.hand),inn=inSet(m,RT.hand),deal=RT.fresh?' deal':'';RT.fresh=false;
-  const btn=yes=>`<button class="opt${yes?' go':''}${a===null?'':(yes===inn?' right':yes===a?' wrong':' dim')}" data-yes="${yes?1:0}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${yes?1:2}</span>${yes?md.act:'Fold'}</button>`;
+  const btn=yes=>`<button class="opt${yes?' go':''}${a===null?'':(yes===inn?' right':yes===a?' wrong':' dim')+(yes===a?' picked':'')}" data-yes="${yes?1:0}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${yes?1:2}</span>${yes?md.act:'Fold'}</button>`;
   $('#rt-spot').innerHTML=`<div class="spot">
       <div class="shead"><span class="topic">${md.label}</span><span class="stag"><span>Streak <b>${RT.streak}</b></span><span>Here <b>${st.n?pct(st.c/st.n):'–'}</b></span></span></div>
       ${tableHTML(md)}
@@ -1149,7 +1179,7 @@ function renderMath(){
   <div class="drill"><div class="left">
     <div class="box qcard"><div class="qmeta"><span>${MATH[MT.type].label}</span><span>Session <b class="num" style="color:var(--ink)">${MT.score}/${MT.n}</b> · all time ${st.n?pct(st.c/st.n):'–'}</span></div>
       <div class="qt">${c.q}</div>
-      <div class="opts">${c.opts.map((o,i)=>optHTML(o,i,a===null?'':i===c.a?'right':i===a?'wrong':'dim')).join('')}</div>
+      <div class="opts">${c.opts.map((o,i)=>optHTML(o,i,a===null?'':(i===c.a?'right':i===a?'wrong':'dim')+(i===a?' picked':''))).join('')}</div>
       ${a!==null?whyHTML(a===c.a,' '+c.why):''}</div>
     <div class="actions"><button class="btn" id="mnext">${a===null?'Skip':'Next →'}</button></div>
   </div>
@@ -1238,22 +1268,25 @@ function renderProgress(){
 function buildLine(){let t;try{t=new Date(BUILD.at).toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});}catch(e){t=BUILD.at;}return 'v'+BUILD.v+' · built '+t;}
 function renderSettings(){
   $('#v-settings').innerHTML=`<div class="sec" style="margin-top:6px">Appearance</div>
-  <div class="group"><div class="srow"><div><b>Theme</b><small>Auto follows your phone</small></div><div class="seg" role="group" aria-label="Theme">${['auto','light','dark'].map(t=>`<button data-th="${t}" aria-pressed="${S.theme===t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</div></div></div>
+  <div class="group"><div class="srow"><div><b>Theme</b><small>Auto follows your phone</small></div><div class="seg" role="group" aria-label="Theme">${['auto','light','dark'].map(t=>`<button data-th="${t}" aria-pressed="${S.theme===t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</div></div>
+    <div class="srow"><div><b>Colours</b></div></div>
+    <div class="swatches" role="group" aria-label="Colours">${PALETTES.map(([k,n,a,b])=>`<button class="swatch" data-pal="${k}" aria-pressed="${(S.pal||'felt')===k}"><i style="background:linear-gradient(135deg,${a} 0 58%,${b} 58%)"></i>${n}</button>`).join('')}</div></div>
   <div class="sec">Your data<span>saved on this device only</span></div>
   <div class="group">
     <div class="srow"><div><b>Back up progress</b><small>Download a file you can import on another device</small></div><button class="btn alt sm" id="exp">Export</button></div>
     <div class="srow"><div><b>Restore progress</b><small>Replaces what is saved here</small></div><label class="btn alt sm" for="impf" style="cursor:pointer">Import</label><input type="file" id="impf" accept="application/json,.json" hidden></div>
     <div class="srow"><div><b>Reset everything</b><small>Lessons, quiz scores, drills and the review deck</small></div><button class="btn alt sm danger" id="reset">Reset</button></div>
   </div>
-  <div class="sec">Keyboard</div>
-  <div class="group"><div class="srow"><div><small><b style="display:inline">1–4</b> answer · <b style="display:inline">Enter</b> next · <b style="display:inline">← →</b> lesson pages · <b style="display:inline">R / F</b> raise or fold in the range trainer · <b style="display:inline">Space</b> flip a card</small></div></div></div>
+  <div class="kbd-only"><div class="sec">Keyboard</div>
+  <div class="group"><div class="srow"><div><small><b style="display:inline">1–4</b> answer · <b style="display:inline">Enter</b> next · <b style="display:inline">← →</b> lesson pages · <b style="display:inline">R / F</b> raise or fold in the range trainer · <b style="display:inline">Space</b> flip a card</small></div></div></div></div>
   <div class="sec">About</div>
   <div class="group"><div class="srow"><div><small>A study companion for <i>The Grinder’s Manual</i> by Peter Clarke: lessons and quizzes in chapter order, the book’s default range charts, maths drills and spaced-repetition flashcards. Lesson text is a summary in our own words; the book itself is not included. Install it from your browser menu (Add to Home Screen) to use it offline.</small></div></div></div>
   <p class="ver">${buildLine()}</p>`;
   $$('#v-settings [data-th]').forEach(b=>b.onclick=()=>{S.theme=b.dataset.th;save();applyTheme();renderSettings();});
+  $$('#v-settings [data-pal]').forEach(b=>b.onclick=()=>{S.pal=b.dataset.pal;save();applyTheme();renderSettings();});
   $('#exp').onclick=()=>{const blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='grinders-manual-progress-'+dayStr()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('Progress exported');};
   $('#impf').onchange=e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||typeof d!=='object'||!d.lessons||!d.cards)throw 0;S=Object.assign(BLANK(),d);save();applyTheme();RV.queue=null;renderSettings();updateChrome();toast('Progress restored');}catch(x){toast('That file is not a progress backup');}};r.readAsText(file);};
-  $('#reset').onclick=()=>{const b=$('#reset');if(b.dataset.armed){const th=S.theme;S=BLANK();S.theme=th;save();RV.queue=null;LS.id=null;renderSettings();updateChrome();toast('Progress reset');}else{b.dataset.armed=1;b.textContent='Tap again to erase';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Reset';}},4000);}};
+  $('#reset').onclick=()=>{const b=$('#reset');if(b.dataset.armed){const th=S.theme,pl=S.pal;S=BLANK();S.theme=th;S.pal=pl;save();RV.queue=null;LS.id=null;renderSettings();updateChrome();toast('Progress reset');}else{b.dataset.armed=1;b.textContent='Tap again to erase';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Reset';}},4000);}};
 }
 
 /* ---------- keyboard ---------- */
