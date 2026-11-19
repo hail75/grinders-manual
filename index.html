@@ -293,7 +293,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 /* Press feedback. Touch browsers apply :active late or not at all, so JS adds .press the moment a finger
    (or mouse) goes down and removes it on release or scroll; :active stays as a fallback.
    After an answer the picked option pops (or shakes when wrong) and both picked and right options get a mark. */
-.opt,.btn,.chip,.seg button,.peek,.tile,.lrow,.prow,.iconbtn,.pill{touch-action:manipulation}
+.opt,.btn,.chip,.seg button,.peek,.tile,.lrow,.prow,.nextrow,.iconbtn,.pill{touch-action:manipulation}
 .btn,.chip,.seg button,.peek,.tile,.lrow,.prow,.iconbtn{transition:transform .12s ease,filter .12s,background .15s,border-color .15s}
 .opt:not(:disabled):active,.opt.press:not(:disabled){transform:scale(.97);border-color:var(--felt-2);background:color-mix(in srgb,var(--felt-2) 14%,var(--surface-2));box-shadow:inset 0 0 0 1px var(--felt-2)}
 .acts .opt.go:not(:disabled):active,.acts .opt.go.press:not(:disabled){background:linear-gradient(180deg,var(--felt),var(--felt-3));box-shadow:none}
@@ -336,20 +336,41 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .hidden-chart{padding:30px 10px;text-align:center;color:var(--muted);font-size:14px;border:1.5px dashed var(--line);border-radius:12px}
 .note{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.45}
 
-/* Progress */
-.statrow{display:flex;align-items:center;gap:14px}
-.ring{position:relative;flex:none;width:88px;height:88px}
-.ring svg{width:88px;height:88px;transform:rotate(-90deg)}
-.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
-.rbg{stroke:var(--track)} .rfg{stroke:var(--gold)}
-.ring div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
-.ring b{font-family:var(--serif);font-size:21px}
-.ring span,.statcol span{font-size:11.5px;color:var(--muted)}
-.statcol{flex:1;display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:4px}
-.statcol b{display:block;font-family:var(--serif);font-size:22px;line-height:1.2}
+/* Progress: this week, activity, what to work on next, the range trainer by group, math tiles.
+   Chapters and quiz scores live on the Course tab only. */
+.week{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:4px}
+.week b{display:block;font-family:var(--serif);font-size:24px;line-height:1.2;font-variant-numeric:tabular-nums}
+.week span{font-size:11.5px;color:var(--muted)}
+.wdays{display:flex;gap:6px;margin-top:14px}
+.wdays span{flex:1;text-align:center;font-size:11px;color:var(--muted)}
+.wdays i{display:block;height:8px;border-radius:4px;background:var(--track);margin-bottom:4px}
+.wdays i.on{background:var(--felt-2)}
+.wdays span.now{color:var(--ink);font-weight:700}
 .heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;margin-top:4px}
 .heat i{aspect-ratio:1;border-radius:3px;background:var(--track)}
-.heat i.on{background:var(--felt-2)} .heat i.today{outline:1.5px solid var(--gold)} .heat i.fut{background:transparent}
+.heat i.l1,.heatkey i.l1{background:color-mix(in srgb,var(--felt-2) 30%,var(--track))} .heat i.l2,.heatkey i.l2{background:color-mix(in srgb,var(--felt-2) 55%,var(--track))}
+.heat i.l3,.heatkey i.l3{background:color-mix(in srgb,var(--felt-2) 80%,var(--track))} .heat i.l4,.heatkey i.l4{background:var(--felt-2)}
+.heat i.today{outline:1.5px solid var(--gold)} .heat i.fut{background:transparent}
+.heatkey{display:flex;align-items:center;justify-content:flex-end;gap:3px;margin-top:8px;font-size:11.5px;color:var(--muted)}
+.heatkey i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.nextrow{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:8px 12px;margin-top:6px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink);text-decoration:none}
+.nextrow .kind{flex:none;width:58px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.nextrow .what{flex:1;min-width:0;font-weight:600;font-size:14.5px;line-height:1.3}
+.nextrow .what small{display:block;font-weight:500;font-size:12.5px;color:var(--muted)}
+.nextrow .go{flex:none;color:var(--muted);font-size:18px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-top:6px}
+.gcard summary{display:grid;grid-template-columns:minmax(0,1fr) 80px 46px 14px;gap:10px;align-items:center;min-height:56px;padding:6px 12px;cursor:pointer;list-style:none}
+.gcard summary::-webkit-details-marker{display:none}
+.gcard summary::after{content:"›";color:var(--muted);font-size:18px;transition:transform .15s}
+.gcard[open] summary::after{transform:rotate(90deg)}
+.gcard .pn{font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcard .pn small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.gcard .pv{font-family:var(--serif);text-align:right;font-variant-numeric:tabular-nums}
+.gcard .glist{padding:0 8px 8px}
+.gcard .glist .prow{margin-top:4px;background:var(--surface-2)}
+.gcard .unplayed{font-size:12.5px;color:var(--muted);padding:8px 4px 2px;line-height:1.6}
+.gcard .unplayed a{color:var(--accent);margin-right:10px;white-space:nowrap}
+.mtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .prow{display:grid;grid-template-columns:minmax(0,1fr) 80px 46px;gap:10px;align-items:center;width:100%;min-height:50px;padding:6px 12px;margin-top:6px;font-size:14.5px;text-align:left;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none}
 .prow .pn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .prow .pn small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
@@ -370,7 +391,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,8px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
-@media (max-width:359px){.top h1{font-size:19px}.tile b{font-size:20px}.statcol b{font-size:19px}.qt{font-size:18.5px}}
+@media (max-width:359px){.top h1{font-size:19px}.tile b{font-size:20px}.week b{font-size:20px}.qt{font-size:18.5px}}
 @media (hover:hover){
   .btn:hover:not(:disabled){filter:brightness(1.07)}
   .opt:hover:not(:disabled),.chip:hover,.lrow:hover,.tile:hover,.prow:hover,.peek:hover{border-color:var(--felt-2)}
@@ -920,18 +941,20 @@ const MATH={
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.5.0",at:"2026-11-19T11:50Z"};
+var BUILD={v:"2.6.0",at:"2026-11-19T11:53Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- storage (same key and shape as v1, so existing progress carries over) ---------- */
 const KEY='gm-trainer-v1';
-const BLANK=()=>({lessons:{},quiz:{},drills:{},days:[],math:{},theme:'auto'});
+const BLANK=()=>({lessons:{},quiz:{},drills:{},days:[],math:{},log:{},theme:'auto'});
 let S=BLANK();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(BLANK(),JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 function dayStr(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function markDay(){const d=dayStr();if(!S.days.includes(d)){S.days.push(d);save();updateChrome();}}
+/* Answers per day (quiz, range trainer, math): drives This week and the activity shading. */
+function logAnswer(ok){const d=dayStr(),x=S.log[d]||{n:0,c:0};x.n++;if(ok)x.c++;S.log[d]=x;save();}
 function studyStreak(){const set=new Set(S.days);let n=0;const d=new Date();if(!set.has(dayStr(d)))d.setDate(d.getDate()-1);while(set.has(dayStr(d))){n++;d.setDate(d.getDate()-1);}return n;}
 function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),1800);}
 
@@ -1082,7 +1105,7 @@ function bindQuiz(l){
 }
 function answerQuiz(i){
   const l=LESSONS.find(x=>x.id===LS.id);if(LS.answered!==null||LS.qi>=l.quiz.length||i>=l.quiz[LS.qi][1].length)return;
-  const ok=i===l.quiz[LS.qi][2];LS.answered=i;LS.res[LS.qi]=ok;if(ok)LS.score++;
+  const ok=i===l.quiz[LS.qi][2];LS.answered=i;LS.res[LS.qi]=ok;if(ok)LS.score++;logAnswer(ok);
   renderLesson(LS.id);
 }
 function nextQuiz(){
@@ -1197,7 +1220,7 @@ function setMode(m){if(m===RT.mode)return;RT.mode=m;RT.streak=0;dealHand();histo
 function nextRT(){dealHand();drawSpot();drawChart();const s=$('#v-ranges .spot');if(s&&s.getBoundingClientRect().top<0)s.scrollIntoView({block:'start'});}
 function answerRT(k){
   const md=MODES[RT.cur];if(RT.answered!==null||VIEW!=='ranges'||!md.opts.some(o=>o[0]===k))return;const right=answerOf(RT.cur,RT.hand)===k;
-  const st=S.drills[RT.cur]||{c:0,n:0};st.n++;if(right)st.c++;S.drills[RT.cur]=st;save();markDay();
+  const st=S.drills[RT.cur]||{c:0,n:0};st.n++;if(right)st.c++;S.drills[RT.cur]=st;logAnswer(right);markDay();
   RT.streak=right?RT.streak+1:0;RT.answered=k;drawSpot();drawChart();
   const nx=$('#rt-next');if(nx)nx.focus({preventScroll:true});
 }
@@ -1225,29 +1248,52 @@ function renderMath(){
 }
 function answerMath(i){
   const c=MT.cur;if(MT.answered!==null||i>=c.opts.length)return;MT.answered=i;const ok=i===c.a;MT.n++;if(ok)MT.score++;
-  const st=S.math[MT.type]||{c:0,n:0};st.n++;if(ok)st.c++;S.math[MT.type]=st;save();markDay();
+  const st=S.math[MT.type]||{c:0,n:0};st.n++;if(ok)st.c++;S.math[MT.type]=st;logAnswer(ok);markDay();
   renderMath();$('#mnext').focus({preventScroll:true});
 }
 function nextMath(){MT.cur=MATH[MT.type].gen();MT.answered=null;renderMath();const q=$('#v-math .qcard');if(q&&q.getBoundingClientRect().top<0)q.scrollIntoView({block:'start'});}
 
 /* ---------- progress ---------- */
 function renderProgress(){
-  const acc=drillAcc(),done=LESSONS.filter(l=>lessonDone(l.id)).length,f=done/LESSONS.length,C=2*Math.PI*38;
-  const qs=LESSONS.filter(l=>S.quiz[l.id]!=null),qAvg=qs.length?qs.reduce((a,l)=>a+S.quiz[l.id]/l.quiz.length,0)/qs.length:null,streak=studyStreak();
-  const set=new Set(S.days),now=new Date(),cells=[];
-  const start=new Date(now);start.setDate(start.getDate()-start.getDay()-7*15);
-  for(let i=0;i<16*7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const s=dayStr(d);cells.push(`<i class="${d>now?'fut':set.has(s)?'on':''}${s===dayStr(now)?' today':''}" title="${s}"></i>`);}
-  const mathRows=Object.entries(MATH).map(([k,v])=>{const s=S.math[k]||{c:0,n:0};return `<a class="prow" href="#math" data-mt="${k}"><span class="pn">${v.label}<small>${plural(s.n,'question')}</small></span>${s.n?barHTML(s.c/s.n):'<span></span>'}<span class="pv">${s.n?pct(s.c/s.n):'–'}</span></a>`;}).join('');
-  $('#v-progress').innerHTML=`<div class="box statrow">
-    <div class="ring"><svg viewBox="0 0 88 88" aria-hidden="true"><circle class="rbg" cx="44" cy="44" r="38"/><circle class="rfg" cx="44" cy="44" r="38" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-f)}"/></svg><div><b>${done}/${LESSONS.length}</b><span>chapters</span></div></div>
-    <div class="statcol"><div><b>${acc.n?pct(acc.c/acc.n):'–'}</b><span>range accuracy</span></div><div><b>${qAvg===null?'–':pct(qAvg)}</b><span>quiz average</span></div><div><b>${S.days.length}</b><span>study days</span></div></div></div>
-  <div class="sec">Activity<span>${streak?streak+'-day streak':'Study today to start a streak'}</span></div>
-  <div class="box"><div class="heat" aria-label="Study days, last 16 weeks">${cells.join('')}</div></div>
-  <div class="sec">Chapters<span>best quiz score</span></div>
-  ${LESSONS.map(l=>{const q=S.quiz[l.id];return `<a class="prow" href="#lesson-${l.id}"><span class="pn">${l.ch}. ${esc(l.title)}<small>${lessonDone(l.id)?'Done':'To do'}</small></span>${q!=null?barHTML(q/l.quiz.length):'<span></span>'}<span class="pv">${q!=null?q+'/'+l.quiz.length:'–'}</span></a>`;}).join('')}
-  <div class="sec">Range trainer<span>${acc.n?pct(acc.c/acc.n)+' over '+plural(acc.n,'hand'):'No hands yet'}</span></div>
-  ${Object.entries(MODES).map(([k,m])=>{const s=S.drills[k]||{c:0,n:0};return `<a class="prow" href="#ranges/${k}"><span class="pn">${m.label}<small>${m.grp} · ${plural(s.n,'hand')}</small></span>${s.n?barHTML(s.c/s.n):'<span></span>'}<span class="pv">${s.n?pct(s.c/s.n):'–'}</span></a>`;}).join('')}
-  <div class="sec">Math drills</div>${mathRows}`;
+  const now=new Date(),today=dayStr(now),studied=new Set(S.days);
+  const ago=k=>{const d=new Date(now);d.setDate(d.getDate()-k);return d;};
+  // this week: the last seven days
+  let wn=0,wc=0,wd=0;const strip=[];
+  for(let k=6;k>=0;k--){const d=ago(k),ds=dayStr(d),x=S.log[ds];if(x){wn+=x.n;wc+=x.c;}if(studied.has(ds))wd++;
+    strip.push(`<span class="${k===0?'now':''}"><i class="${studied.has(ds)?'on':''}"></i>${'SMTWTFS'[d.getDay()]}</span>`);}
+  // activity: 16 weeks, shaded by the number of answers that day
+  const start=new Date(now);start.setDate(start.getDate()-start.getDay()-7*15);const cells=[];
+  for(let i=0;i<16*7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const ds=dayStr(d),n=(S.log[ds]||{n:0}).n;
+    const lv=d>now?'fut':n>=60?'l4':n>=20?'l3':n>0?'l2':studied.has(ds)?'l1':'';
+    cells.push(`<i class="${lv}${ds===today?' today':''}" title="${ds}${n?' · '+plural(n,'answer'):''}"></i>`);}
+  // what to work on next
+  const items=[];
+  Object.entries(MODES).map(([k,m])=>[k,m,S.drills[k]]).filter(([k,m,x])=>x&&x.n>=8&&x.c/x.n<.85).sort((a,b)=>a[2].c/a[2].n-b[2].c/b[2].n).slice(0,3)
+    .forEach(([k,m,x])=>items.push(['Range',`#ranges/${k}`,`${m.label}`,`${pct(x.c/x.n)} over ${plural(x.n,'hand')} · ${m.grp}`]));
+  LESSONS.filter(l=>S.quiz[l.id]!=null&&S.quiz[l.id]/l.quiz.length<.7).slice(0,2)
+    .forEach(l=>items.push(['Quiz',`#lesson-${l.id}`,`Ch. ${l.ch} ${esc(l.title)}`,`Best score ${S.quiz[l.id]}/${l.quiz.length}: reread and retake`]));
+  Object.entries(MATH).filter(([k])=>(S.math[k]||{n:0}).n>=5&&S.math[k].c/S.math[k].n<.75).slice(0,2)
+    .forEach(([k,v])=>items.push(['Math','#math',v.label,`${pct(S.math[k].c/S.math[k].n)} over ${plural(S.math[k].n,'question')}`,k]));
+  GROUPS.filter(g=>!Object.entries(MODES).some(([k,m])=>m.grp===g&&(S.drills[k]||{n:0}).n)).slice(0,2)
+    .forEach(g=>items.push(['New',`#ranges/mix-${g}`,`Try the ${g} spots`,'Not played yet']));
+  // the range trainer by group
+  const groups=GROUPS.map(g=>{const ms=Object.entries(MODES).filter(([k,m])=>m.grp===g);let n=0,c=0;ms.forEach(([k])=>{const x=S.drills[k];if(x){n+=x.n;c+=x.c;}});
+    return `<details class="gcard"><summary><span class="pn">${g}<small>${plural(ms.length,'spot')} · ${plural(n,'hand')}</small></span>${n?barHTML(c/n):'<span></span>'}<span class="pv">${n?pct(c/n):'–'}</span></summary>
+      <div class="glist">${ms.filter(([k])=>S.drills[k]).sort((a,b)=>S.drills[a[0]].c/S.drills[a[0]].n-S.drills[b[0]].c/S.drills[b[0]].n).map(([k,m])=>{const x=S.drills[k];return `<a class="prow" href="#ranges/${k}"><span class="pn">${m.label}<small>${plural(x.n,'hand')}</small></span>${barHTML(x.c/x.n)}<span class="pv">${pct(x.c/x.n)}</span></a>`;}).join('')}
+      ${ms.some(([k])=>!S.drills[k])?`<div class="unplayed">Not played yet: ${ms.filter(([k])=>!S.drills[k]).map(([k,m])=>`<a href="#ranges/${k}">${m.label}</a>`).join(' ')}</div>`:''}</div></details>`;}).join('');
+  const maths=Object.entries(MATH).map(([k,v])=>{const x=S.math[k]||{c:0,n:0};return `<a class="tile" href="#math" data-mt="${k}"><b>${x.n?pct(x.c/x.n):'–'}</b><span>${v.label}<br>${plural(x.n,'question')}</span></a>`;}).join('');
+  const lv=c=>`<i class="${c}" style="${c?'':'background:var(--track)'}"></i>`;
+  $('#v-progress').innerHTML=`<div class="sec" style="margin-top:6px">This week<span>last 7 days</span></div>
+  <div class="box"><div class="week"><div><b>${wn}</b><span>answers</span></div><div><b>${wn?pct(wc/wn):'–'}</b><span>correct</span></div><div><b>${wd}/7</b><span>days studied</span></div></div>
+    <div class="wdays" aria-label="Days studied this week">${strip.join('')}</div></div>
+  <div class="sec">Work on next</div>
+  ${items.length?items.slice(0,5).map(([kind,href,what,why,mt])=>`<a class="nextrow" href="${href}"${mt?` data-mt="${mt}"`:''}><span class="kind">${kind}</span><span class="what">${what}<small>${why}</small></span><span class="go" aria-hidden="true">›</span></a>`).join('')
+    :`<div class="box small muted">Nothing weak yet. Spots show up here once you’ve played 8 hands of them below 85%, a quiz under 70%, or a math drill under 75%.</div>`}
+  <div class="sec">Range trainer<span>tap a group for its spots</span></div>${groups}
+  <div class="sec">Math drills</div><div class="mtiles">${maths}</div>
+  <div class="sec">Activity<span>last 16 weeks</span></div>
+  <div class="box"><div class="heat" aria-label="Study days, last 16 weeks">${cells.join('')}</div>
+    <div class="heatkey">Less ${lv('')}${lv('l1')}${lv('l2')}${lv('l3')}${lv('l4')} More</div></div>`;
   $$('#v-progress [data-mt]').forEach(a=>a.onclick=()=>{MT.type=a.dataset.mt;MT.cur=null;MT.answered=null;});
 }
 

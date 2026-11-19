@@ -16,7 +16,7 @@
 - **Interactive tools** inside the lessons: steal calculator, ISO sizing, bet size vs required fold equity, required equity, the value-bet flowchart and a 3-bet shape helper.
 - **Range trainer.** 42 spots read cell by cell from the book’s charts, dealt on a six-seat table with who folded, raised, called or 3-bet, the blinds and the pot in chips, and your two cards. Groups: **Open** (default, fish/nit hunting and defensive ranges), **Flat** and **BB defend** (Ch. 6, including the SB spots and calls by open size), **3-bet** (polar, linear and squeeze ranges from Ch. 10) and **vs 3-bet** (4-bet / call / fold defences from Ch. 11). The chart opens after each answer with your hand marked. 60% of hands come from the edge of the range, where the decisions are. *Mix* deals random spots from a group.
 - **Math drills.** Endless required fold equity, equity to call, outs to equity, combined fold equity and combo questions, with the milestone table alongside.
-- **Progress.** Chapters done, best quiz scores, accuracy per range spot and per drill, and a 16-week study calendar with your streak.
+- **Progress.** This week (answers, accuracy, days studied), what to work on next (weakest range spots, quizzes to retake, weak math drills, groups not tried), the range trainer by group, math drill tiles and a 16-week activity calendar. Chapter scores stay on the Course tab.
 - **Phone first.** One-hand layout with a bottom tab bar and the main button within thumb reach; a sidebar and two-column drills on a wide screen. Light and dark themes. Keyboard: 1–4 answer, Enter next, ← → turn lesson pages, R / C / F in the range trainer.
 
 <p><img src="docs/desktop.png" width="90%" alt="The range trainer on a wide screen"></p>
