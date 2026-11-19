@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Study companion for The Grinder’s Manual: lessons, quizzes, a range trainer on a real table, math drills and spaced-repetition review.">
+<meta name="description" content="Study companion for The Grinder’s Manual: lessons, quizzes, a range trainer on a real table and math drills.">
 <meta name="theme-color" content="#0a111d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -90,16 +90,13 @@ button{font:inherit;color:inherit;cursor:pointer}
 .iconbtn[aria-current="page"]{background:var(--felt);border-color:var(--felt);color:var(--felt-ink)}
 
 /* Bottom navigation (phone), left rail (wide screen) */
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border-top:1px solid var(--line);
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-top:1px solid var(--line);
   padding:0 max(0px,calc((100% - 600px)/2)) env(safe-area-inset-bottom,0px)}
 .nav .rail-brand,.nav .rail-set{display:none}
 .nav button{font-size:11px;font-weight:600;min-height:var(--nav-h);border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;padding:0}
 .nav button svg{width:22px;height:22px}
 .nav button[aria-current="page"]{color:var(--accent)}
 .nav button[aria-current="page"]::before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
-.due{position:absolute;top:7px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--bad);color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;line-height:1}
-:root[data-theme="dark"] .due{color:#2a0d0d}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .due{color:#2a0d0d}}
 
 /* Common blocks */
 .sec{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:22px 2px 8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -295,12 +292,12 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 /* Press feedback. Touch browsers apply :active late or not at all, so JS adds .press the moment a finger
    (or mouse) goes down and removes it on release or scroll; :active stays as a fallback.
    After an answer the picked option pops (or shakes when wrong) and both picked and right options get a mark. */
-.opt,.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.prow,.iconbtn,.pill{touch-action:manipulation}
-.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.prow,.iconbtn{transition:transform .12s ease,filter .12s,background .15s,border-color .15s}
+.opt,.btn,.chip,.seg button,.peek,.tile,.lrow,.prow,.iconbtn,.pill{touch-action:manipulation}
+.btn,.chip,.seg button,.peek,.tile,.lrow,.prow,.iconbtn{transition:transform .12s ease,filter .12s,background .15s,border-color .15s}
 .opt:not(:disabled):active,.opt.press:not(:disabled){transform:scale(.97);border-color:var(--felt-2);background:color-mix(in srgb,var(--felt-2) 14%,var(--surface-2));box-shadow:inset 0 0 0 1px var(--felt-2)}
 .acts .opt.go:not(:disabled):active,.acts .opt.go.press:not(:disabled){background:linear-gradient(180deg,var(--felt),var(--felt-3));box-shadow:none}
 .btn:not(:disabled):active,.btn.press:not(:disabled){transform:scale(.97);filter:brightness(.9)}
-.grades button:active,.grades button.press,.peek:active,.peek.press,.chip:active,.chip.press,.seg button.press,.iconbtn.press,
+.peek:active,.peek.press,.chip:active,.chip.press,.seg button.press,.iconbtn.press,
 .tile:active,.tile.press,.lrow:active,.lrow.press,.prow:active,.prow.press{transform:scale(.97);filter:brightness(.95)}
 .opt.picked{animation:pick .4s cubic-bezier(.25,1.7,.5,1)}
 .opt.wrong.picked{animation:shake .4s ease-out}
@@ -333,33 +330,6 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .peek{min-height:44px;min-width:96px;padding:0 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:14px;font-weight:600}
 .hidden-chart{padding:30px 10px;text-align:center;color:var(--muted);font-size:14px;border:1.5px dashed var(--line);border-radius:12px}
 .note{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.45}
-
-/* Review flashcards */
-.deck{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:74px;margin-top:6px}
-.deck div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;font-size:11px;color:var(--muted)}
-.deck i{display:block;width:100%;border-radius:5px 5px 2px 2px;background:var(--felt-2);min-height:3px}
-.deck div:first-child i{background:var(--track)}
-.deck b{font-family:var(--serif);font-size:13px;color:var(--ink)}
-.flip{perspective:1200px;margin-top:12px;cursor:pointer}
-.flip-in{position:relative;min-height:250px;transition:transform .45s cubic-bezier(.2,.7,.3,1);transform-style:preserve-3d}
-.flip.on .flip-in{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;padding:22px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;box-shadow:var(--shadow)}
-.face.front{background:radial-gradient(120% 100% at 50% 0%,var(--felt-2) 0%,var(--felt) 55%,var(--felt-3) 100%);color:#fff}
-.face.front .eyebrow{color:var(--gold)}
-.face.front h2{font-size:27px;max-width:22ch}
-.face.front small{font-size:13px;color:rgba(238,243,250,.7);margin-top:8px}
-.face.back{background:var(--card);color:var(--card-ink);transform:rotateY(180deg);border:1.5px solid var(--gold)}
-.face.back .eyebrow{color:#536079}
-.face.back p{font-size:17px;line-height:1.5;max-width:46ch}
-.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
-.grades button{min-height:52px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;font-size:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
-.grades button small{font-weight:500;font-size:12px;color:var(--muted)}
-.grades button.g0{border-color:var(--bad);color:var(--bad)}
-.grades button.g2{background:linear-gradient(180deg,var(--felt-2),var(--felt));border-color:var(--felt);color:var(--felt-ink)} .grades button.g2 small{color:rgba(255,255,255,.75)}
-.empty{text-align:center;padding:30px 18px}
-.empty h2{font-size:24px;margin:6px 0}
-.empty p{color:var(--muted);max-width:40ch;margin:0 auto 16px}
-.big-emoji{font-size:40px;line-height:1}
 
 /* Progress */
 .statrow{display:flex;align-items:center;gap:14px}
@@ -398,7 +368,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 @media (max-width:359px){.top h1{font-size:19px}.tile b{font-size:20px}.statcol b{font-size:19px}.qt{font-size:18.5px}}
 @media (hover:hover){
   .btn:hover:not(:disabled){filter:brightness(1.07)}
-  .opt:hover:not(:disabled),.chip:hover,.lrow:hover,.tile:hover,.prow:hover,.peek:hover,.grades button:hover{border-color:var(--felt-2)}
+  .opt:hover:not(:disabled),.chip:hover,.lrow:hover,.tile:hover,.prow:hover,.peek:hover{border-color:var(--felt-2)}
 }
 /* Wide screen: navigation becomes a rail on the left; lessons get a contents sidebar; drills go two columns. */
 @media (min-width:960px){
@@ -415,7 +385,6 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
   .nav button:hover{background:var(--surface-2);color:var(--ink)}
   .nav button[aria-current="page"]{background:var(--surface-2)}
   .nav button[aria-current="page"]::before{top:24%;bottom:24%;left:0;right:auto;width:3px;height:auto;border-radius:0 3px 3px 0}
-  .due{position:static;margin-left:auto}
   .actions{position:static;margin:16px 0 0;padding:0;background:none}
   .home-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start}
   .home-grid .tiles{margin-top:0}
@@ -432,7 +401,6 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
   .drill>.left{position:sticky;top:20px}
   .drill .chartbox{margin-top:8px}
   .ptable{height:230px}
-  .flip-in{min-height:300px}
   .toast{bottom:28px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -452,7 +420,6 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
     <section class="view" id="v-lesson" hidden></section>
     <section class="view" id="v-ranges" hidden></section>
     <section class="view" id="v-math" hidden></section>
-    <section class="view" id="v-review" hidden></section>
     <section class="view" id="v-progress" hidden></section>
     <section class="view" id="v-settings" hidden></section>
   </main>
@@ -464,7 +431,6 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
   <button data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/></svg>Course</button>
   <button data-v="ranges"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.2h17M3.5 14.8h17M9.2 3.5v17M14.8 3.5v17"/></svg>Ranges</button>
   <button data-v="math"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M18.5 5.5l-13 13"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></svg>Math</button>
-  <button data-v="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="3.5" width="12" height="16" rx="2" transform="rotate(8 13.5 11.5)"/><rect x="4" y="5" width="12" height="16" rx="2" fill="var(--surface)"/></svg>Review<span class="due" id="dueBadge" hidden></span></button>
   <button data-v="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-5"/></svg>Progress</button>
   <button data-v="settings" class="rail-set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Settings</button>
 </nav>
@@ -749,72 +715,6 @@ quiz:[
 ]},
 ];
 
-/* ---------- flashcards ---------- */
-const CARDS=[
-['EV','Expected value: what a decision earns or loses on average over many repetitions. The real scoreboard of poker decisions.'],
-['All-in EV','Expected winnings from all-in showdowns only. A narrow window on luck; it ignores non-showdown pots.'],
-['RFE (formula)','Required fold equity = Risk / (Risk + Potential Gain). How often a bet must win immediately to break even.'],
-['RFE of a 2x BU steal','57%: risk 2 to win 1.5.'],
-['RFE of a ½-pot bet','33%'],
-['RFE of a pot-sized bet','50%'],
-['RFE of a ⅔-pot bet','40%'],
-['Required equity facing a pot-sized bet','33%'],
-['Required equity facing a ½-pot bet','25%'],
-['Required equity facing a ⅓-pot bet','20%'],
-['ATC / (ATC + TP)','Required equity when calling: amount to call ÷ (amount to call + total pot including Villain\'s bet).'],
-['Combined fold equity vs two players','Multiply their fold frequencies, e.g. 0.76 × 0.83 = 63%.'],
-['BU steal margin rule','With neutral factors, an open is usually fine if fold equity is within 5–10% of RFE (3–7% from the SB).'],
-['Three opening-hand attributes (in order)','Good Pair Potential, Versatility, Nut Potential.'],
-['Default open sizes','UTG 3x · HJ 3x · CO 2.5x · BU 2x vs regs · SB 2.5x. Size up vs Fish.'],
-['UTG default range','77+, ATs+, KTs+, QTs+, JTs, T9s, AJo+, KQo (~11%).'],
-['Vacuum EV vs long-term EV','Vacuum EV ignores how opponents adjust. Long-term EV includes future fold equity lost when aware players adapt.'],
-['ISO triangle','Frequent strength, fold equity, position. Full triangle = ISO; empty = limp or fold. Frequent strength alone can justify an ISO.'],
-['ISO sizing rule','3bb + 1bb per limper, +1bb if out of position to the limper. Size up vs loose callers, down vs 3-bettors.'],
-['Fish type A','Fit-or-fold (e.g. 40/6, folds to c-bets 55–75%). ISO wide and c-bet: build it up, take it down.'],
-['Fish type B','Station (e.g. 65/3, fold to c-bet ≤45%). ISO tighter, value bet relentlessly.'],
-['Fish type C','Aggro Fish (e.g. 57/38). Raises c-bets and bluffs air. Need SDV; don\'t fight aggression with bad equity.'],
-['Fish type D','Whale (e.g. 95/80). ISO very wide and play straightforward value.'],
-['Complete','Calling the extra 0.5bb from the SB after limpers. A form of limping behind.'],
-['Light c-bet factors (good)','Dry board, equity when called, villain folds, no/vulnerable SDV, heads-up, turn/river prospects, in position.'],
-['Fish flop fallacy','The belief that loose players hit low boards a lot. Their wide ranges are mostly high cards and miss low boards.'],
-['Vulnerable vs stable SDV','Vulnerable: many bad turns and folding hands have equity, so bet for protection. Stable: few bad turns, so check for pot control.'],
-['C-bet sizing zones','Small ½–⅗ (dry, weak range) · Medium ⅗–⅔ · Large ⅔–1× (wet, strong range).'],
-['Balanced vs unbalanced sizing','Vs regs: one size for the whole range. Vs fit-or-fold Fish: big with value, small with air.'],
-['Value bet (definition)','A bet that is ahead of the range that calls it.'],
-['Value-bet questions','Q1 Relative hand strength sufficient? Q2 Need to build the pot? Q3 Should I slowplay?'],
-['Procedural check','Checking to the aggressor of the previous street. Skip the value-bet questions in these spots.'],
-['Exponential Mistake','Failing to build the pot early, so every later bet (a fraction of the pot) is smaller too.'],
-['Elastic vs inelastic range','Elastic ranges fold more to bigger bets. Inelastic ranges (most Fish) don\'t, so size up for value.'],
-['Thin value','A bet that\'s ahead only slightly more than half the time when called. Worse vs uncapped ranges.'],
-['Gap concept','You need a stronger hand to call an open than to open yourself.'],
-['Set-mining frequency','A pocket pair flops a set or better about 11.8% of the time (≈1 in 8.5).'],
-['Implied odds factors (good)','Small investment, flops big hands often, villain\'s range strong, deep stacks, villain doesn\'t fold, multiway, good position.'],
-['Three specificities of read','Player read (precise) → player-type read → population read (vague).'],
-['Ghost equity','Equity you\'ll often have to fold before showdown on later streets. It isn\'t real.'],
-['Pyramidal calling','Defend wide on the flop, narrower on the turn, narrower on the river, keeping each level uncapped.'],
-['Donk bet','A lead into the previous street\'s aggressor. Often capped and weak from Fish, so raise wider.'],
-['Combos: pair / suited / offsuit','6 / 4 / 12. Any unpaired hand = 16. Total = 1326.'],
-['AK combos with an A on board','12 (3 aces × 4 kings).'],
-['Blocker','A card in your hand that reduces the combos of certain hands in Villain\'s range.'],
-['Polar 3-bet range','Value + bluffs with a flatting range in between. Use with fold equity and when you want to flat.'],
-['Linear 3-bet range','The top of your playing range, little or no flatting. Use vs Fish, from the SB, short-stacked, or with squeezers behind.'],
-['Polar spectrum (weak → strong)','Fold → 3-bet bluff → Call → 3-bet value.'],
-['Squeeze','A 3-bet after an open and one or more callers. Sized bigger.'],
-['3-bet size IP vs 2.5bb open','7bb (OOP: 8bb).'],
-['3-bet size OOP vs 3bb open','10bb (IP: 8bb).'],
-['Flatting 3-bets: good factors','In position, frequent strength vs his range, versatility, known post-flop weaknesses, or simply enough implied odds.'],
-['Typical 4-bet size','About 2.2–2.5× the 3-bet.'],
-['When to leave balance','Villain very unbalanced, big pot, rare spot, or villain won\'t adjust.'],
-['Turn barrel vs a Station','Bad idea: stations don\'t fold.'],
-['River bluff blockers','Good: block his calling range. Bad: block his folding (weakest) hands.'],
-['Probe bet','Leading the turn after the pre-flop raiser checked back the flop.'],
-['Deep stacks favour…','Nut potential, versatility, implied-odds hands. Be wary of stacking off with one pair.'],
-['Shallow stacks favour…','Good pair potential, linear 3-bet/shove ranges, fewer speculative calls.'],
-['Outs → equity shortcut','Flop to river ≈ outs × 4 (slightly high for big draws). One card ≈ outs × 2.'],
-['HUD: VPIP / PFR','Voluntarily put $ in pot % / Pre-flop raise %. A big gap between them suggests a passive Fish.'],
-['HUD: Fold to F Cbet','How often a player folds to a flop c-bet. Key to light c-bets and ISO decisions.'],
-];
-const CARD_IDS=CARDS.map((c,i)=>'c'+i);
 
 /* ---------- interactive tools inside lessons ---------- */
 /* ---------- interactive tools ---------- */
@@ -900,13 +800,13 @@ const MATH={
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.2.1",at:"2026-11-19T11:17Z"};
+var BUILD={v:"2.3.0",at:"2026-11-19T11:23Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- storage (same key and shape as v1, so existing progress carries over) ---------- */
 const KEY='gm-trainer-v1';
-const BLANK=()=>({lessons:{},quiz:{},drills:{},cards:{},days:[],math:{},theme:'auto'});
+const BLANK=()=>({lessons:{},quiz:{},drills:{},days:[],math:{},theme:'auto'});
 let S=BLANK();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(BLANK(),JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
@@ -924,7 +824,7 @@ function applyTheme(){
 }
 /* iOS Safari only shows :active press styles when the page has a touchstart listener. */
 document.addEventListener('touchstart',()=>{},{passive:true});
-const PRESSABLE='.opt,.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.prow,.iconbtn';
+const PRESSABLE='.opt,.btn,.chip,.seg button,.peek,.tile,.lrow,.prow,.iconbtn';
 document.addEventListener('pointerdown',e=>{
   if(e.button>0)return;const t=e.target.closest(PRESSABLE);if(!t||t.disabled)return;
   t.classList.add('press');
@@ -934,7 +834,7 @@ document.addEventListener('pointerdown',e=>{
 if(mqDark&&mqDark.addEventListener)mqDark.addEventListener('change',applyTheme);
 
 /* ---------- routing ---------- */
-const TITLES={home:'Course',lesson:'Course',ranges:'Range trainer',math:'Math drills',review:'Review',progress:'Progress',settings:'Settings'};
+const TITLES={home:'Course',lesson:'Course',ranges:'Range trainer',math:'Math drills',progress:'Progress',settings:'Settings'};
 let VIEW='home';
 function go(h){location.hash=h;}
 function parseHash(){
@@ -949,16 +849,14 @@ function route(){
   $('#setBtn').setAttribute('aria-current',VIEW==='settings'?'page':'false');
   if(VIEW==='ranges'&&r.arg&&(MODES[r.arg]||(r.arg.startsWith('mix-')&&GROUPS.includes(r.arg.slice(4))))&&r.arg!==RT.mode){RT.mode=r.arg;RT.streak=0;dealHand();}
   if(VIEW==='lesson')LS.want=r.id;
-  if(VIEW==='review')RV.queue=null;
   render();window.scrollTo(0,0);
 }
 function render(){
   $('#ptitle').textContent=TITLES[VIEW];
-  ({home:renderHome,lesson:()=>renderLesson(LS.want),ranges:renderRanges,math:renderMath,review:renderReview,progress:renderProgress,settings:renderSettings})[VIEW]();
+  ({home:renderHome,lesson:()=>renderLesson(LS.want),ranges:renderRanges,math:renderMath,progress:renderProgress,settings:renderSettings})[VIEW]();
   updateChrome();
 }
 function updateChrome(){
-  const n=dueCards().length,b=$('#dueBadge');b.hidden=!n;b.textContent=n>99?'99+':n;
   const s=studyStreak(),p=$('#streakPill');p.hidden=s<1;$('#streakN').textContent=s;
 }
 $$('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
@@ -975,19 +873,19 @@ function lessonDone(id){return !!S.lessons[id];}
 function drillAcc(){let c=0,n=0;Object.values(S.drills).forEach(x=>{c+=x.c;n+=x.n;});return {c,n};}
 function renderHome(){
   const done=LESSONS.filter(l=>lessonDone(l.id)).length,next=LESSONS.find(l=>!lessonDone(l.id)),nl=next||LESSONS[0];
-  const mAcc=Object.values(S.math).reduce((a,x)=>({c:a.c+x.c,n:a.n+x.n}),{c:0,n:0}),due=dueCards().length,fresh=!Object.keys(S.cards).length,acc=drillAcc(),streak=studyStreak();
+  const mAcc=Object.values(S.math).reduce((a,x)=>({c:a.c+x.c,n:a.n+x.n}),{c:0,n:0}),acc=drillAcc(),streak=studyStreak();
   $('#v-home').innerHTML=`<div class="home-grid">
     <div class="welcome">
       <div class="eyebrow">${next?(done?'Up next':'Start here'):'Course complete'}</div>
       <h2>${next?`Ch. ${nl.ch} · ${esc(nl.title)}`:'All 14 chapters done'}</h2>
-      <p>${next?esc(nl.sum):'Keep the ideas sharp with daily review, the range trainer and the math drills.'}</p>
+      <p>${next?esc(nl.sum):'Keep the ideas sharp with the range trainer and the math drills.'}</p>
       <div class="bar"><i style="width:${done/LESSONS.length*100}%"></i></div>
       <div class="meta"><span>${done} of ${LESSONS.length} chapters done</span><span>${next?nl.mins+' min · '+nl.quiz.length+' questions':''}</span></div>
       <a class="btn wide" href="#lesson-${nl.id}">${next?(done||S.quiz[nl.id]!=null?'Continue':'Start')+' chapter '+nl.ch+' →':'Read chapter 1 again'}</a>
     </div>
     <div>
       <div class="tiles">
-        <a class="tile${due&&!fresh?' alert':''}" href="#review"><b>${due}</b><span>${fresh?'new flashcards':(due===1?'card':'cards')+' due today'}</span></a>
+        <a class="tile" href="#lesson-${nl.id}"><b>${done}/${LESSONS.length}</b><span>chapters done</span></a>
         <a class="tile" href="#ranges"><b>${acc.n?pct(acc.c/acc.n):'–'}</b><span>range accuracy</span></a>
         <a class="tile" href="#math"><b>${mAcc.n?pct(mAcc.c/mAcc.n):'–'}</b><span>math accuracy</span></a>
         <a class="tile" href="#progress"><b>${streak}</b><span>day streak</span></a>
@@ -1044,7 +942,7 @@ function quizHTML(l){
     const missed=l.quiz.map((q,i)=>LS.res[i]===false?`<div><b>${q[0]}</b>Answer: <span>${q[1][q[2]]}</span><br><span class="muted" style="color:var(--muted);font-weight:400">${q[3]}</span></div>`:'').join('');
     return `<div class="result ${s===t?'good':f>=.7?'warn':'bad'}"><small>Chapter ${l.ch} quiz</small><b>${s}/${t}</b><p>${s===t?'Clean sweep. On to the next chapter.':f>=.7?'Solid. Look over the misses below, then move on.':'Worth another pass through the chapter before moving on.'}</p></div>
     ${missed?`<div class="sec">What you missed</div><div class="missed">${missed}</div>`:''}
-    <div class="actions"><button class="btn alt" id="retry">Retry</button>${nxt?`<a class="btn" href="#lesson-${nxt.id}">Chapter ${nxt.ch} →</a>`:`<a class="btn" href="#review">Go to review →</a>`}</div>`;
+    <div class="actions"><button class="btn alt" id="retry">Retry</button>${nxt?`<a class="btn" href="#lesson-${nxt.id}">Chapter ${nxt.ch} →</a>`:`<a class="btn" href="#ranges">Range trainer →</a>`}</div>`;
   }
   const q=l.quiz[LS.qi],a=LS.answered;
   const dots=l.quiz.map((_,i)=>`<i class="${LS.res[i]===true?'r':LS.res[i]===false?'w':''}${i===LS.qi?' c':''}"></i>`).join('');
@@ -1205,62 +1103,17 @@ function answerMath(i){
 }
 function nextMath(){MT.cur=MATH[MT.type].gen();MT.answered=null;renderMath();const q=$('#v-math .qcard');if(q&&q.getBoundingClientRect().top<0)q.scrollIntoView({block:'start'});}
 
-/* ---------- review (Leitner boxes) ---------- */
-const INTERVAL=[0,1,2,4,8,16,32];
-const today=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/86400000);
-function dueCards(){return CARD_IDS.filter(id=>{const c=S.cards[id];return !c||c.due<=today();});}
-let RV={queue:null,flip:false,total:0};
-function nextBox(box,g){return g===0?0:Math.min(6,Math.max(1,box+(g===1?0:g===2?1:2)));}
-const ivl=d=>d===0?'now':d===1?'1 day':d+' days';
-function renderReview(){
-  if(!RV.queue){RV.queue=dueCards().sort(()=>Math.random()-.5);RV.total=RV.queue.length;RV.flip=false;}
-  const boxes=[0,0,0,0,0,0,0];CARD_IDS.forEach(id=>{boxes[(S.cards[id]||{box:0}).box]++;});const mx=Math.max(...boxes,1);
-  const deck=`<div class="box"><div class="qmeta"><span>Your deck · ${CARDS.length} cards</span><span>${boxes.slice(3).reduce((a,b)=>a+b,0)} learned</span></div>
-    <div class="deck">${boxes.map((n,i)=>`<div title="${i?'Box '+i+': every '+ivl(INTERVAL[i]):'New or missed'}"><b>${n}</b><i style="height:${Math.max(4,n/mx*44)}px"></i>${i?INTERVAL[i]+'d':'New'}</div>`).join('')}</div></div>`;
-  const el=$('#v-review');
-  if(!RV.queue.length){el.innerHTML=deck+`<div class="box empty" style="margin-top:12px"><div class="big-emoji" aria-hidden="true">🂡</div><h2>Deck clear</h2><p>Nothing is due. Cards come back after 1, 2, 4, 8, 16 and 32 days as you keep getting them right.</p>
-    <div class="row"><button class="btn alt" id="rv-all">Review all ${CARDS.length} anyway</button><a class="btn" href="#ranges">Drill ranges</a></div></div>`;
-    $('#rv-all').onclick=()=>{RV.queue=[...CARD_IDS].sort(()=>Math.random()-.5);RV.total=RV.queue.length;RV.flip=false;renderReview();};return;}
-  const id=RV.queue[0],c=CARDS[+id.slice(1)],box=(S.cards[id]||{box:0}).box,k=RV.total-RV.queue.length+1;
-  el.innerHTML=deck+`<div class="sec" style="margin-top:16px">Card ${Math.min(k,RV.total)} of ${RV.total}<span>${RV.queue.length} left</span></div>
-  <div class="flip${RV.flip?' on':''}" id="rv-card" role="button" tabindex="0" aria-label="${RV.flip?'Answer shown':'Show answer'}"><div class="flip-in">
-    <div class="face front" aria-hidden="${RV.flip}"><div class="eyebrow">${box?'Box '+box:'New card'}</div><h2>${c[0]}</h2><small>Say the answer, then tap to check</small></div>
-    <div class="face back" aria-hidden="${!RV.flip}"><div class="eyebrow">${c[0]}</div><p>${c[1]}</p></div>
-  </div></div>
-  <div class="actions">${RV.flip?gradesHTML(box):`<button class="btn" id="rv-flip">Show answer</button>`}</div>`;
-  $('#rv-card').onclick=flipCard;$('#rv-card').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();flipCard();}};
-  const f=$('#rv-flip');if(f)f.onclick=flipCard;
-  $$('#v-review [data-g]').forEach(b=>b.onclick=()=>grade(+b.dataset.g));
-}
-function gradesHTML(box){return `<div class="grades" style="flex:1;margin:0">${['Again','Hard','Good','Easy'].map((t,g)=>`<button class="g${g}" data-g="${g}">${t}<small>${ivl(INTERVAL[nextBox(box,g)])}</small></button>`).join('')}</div>`;}
-/* Flip the card in place so the turn animates; only the buttons below it are swapped. */
-function flipCard(){
-  if(RV.flip||!RV.queue||!RV.queue.length)return;RV.flip=true;
-  const card=$('#rv-card'),id=RV.queue[0];
-  card.classList.add('on');card.setAttribute('aria-label','Answer shown');
-  card.querySelector('.front').setAttribute('aria-hidden','true');card.querySelector('.back').setAttribute('aria-hidden','false');
-  $('#v-review .actions').innerHTML=gradesHTML((S.cards[id]||{box:0}).box);
-  $$('#v-review [data-g]').forEach(b=>b.onclick=()=>grade(+b.dataset.g));
-  $('#v-review [data-g="2"]').focus({preventScroll:true});
-}
-function grade(g){
-  if(!RV.flip||!RV.queue||!RV.queue.length)return;
-  const id=RV.queue.shift();const c=S.cards[id]||{box:0,due:0};
-  c.box=nextBox(c.box,g);c.due=today()+INTERVAL[c.box];if(g===0)RV.queue.push(id);
-  S.cards[id]=c;save();markDay();RV.flip=false;renderReview();updateChrome();
-}
-
 /* ---------- progress ---------- */
 function renderProgress(){
   const acc=drillAcc(),done=LESSONS.filter(l=>lessonDone(l.id)).length,f=done/LESSONS.length,C=2*Math.PI*38;
-  const learned=CARD_IDS.filter(id=>(S.cards[id]||{box:0}).box>=3).length,streak=studyStreak();
+  const qs=LESSONS.filter(l=>S.quiz[l.id]!=null),qAvg=qs.length?qs.reduce((a,l)=>a+S.quiz[l.id]/l.quiz.length,0)/qs.length:null,streak=studyStreak();
   const set=new Set(S.days),now=new Date(),cells=[];
   const start=new Date(now);start.setDate(start.getDate()-start.getDay()-7*15);
   for(let i=0;i<16*7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const s=dayStr(d);cells.push(`<i class="${d>now?'fut':set.has(s)?'on':''}${s===dayStr(now)?' today':''}" title="${s}"></i>`);}
   const mathRows=Object.entries(MATH).map(([k,v])=>{const s=S.math[k]||{c:0,n:0};return `<a class="prow" href="#math" data-mt="${k}"><span class="pn">${v.label}<small>${plural(s.n,'question')}</small></span>${s.n?barHTML(s.c/s.n):'<span></span>'}<span class="pv">${s.n?pct(s.c/s.n):'–'}</span></a>`;}).join('');
   $('#v-progress').innerHTML=`<div class="box statrow">
     <div class="ring"><svg viewBox="0 0 88 88" aria-hidden="true"><circle class="rbg" cx="44" cy="44" r="38"/><circle class="rfg" cx="44" cy="44" r="38" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-f)}"/></svg><div><b>${done}/${LESSONS.length}</b><span>chapters</span></div></div>
-    <div class="statcol"><div><b>${acc.n?pct(acc.c/acc.n):'–'}</b><span>range accuracy</span></div><div><b>${learned}</b><span>cards learned</span></div><div><b>${S.days.length}</b><span>study days</span></div></div></div>
+    <div class="statcol"><div><b>${acc.n?pct(acc.c/acc.n):'–'}</b><span>range accuracy</span></div><div><b>${qAvg===null?'–':pct(qAvg)}</b><span>quiz average</span></div><div><b>${S.days.length}</b><span>study days</span></div></div></div>
   <div class="sec">Activity<span>${streak?streak+'-day streak':'Study today to start a streak'}</span></div>
   <div class="box"><div class="heat" aria-label="Study days, last 16 weeks">${cells.join('')}</div></div>
   <div class="sec">Chapters<span>best quiz score</span></div>
@@ -1280,17 +1133,17 @@ function renderSettings(){
   <div class="group">
     <div class="srow"><div><b>Back up progress</b><small>Download a file you can import on another device</small></div><button class="btn alt sm" id="exp">Export</button></div>
     <div class="srow"><div><b>Restore progress</b><small>Replaces what is saved here</small></div><label class="btn alt sm" for="impf" style="cursor:pointer">Import</label><input type="file" id="impf" accept="application/json,.json" hidden></div>
-    <div class="srow"><div><b>Reset everything</b><small>Lessons, quiz scores, drills and the review deck</small></div><button class="btn alt sm danger" id="reset">Reset</button></div>
+    <div class="srow"><div><b>Reset everything</b><small>Lessons, quiz scores and drill stats</small></div><button class="btn alt sm danger" id="reset">Reset</button></div>
   </div>
   <div class="kbd-only"><div class="sec">Keyboard</div>
-  <div class="group"><div class="srow"><div><small><b style="display:inline">1–4</b> answer · <b style="display:inline">Enter</b> next · <b style="display:inline">← →</b> lesson pages · <b style="display:inline">R / F</b> raise or fold in the range trainer · <b style="display:inline">Space</b> flip a card</small></div></div></div></div>
+  <div class="group"><div class="srow"><div><small><b style="display:inline">1–4</b> answer · <b style="display:inline">Enter</b> next · <b style="display:inline">← →</b> lesson pages · <b style="display:inline">R / F</b> raise or fold in the range trainer</small></div></div></div></div>
   <div class="sec">About</div>
-  <div class="group"><div class="srow"><div><small>A study companion for <i>The Grinder’s Manual</i> by Peter Clarke: lessons and quizzes in chapter order, the book’s default range charts, maths drills and spaced-repetition flashcards. Lesson text is a summary in our own words; the book itself is not included. Install it from your browser menu (Add to Home Screen) to use it offline.</small></div></div></div>
+  <div class="group"><div class="srow"><div><small>A study companion for <i>The Grinder’s Manual</i> by Peter Clarke: lessons and quizzes in chapter order, the book’s default range charts and maths drills. Lesson text is a summary in our own words; the book itself is not included. Install it from your browser menu (Add to Home Screen) to use it offline.</small></div></div></div>
   <p class="ver">${buildLine()}</p>`;
   $$('#v-settings [data-th]').forEach(b=>b.onclick=()=>{S.theme=b.dataset.th;save();applyTheme();renderSettings();});
   $('#exp').onclick=()=>{const blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='grinders-manual-progress-'+dayStr()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('Progress exported');};
-  $('#impf').onchange=e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||typeof d!=='object'||!d.lessons||!d.cards)throw 0;S=Object.assign(BLANK(),d);save();applyTheme();RV.queue=null;renderSettings();updateChrome();toast('Progress restored');}catch(x){toast('That file is not a progress backup');}};r.readAsText(file);};
-  $('#reset').onclick=()=>{const b=$('#reset');if(b.dataset.armed){const th=S.theme;S=BLANK();S.theme=th;save();RV.queue=null;LS.id=null;renderSettings();updateChrome();toast('Progress reset');}else{b.dataset.armed=1;b.textContent='Tap again to erase';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Reset';}},4000);}};
+  $('#impf').onchange=e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||typeof d!=='object'||!d.lessons||!d.quiz)throw 0;S=Object.assign(BLANK(),d);save();applyTheme();renderSettings();updateChrome();toast('Progress restored');}catch(x){toast('That file is not a progress backup');}};r.readAsText(file);};
+  $('#reset').onclick=()=>{const b=$('#reset');if(b.dataset.armed){const th=S.theme;S=BLANK();S.theme=th;save();LS.id=null;renderSettings();updateChrome();toast('Progress reset');}else{b.dataset.armed=1;b.textContent='Tap again to erase';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Reset';}},4000);}};
 }
 
 /* ---------- keyboard ---------- */
@@ -1308,9 +1161,6 @@ document.addEventListener('keydown',e=>{
     else if((k==='Enter'||k===' ')&&RT.answered!==null){e.preventDefault();nextRT();}
   }else if(VIEW==='math'){
     if(num>=0)answerMath(num);else if(k==='Enter'&&MT.answered!==null)nextMath();
-  }else if(VIEW==='review'){
-    if(k===' '||k==='Enter'){if(!RV.flip&&RV.queue&&RV.queue.length){e.preventDefault();flipCard();}}
-    else if(RV.flip&&num>=0)grade(num);
   }
 });
 

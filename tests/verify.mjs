@@ -6,7 +6,7 @@ const html = readFileSync(new URL("index.html", root), "utf8");
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 const cut = script.indexOf("/* ===================== UI");
 if (cut < 0) throw new Error("UI marker not found in index.html");
-const X = new Function(script.slice(0, cut) + "; return {RANGES,CALLS,MODES,LESSONS,CARDS,CARD_IDS,MATH,rangePct,allHands,combos,toolHTML,eq2};")();
+const X = new Function(script.slice(0, cut) + "; return {RANGES,CALLS,MODES,LESSONS,MATH,rangePct,allHands,combos,toolHTML,eq2};")();
 
 let fails = 0;
 const ok = (c, m) => { if (!c) { fails++; console.log("FAIL:", m); } };
@@ -50,16 +50,13 @@ X.LESSONS.forEach((l, i) => {
   const txt = l.blocks.map(b => b[1]).join("");
   ok(!/undefined|NaN|\[object/.test(txt), `lesson ${l.id}: broken text`);
   (txt.match(/href="#([^"]+)"/g) || []).forEach(a => { const h = a.slice(7, -1), [v, arg] = h.split("/");
-    ok(["home", "ranges", "math", "review", "progress", "settings"].includes(v) || v.startsWith("lesson-"), `lesson ${l.id}: link ${h}`);
+    ok(["home", "ranges", "math", "progress", "settings"].includes(v) || v.startsWith("lesson-"), `lesson ${l.id}: link ${h}`);
     if (v === "ranges" && arg) ok(!!X.MODES[arg], `lesson ${l.id}: link to unknown spot ${arg}`); });
 });
 ok(X.LESSONS.length === 14, "14 chapters");
 
-// 3. Flashcards
-ok(X.CARDS.length === X.CARD_IDS.length && X.CARDS.every(c => c.length === 2 && c[0] && c[1]), "flashcards have a front and a back");
-ok(new Set(X.CARDS.map(c => c[0])).size === X.CARDS.length, "flashcard fronts are unique");
 
-// 4. Math drills: every generated question has its answer among 2-4 distinct options
+// 3. Math drills: every generated question has its answer among 2-4 distinct options
 for (const [k, m] of Object.entries(X.MATH)) for (let i = 0; i < 2000; i++) {
   const g = m.gen();
   ok(g.opts.length >= 2 && g.opts.length <= 4, `math ${k}: ${g.opts.length} options`);
@@ -70,7 +67,7 @@ for (const [k, m] of Object.entries(X.MATH)) for (let i = 0; i < 2000; i++) {
 }
 ok(Math.abs(X.eq2(9) - 0.35) < 0.01, "9 outs on the flop is about 35%");
 
-// 5. App files: versions match, everything the service worker caches exists
+// 4. App files: versions match, everything the service worker caches exists
 const sw = readFileSync(new URL("sw.js", root), "utf8");
 const v1 = (sw.match(/grinders-manual-(\d+\.\d+\.\d+)/) || [])[1], v2 = (html.match(/BUILD=\{v:"(\d+\.\d+\.\d+)"/) || [])[1];
 ok(v1 && v1 === v2, `version in sw.js (${v1}) matches BUILD in index.html (${v2})`);
@@ -83,7 +80,7 @@ ok(!/fonts\.googleapis|fonts\.gstatic/.test(html), "no fonts from Google: they a
 const idsInHtml = [...html.matchAll(/\sid="([^"$]+)"/g)].map(m => m[1]);
 ok(idsInHtml.length === new Set(idsInHtml).size, "no duplicate ids in the page shell: " + idsInHtml.filter((x, i) => idsInHtml.indexOf(x) !== i));
 
-// 6. CSS: a class with its own rule must not also be used as a modifier of another component
+// 5. CSS: a class with its own rule must not also be used as a modifier of another component
 // (v2.0.1: a 5/6 quiz result had class "mid", the table's pot centring class, and floated over the page)
 { const css = html.slice(html.indexOf("<style>"), html.indexOf("</style>"));
   const own = new Set([...css.matchAll(/(?:^|[},])\s*\.([a-zA-Z][\w-]*)(?=[\s{:,.\[>])/gm)].map(m => m[1]));
