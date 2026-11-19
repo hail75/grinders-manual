@@ -33,7 +33,7 @@
   --card:#fffdf8; --card-ink:#141b26; --card-red:#c4262d; --txt-red:#c4262d;
   --card-edge:0 0 0 1px rgba(18,28,44,.22),0 2px 0 rgba(18,28,44,.28),0 6px 14px rgba(18,28,44,.22);
   --shadow:0 1px 2px rgba(18,28,44,.06),0 6px 20px rgba(18,28,44,.08);
-  --cell-fold:#dde4ee; --cell-fold-ink:#67748a; --cell-t2:#d9a53a; --cell-t2-ink:#3a2a00; --cell-t3:#b8432f;
+  --cell-fold:#dde4ee; --cell-fold-ink:#67748a; --cell-call:#2e8b7f; --cell-t2:#d9a53a; --cell-t2-ink:#3a2a00; --cell-t3:#b8432f;
   --hud-green:#1f8a4c; --hud-red:#c2372f; --hud-blue:#2f72d6; --hud-purple:#8a4fd1; --hud-pink:#d1489a;
   --serif:"Fraunces",Georgia,"Times New Roman",serif;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -48,7 +48,7 @@
     --accent:#8fb4e6; --good:#6fd3b0; --good-bg:#11302b; --good-mark:#23a37e; --bad:#ff9189; --bad-bg:#3a1d24; --bad-mark:#d9534a;
     --warn:#f0c46a; --warn-bg:#3a2d12; --txt-red:#ff8a8f;
     --card-edge:0 2px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.18); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
-    --cell-fold:#19253a; --cell-fold-ink:#7d8ca5;
+    --cell-fold:#19253a; --cell-fold-ink:#7d8ca5; --cell-call:#2a7d72;
     --hud-green:#5fd38a; --hud-red:#ff7a6e; --hud-blue:#6aa6ff; --hud-purple:#b68cff; --hud-pink:#ff7cc3;
   }
 }
@@ -59,7 +59,7 @@
   --accent:#8fb4e6; --good:#6fd3b0; --good-bg:#11302b; --good-mark:#23a37e; --bad:#ff9189; --bad-bg:#3a1d24; --bad-mark:#d9534a;
   --warn:#f0c46a; --warn-bg:#3a2d12; --txt-red:#ff8a8f;
   --card-edge:0 2px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.18); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
-  --cell-fold:#19253a; --cell-fold-ink:#7d8ca5;
+  --cell-fold:#19253a; --cell-fold-ink:#7d8ca5; --cell-call:#2a7d72;
   --hud-green:#5fd38a; --hud-red:#ff7a6e; --hud-blue:#6aa6ff; --hud-purple:#b68cff; --hud-pink:#ff7cc3;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -282,6 +282,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .sinfo{text-align:center;font-size:14.5px;color:var(--muted);margin-top:10px;line-height:1.4}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .acts .opt{position:relative;justify-content:center;font-weight:700;font-size:17px;min-height:52px;padding:0 44px}
+.acts.n3{grid-template-columns:repeat(3,1fr);gap:6px} .acts.n3 .opt{font-size:16px;padding:0 34px}
 .acts .opt .k{position:absolute;left:12px;top:50%;margin-top:-13px}
 .acts .opt.go{background:linear-gradient(180deg,var(--felt-2),var(--felt));border-color:var(--felt);color:var(--felt-ink)}
 .acts .opt.go .k{background:transparent;border-color:rgba(255,255,255,.5);color:var(--felt-ink)}
@@ -311,7 +312,8 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .acts .opt.right::after,.acts .opt.wrong::after{margin:0}
 .acts .opt.right{color:var(--good)} .acts .opt.wrong{color:var(--bad)}
 /* Touch screens: no keyboard hints */
-@media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt{padding:0 12px}.kbd-only{display:none!important}}
+@media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt,.acts.n3 .opt{padding:0 8px}.kbd-only{display:none!important}}
+@media (max-width:440px){#v-ranges>.seg button{font-size:12.5px;padding:0 4px}}
 
 /* Range chart */
 .rg{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;user-select:none}
@@ -320,6 +322,9 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .rc.in{background:var(--felt);color:var(--felt-ink)}
 .rc.t2{background:var(--cell-t2);color:var(--cell-t2-ink)}
 .rc.t3{background:var(--cell-t3);color:#fff}
+.rc.cl{background:var(--cell-call);color:#fff}
+.rc.dyn{background:repeating-linear-gradient(135deg,var(--cell-fold) 0 4px,color-mix(in srgb,var(--cell-t2) 50%,var(--cell-fold)) 4px 8px);color:var(--cell-fold-ink)}
+.rc.nr{background:transparent;color:color-mix(in srgb,var(--muted) 50%,transparent);box-shadow:inset 0 0 0 1px var(--line)}
 .rc.cur{outline:2.5px solid var(--gold);outline-offset:0;position:relative;z-index:1;box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;margin-top:10px;align-items:center;color:var(--muted)}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
@@ -483,6 +488,71 @@ const MODES={
   'bb-CO':{grp:'BB defend',label:'BB vs CO',seat:'BB',vill:'CO',act:'Call',set:[...CALLS['BB>UTG'],...CALLS['BB>HJ'],...CALLS['BB>CO']],info:'CO opens 3x, folds to you in the BB.'},
 };
 const rangePct=set=>set.reduce((a,h)=>a+combos(h),0)/1326;
+
+/* ---------- more charts from the book (Ch. 2, 6, 10, 11), read cell by cell from its figures ---------- */
+/* Each spot: opts are the answers ([key, label]); tiers colour the chart and give each hand its answer: [key, css, legend, hands].
+   scene: chips in front of each seat (bets), what they did (did), hero chips (me); after = hero opened and now faces a 3-bet. */
+const XMODES={
+  'open-UTG-fish':{grp:'Open',label:'UTG · Fish',fig:6,seat:'UTG',info:'Folded to you UTG. The tight table has one big Fish in the BB who rarely folds.',opts:[['y','Raise 3x'],['f','Fold']],base:'UTG',add:L("66 55 44 33 22 A9s A8s A7s A6s A5s A4s A3s A2s 98s 87s ATo KJo")},
+  'open-HJ-fish':{grp:'Open',label:'HJ · Fish/Nit',fig:8,seat:'HJ',info:'Folded to you in the HJ. A Fish or a Nit sits in the blinds, and nobody behind 3-bets light.',opts:[['y','Raise 3x'],['f','Fold']],base:'HJ',add:L("55 44 33 22 K9s Q9s J9s T8s 87s 76s KTo QJo")},
+  'open-HJ-def':{grp:'Open',label:'HJ · 3-bettor',fig:9,seat:'HJ',info:'Folded to you in the HJ. An aggressive Reg behind you 3-bets light.',opts:[['y','Raise 3x'],['f','Fold']],base:'HJ',drop:L("66 A8s A7s A6s 98s ATo KJo")},
+  'open-CO-fish':{grp:'Open',label:'CO · Fish/Nit',fig:11,seat:'CO',info:'Folded to you in the CO. A Fish or a Nit sits in the blinds.',opts:[['y','Raise 3x'],['f','Fold']],base:'CO',add:L("K7s K6s K5s K4s K3s K2s Q8s J8s 86s 75s A8o A7o A6o A5o A4o A3o A2o K9o Q9o J9o")},
+  'open-CO-nit':{grp:'Open',label:'CO · BU Nit',fig:12,seat:'CO',info:'Folded to you in the CO. The BU is a Nit, so the CO plays like a second button.',opts:[['y','Raise 2x'],['f','Fold']],base:'CO',add:L("K7s K6s K5s K4s K3s K2s Q8s Q7s Q6s J8s J7s T7s 86s 75s 64s 54s 43s A8o A7o A6o A5o A4o A3o A2o K9o K8o K7o Q9o Q8o Q7o J9o J8o T8o 98o")},
+  'open-CO-def':{grp:'Open',label:'CO · 3-bettor',fig:13,seat:'CO',info:'Folded to you in the CO. A light 3-bettor sits behind you.',opts:[['y','Raise 2.5x'],['f','Fold']],base:'CO',drop:L("55 44 33 22 K8s T8s 97s 76s 65s A9o KTo QTo JTo T9o")},
+  'call-SBvUTG':{grp:'Flat',label:'SB vs UTG',fig:33,seat:'SB',info:'UTG opens 3x, folds to you in the SB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs UTG',"AA KK QQ JJ TT 99 88 AKs AQs AKo"]],scene:{bets:{UTG:3},did:{UTG:'Raise 3'}}},
+  'call-SBvHJ':{grp:'Flat',label:'SB vs HJ',fig:33,seat:'SB',info:'HJ opens 3x, folds to you in the SB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs UTG',"AA KK QQ JJ TT 99 88 AKs AQs AKo"],['c','t2','+ vs HJ',"AJs KQs AQo"]],scene:{bets:{HJ:3},did:{HJ:'Raise 3'}}},
+  'call-SBvCO-fish':{grp:'Flat',label:'SB vs CO · Fish BB',fig:34,seat:'SB',info:'CO opens 3x, folds to you in the SB. A Fish is in the BB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs CO 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s KQs KJs KTs QJs QTs JTs T9s AKo AQo AJo KQo"]],scene:{bets:{CO:3},did:{CO:'Raise 3'}}},
+  'call-SBvBU-fish':{grp:'Flat',label:'SB vs BU · Fish BB',fig:34,seat:'SB',info:'BU opens 2x, you are in the SB. A Fish is in the BB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs CO 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s KQs KJs KTs QJs QTs JTs T9s AKo AQo AJo KQo"],['c','t2','+ vs BU 2x',"55 44 33 22 A8s A7s A6s A5s A4s A3s A2s K9s Q9s J9s T8s 98s 97s 87s 76s ATo KJo KTo QJo"]],scene:{bets:{BU:2},did:{BU:'Raise 2'}}},
+  'call-SBvCO-nit':{grp:'Flat',label:'SB vs CO · tight BB',fig:35,seat:'SB',info:'CO opens 3x, folds to you in the SB. The BB is a tight player who almost never squeezes.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs CO 3x',"AA KK QQ JJ TT 99 88 AKs AQs AJs ATs KQs KJs QJs AKo AQo AJo ATo KQo KJo"]],scene:{bets:{CO:3},did:{CO:'Raise 3'}}},
+  'call-SBvBU-nit':{grp:'Flat',label:'SB vs BU · tight BB',fig:35,seat:'SB',info:'BU opens 2x, you are in the SB. The BB is a tight player who almost never squeezes.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs CO 3x',"AA KK QQ JJ TT 99 88 AKs AQs AJs ATs KQs KJs QJs AKo AQo AJo ATo KQo KJo"],['c','t2','+ vs BU 2x',"77 A9s A8s KTs QTs JTs T9s 98s"]],scene:{bets:{BU:2},did:{BU:'Raise 2'}}},
+  'bb-BU3':{grp:'BB defend',label:'BB vs BU 3x',fig:32,seat:'BB',info:'BU opens to 3, the SB folds, you are in the BB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s A8s KQs KJs KTs K9s QJs QTs Q9s JTs J9s T9s 98s 87s AKo AQo AJo ATo KQo KJo QJo"]],scene:{bets:{BU:3},did:{BU:'Raise 3'}}},
+  'bb-BU25':{grp:'BB defend',label:'BB vs BU 2.5x',fig:32,seat:'BB',info:'BU opens to 2.5, the SB folds, you are in the BB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s A8s KQs KJs KTs K9s QJs QTs Q9s JTs J9s T9s 98s 87s AKo AQo AJo ATo KQo KJo QJo"],['c','t2','+ vs 2.5x',"55 44 33 22 A7s A6s A5s A4s A3s A2s K8s Q8s J8s T8s 97s 86s 76s 65s A9o A8o KTo K9o QTo Q9o JTo J9o T9o"]],scene:{bets:{BU:2.5},did:{BU:'Raise 2.5'}}},
+  'bb-BU2':{grp:'BB defend',label:'BB vs BU 2x',fig:32,seat:'BB',info:'BU opens to 2, the SB folds, you are in the BB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s A8s KQs KJs KTs K9s QJs QTs Q9s JTs J9s T9s 98s 87s AKo AQo AJo ATo KQo KJo QJo"],['c','t2','+ vs 2.5x',"55 44 33 22 A7s A6s A5s A4s A3s A2s K8s Q8s J8s T8s 97s 86s 76s 65s A9o A8o KTo K9o QTo Q9o JTo J9o T9o"],['c','t3','+ vs 2x',"K7s K6s K5s K4s K3s K2s Q7s J7s T7s 96s 75s 54s A7o A6o A5o A4o A3o A2o K8o K7o Q8o Q7o J8o J7o T8o 98o 87o 76o"]],scene:{bets:{BU:2},did:{BU:'Raise 2'}}},
+  'bb-SB3':{grp:'BB defend',label:'BB vs SB 3x',fig:36,seat:'BB',info:'Folds to the SB, who opens to 3. You are in the BB, in position.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs K9s K8s K7s K6s QJs QTs Q9s Q8s Q7s JTs J9s J8s J7s T9s T8s T7s 98s 97s 87s 86s 76s AKo AQo AJo ATo A9o A8o KQo KJo KTo K9o QJo QTo Q9o JTo J9o T9o"]],scene:{bets:{SB:3},did:{SB:'Raise 3'}}},
+  'bb-SB25':{grp:'BB defend',label:'BB vs SB 2.5x',fig:36,seat:'BB',info:'Folds to the SB, who opens to 2.5. You are in the BB, in position.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs K9s K8s K7s K6s QJs QTs Q9s Q8s Q7s JTs J9s J8s J7s T9s T8s T7s 98s 97s 87s 86s 76s AKo AQo AJo ATo A9o A8o KQo KJo KTo K9o QJo QTo Q9o JTo J9o T9o"],['c','t2','+ vs 2.5x',"55 44 33 22 K5s K4s K3s K2s Q6s 96s 75s 65s 54s A7o A6o A5o A4o A3o A2o K8o K7o Q8o J8o T8o 98o 87o 76o"]],scene:{bets:{SB:2.5},did:{SB:'Raise 2.5'}}},
+  'bb-SB2':{grp:'BB defend',label:'BB vs SB 2x',fig:36,seat:'BB',info:'Folds to the SB, who opens to 2. You are in the BB, in position.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs K9s K8s K7s K6s QJs QTs Q9s Q8s Q7s JTs J9s J8s J7s T9s T8s T7s 98s 97s 87s 86s 76s AKo AQo AJo ATo A9o A8o KQo KJo KTo K9o QJo QTo Q9o JTo J9o T9o"],['c','t2','+ vs 2.5x',"55 44 33 22 K5s K4s K3s K2s Q6s 96s 75s 65s 54s A7o A6o A5o A4o A3o A2o K8o K7o Q8o J8o T8o 98o 87o 76o"],['c','t3','+ vs 2x',"Q5s Q4s Q3s Q2s J6s J5s J4s J3s J2s T6s 85s 64s 53s 43s 32s K6o K5o K4o K3o K2o Q7o J7o T7o 97o 86o 65o"]],scene:{bets:{SB:2},did:{SB:'Raise 2'}}},
+  '3b-BUvHJ':{grp:'3-bet',label:'BU vs HJ',fig:53,seat:'BU',info:'A Reg opens 3x from the HJ and folds to 3-bets 53% of the time. You are on the BU.',opts:[['r','3-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','3-bet for value',"AA KK QQ AKs AKo"],['r','t3','3-bet bluff',"A9s A5s QTs 98s 87s AJo KQo"],['c','cl','Call',"JJ TT 99 88 77 66 55 44 33 22 AQs AJs ATs KQs KJs QJs JTs T9s AQo"]],scene:{bets:{HJ:3},did:{HJ:'Raise 3'}}},
+  '3b-BBvBU':{grp:'3-bet',label:'BB vs BU',fig:54,seat:'BB',info:'A Reg opens 2x from the BU and folds too much to 3-bets. The SB folds; you are in the BB.',opts:[['r','3-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','3-bet for value',"AA KK QQ JJ TT AKs AQs AJs KQs AKo AQo"],['r','t3','3-bet bluff',"Q5s Q4s Q3s Q2s J5s J4s T6s T5s 85s 74s 64s 53s 43s A7o A6o K8o K7o 87o 76o"],['c','cl','Call',"99 88 77 66 55 44 33 22 ATs A9s A8s A7s A6s A5s A4s A3s A2s KJs KTs K9s K8s K7s K6s K5s K4s K3s K2s QJs QTs Q9s Q8s Q7s Q6s JTs J9s J8s J7s J6s T9s T8s T7s 98s 97s 96s 87s 86s 76s 75s 65s 54s AJo ATo A9o A8o A5o A4o A3o A2o KQo KJo KTo K9o QJo QTo Q9o Q8o JTo J9o J8o T9o T8o 98o"]],scene:{bets:{BU:2},did:{BU:'Raise 2'}}},
+  '3b-COvUTG':{grp:'3-bet',label:'CO vs UTG Fish',fig:56,seat:'CO',info:'An Aggro Fish opens 3x UTG, the HJ folds. You are in the CO.',opts:[['r','3-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','3-bet (value)',"AA KK QQ JJ TT 99 88 AKs AQs AJs ATs A9s KQs KJs KTs QJs QTs JTs AKo AQo AJo ATo KQo KJo"],['c','cl','Call',"77 66 55 44 33 22 A8s A7s A6s A5s A4s A3s A2s J9s T9s T8s 98s 97s 87s 76s 65s"]],scene:{bets:{UTG:3},did:{UTG:'Raise 3'}}},
+  '3b-SBvCO':{grp:'3-bet',label:'SB vs CO',fig:57,seat:'SB',info:'A tight Reg opens 2.5x from the CO, the BU folds. You are in the SB: 3-bet or fold, no flatting.',opts:[['r','3-bet'],['f','Fold']],tiers:[['r','in','3-bet, shove over a 4-bet',"AA KK QQ JJ TT 99 AKs AKo"],['r','t2','3-bet, fold to a 4-bet',"88 AQs AJs ATs A9s A8s A5s A4s A3s A2s KQs KJs KTs QJs QTs JTs J9s T9s 98s AQo AJo KQo"]],scene:{bets:{CO:2.5},did:{CO:'Raise 2.5'}}},
+  'sq-BB':{grp:'3-bet',label:'Squeeze · BB',fig:59,seat:'BB',info:'A Reg opens 2x on the BU and another Reg calls from the SB. You are in the BB.',opts:[['r','Squeeze'],['c','Call'],['f','Fold']],tiers:[['r','in','Squeeze for value',"AA KK QQ JJ TT AKs AQs AJs ATs KQs KJs AKo AQo AJo KQo"],['r','t3','Squeeze bluff',"J5s J4s J3s J2s T5s T4s T3s T2s 95s 94s 93s 92s 85s 84s 83s 74s 73s 64s 63s 53s 52s 43s 42s 32s A7o A6o K8o K7o K6o Q7o Q6o J7o 86o"],['c','cl','Call',"99 88 77 66 55 44 33 22 A9s A8s A7s A6s A5s A4s A3s A2s KTs K9s K8s K7s K6s K5s K4s K3s K2s QJs QTs Q9s Q8s Q7s Q6s Q5s Q4s Q3s Q2s JTs J9s J8s J7s J6s T9s T8s T7s T6s 98s 97s 96s 87s 86s 76s 75s 65s 54s ATo A9o A8o A5o A4o A3o A2o KJo KTo K9o QJo QTo Q9o Q8o JTo J9o J8o T9o T8o 98o 97o 87o 76o"]],scene:{bets:{BU:2,SB:2},did:{BU:'Raise 2',SB:'Call 2'}}},
+  'sq-SB':{grp:'3-bet',label:'Squeeze · SB',fig:60,seat:'SB',info:'A Reg opens 3x from the HJ and a passive Fish calls on the BU. You are in the SB.',opts:[['r','Squeeze'],['c','Call'],['f','Fold']],tiers:[['r','in','Squeeze',"AA KK QQ JJ TT AKs AQs AJs ATs A9s KQs KJs KTs AKo AQo AJo KQo"],['c','cl','Call',"99 88 77 66 55 44 33 22 QJs QTs JTs T9s 98s"]],scene:{bets:{HJ:3,BU:3},did:{HJ:'Raise 3',BU:'Call 3'}}},
+  'f3-COvSB':{grp:'vs 3-bet',label:'CO vs SB',fig:64,seat:'CO',info:'You open 2.5x in the CO. A Reg in the SB 3-bets to 9. Everyone else folds.',opts:[['r','4-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','4-bet, call a shove',"AA KK QQ AKs AKo"],['r','t3','4-bet, fold to a shove',"A9s A8s A5s A4s A3s A2s KTs KJo"],['c','cl','Call',"JJ TT 99 AQs AJs ATs KQs KJs QJs JTs AQo AJo KQo"],['f','','Fold',"88 77 66 55 44 33 22 A7s A6s K9s K8s QTs Q9s J9s T9s T8s 98s 97s 87s 76s 65s ATo A9o KTo QJo QTo JTo T9o"]],scene:{bets:{SB:9},did:{SB:'3-bet 9'},me:2.5,after:true},pool:true},
+  'f3-BUvBB':{grp:'vs 3-bet',label:'BU vs BB',fig:65,seat:'BU',info:'You open 2x on the BU. A Reg in the BB (13% 3-bet) re-raises to 8.',opts:[['r','4-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','4-bet, call a shove',"AA KK QQ JJ AKs AKo"],['r','t3','4-bet, fold to a shove',"K8s K7s K6s K5s K4s K3s K2s A9o A8o A5o K9o K8o"],['c','cl','Call',"TT 99 88 77 AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs K9s QJs QTs Q9s JTs J9s T9s T8s 98s 97s 87s 76s AQo AJo ATo KQo KJo KTo QJo QTo"],['f','','Fold',"66 55 44 33 22 Q8s Q7s Q6s Q5s Q4s Q3s Q2s J8s J7s J6s T7s T6s 96s 86s 75s 65s 64s 54s 53s 43s 32s A7o A6o A4o A3o A2o Q9o Q8o JTo J9o J8o T9o T8o 98o 87o"]],scene:{bets:{BB:8},did:{BB:'3-bet 8'},me:2,after:true},pool:true},
+  'f3-HJvSB':{grp:'vs 3-bet',label:'HJ vs SB Fish',fig:66,seat:'HJ',info:'You open 3x in the HJ. A passive Fish in the SB, who almost never 3-bets, makes it 8.',opts:[['r','4-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','4-bet, call a shove',"AA"],['c','cl','Call',"KK QQ JJ TT 99 88 77 66 T9s 98s"],['f','','Fold',"AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs QJs QTs JTs AKo AQo AJo ATo KQo KJo"]],scene:{bets:{SB:8},did:{SB:'3-bet 8'},me:3,after:true},pool:true},
+  'f3-COvBU40':{grp:'vs 3-bet',label:'CO vs BU 40bb',fig:80,seat:'CO',info:'You open 2.5x in the CO. The BU, who has only 40bb, 3-bets to 6.',opts:[['r','Shove'],['c','Call'],['f','Fold']],tiers:[['r','in','Shove',"AA KK QQ JJ TT 99 88 77 66 55 44 33 22 AKs AQs AJs ATs AKo AQo"],['c','cl','Call',"KQs KJs KTs QJs QTs JTs T9s AJo KQo"],['f','','Fold',"A9s A8s A7s A6s A5s A4s A3s A2s K9s K8s Q9s J9s T8s 98s 97s 87s 76s 65s ATo A9o KJo KTo QJo QTo JTo T9o"]],scene:{bets:{BU:6},did:{BU:'3-bet 6 · 40bb'},me:2.5,after:true},pool:true},
+};
+Object.assign(MODES,XMODES);
+/* Every spot in one shape: opts = the answers [key, label]; tiers = [key, css, legend, hands] colour the chart and
+   give each hand its answer (first tier wins, anything else is a fold); ans = hand -> key; pool = the only hands dealt
+   (vs-3-bet spots deal only hands from your opening range). The original Ch. 2 and Ch. 6 spots are two-answer spots. */
+(function(){
+  const callTiers=(k,m)=>{
+    let t;
+    if(k.startsWith('bb-'))t=[['Call vs UTG',CALLS['BB>UTG']],['+ vs HJ',CALLS['BB>HJ']],['+ vs CO',CALLS['BB>CO']]];
+    else if(m.vill==='UTG')t=[['Call from HJ',CALLS['UTG>HJ']],['+ from CO',CALLS['UTG>CO']],['+ from BU',CALLS['UTG>BU']]];
+    else if(m.vill==='HJ')t=[['Call from CO',CALLS['HJ>CO']],['+ from BU',CALLS['HJ>BU']]];
+    else t=[['Call from BU',CALLS['CO>BU']]];
+    return t.map(([lab,hs],i)=>['y',['in','t2','t3'][i],lab,hs.filter(h=>m.set.includes(h))]).filter(x=>x[3].length);
+  };
+  for(const [k,m] of Object.entries(MODES)){
+    if(m.base){
+      const b=RANGES[m.base];m.act=m.opts[0][1];
+      if(m.add){m.set=[...b,...m.add];m.tiers=[['y','in','Open (default)',b],['y','t2','Open here (dynamic)',m.add]];}
+      else{m.set=b.filter(h=>!m.drop.includes(h));m.tiers=[['y','in','Open',m.set],['f','dyn','Fold here (dynamic)',m.drop]];}
+    }else if(m.tiers){
+      m.tiers=m.tiers.map(([a,c,l,hs])=>[a,c,l,typeof hs==='string'?L(hs):hs]);
+      m.set=m.tiers.filter(t=>t[0]!=='f').flatMap(t=>t[3]);m.act=m.opts[0][1];
+    }else{
+      m.opts=[['y',m.act],['f','Fold']];
+      m.tiers=k.startsWith('open-')?[['y','in',m.act,m.set]]:callTiers(k,m);
+    }
+    m.ans={};m.tiers.forEach(t=>t[3].forEach(h=>{if(!(h in m.ans))m.ans[h]=t[0];}));
+    m.pool=m.pool?Object.keys(m.ans):null;
+  }
+})();
+function answerOf(m,h){return MODES[m].ans[h]||'f';}
+function tierOf(m,h){return MODES[m].tiers.find(t=>t[3].includes(h))||null;}
 
 /* ---------- lesson content (written as study notes, in our own words) ---------- */
 const P=(c,t)=>`<span class="stat-pill" style="background:var(--hud-${c})">${t}</span>`;
@@ -800,7 +870,7 @@ const MATH={
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.3.0",at:"2026-11-19T11:23Z"};
+var BUILD={v:"2.4.0",at:"2026-11-19T11:44Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -978,13 +1048,15 @@ const GROUPS=[...new Set(Object.values(MODES).map(x=>x.grp))];
 const SEATS6=['UTG','HJ','CO','BU','SB','BB'];
 let RT={mode:'open-UTG',cur:'open-UTG',hand:null,suits:null,answered:null,peek:false,streak:0,sc:0,sn:0};
 const grpOf=m=>m.startsWith('mix-')?m.slice(4):MODES[m].grp;
-function inSet(m,h){return MODES[m].set.includes(h);}
-function edgeHands(set){const s=new Set(set);const out=[];for(let i=0;i<13;i++)for(let j=0;j<13;j++){const h=cellName(i,j);const nb=[[i-1,j],[i+1,j],[i,j-1],[i,j+1]].filter(([a,b])=>a>=0&&b>=0&&a<13&&b<13).map(([a,b])=>cellName(a,b));if(nb.some(x=>s.has(x)!==s.has(h)))out.push(h);}return out;}
+function inSet(m,h){return answerOf(m,h)!=='f';}
+/* Hands next to a hand with a different answer: where the decisions are. */
+function edgeHands(m,pool){const P=new Set(pool),out=[];for(let i=0;i<13;i++)for(let j=0;j<13;j++){const h=cellName(i,j);if(!P.has(h))continue;const nb=[[i-1,j],[i+1,j],[i,j-1],[i,j+1]].filter(([a,b])=>a>=0&&b>=0&&a<13&&b<13).map(([a,b])=>cellName(a,b)).filter(x=>P.has(x));if(nb.some(x=>answerOf(m,x)!==answerOf(m,h)))out.push(h);}return out;}
 function dealHand(){
   if(RT.mode.startsWith('mix-')){const ks=Object.keys(MODES).filter(k=>MODES[k].grp===grpOf(RT.mode));RT.cur=ks[Math.floor(Math.random()*ks.length)];}else RT.cur=RT.mode;
-  const set=MODES[RT.cur].set;let h;
-  if(Math.random()<0.6){const e=edgeHands(set);h=e[Math.floor(Math.random()*e.length)];}
-  else{const all=allHands();let tot=0;const w=all.map(x=>tot+=combos(x));const r=Math.random()*tot;h=all[w.findIndex(x=>x>r)];}
+  const pool=MODES[RT.cur].pool||allHands();let h;
+  const e=edgeHands(RT.cur,pool);
+  if(e.length&&Math.random()<0.6)h=e[Math.floor(Math.random()*e.length)];
+  else{let tot=0;const w=pool.map(x=>tot+=combos(x));const r=Math.random()*tot;h=pool[w.findIndex(x=>x>r)];}
   const su=['s','h','d','c'];const a=su[Math.floor(Math.random()*4)];let b;
   if(h.length===2||h[2]==='o'){do b=su[Math.floor(Math.random()*4)];while(b===a);}else b=a;
   RT.hand=h;RT.suits=[a,b];RT.answered=null;RT.fresh=true;
@@ -992,41 +1064,36 @@ function dealHand(){
 const SUIT={s:'♠',h:'♥',d:'♦',c:'♣'};
 function cardHTML(r,s,x){return `<div class="pc${s==='h'||s==='d'?' r':''}${x||''}" aria-label="${r==='T'?'10':r} of ${{s:'spades',h:'hearts',d:'diamonds',c:'clubs'}[s]}">${r==='T'?'<span class="ten">10</span>':r}<small aria-hidden="true">${SUIT[s]}</small></div>`;}
 const bb=x=>(x%1?x.toFixed(1):x)+'';
+/* The table for a spot. scene: bets (chips in front), did (what each player did), me (your chips when you opened
+   first), after (you opened and now face a 3-bet: everyone who did not act has folded). Without a scene, the original
+   spots: blinds posted and, for a call spot, a 3bb raise from md.vill. Folded blinds' chips sit in the pot. */
 function tableHTML(md){
-  const hi=SEATS6.indexOf(md.seat),n=6,chips={SB:.5,BB:1};
-  if(md.vill)chips[md.vill]=3;
+  const sc=md.scene||{bets:md.vill?{[md.vill]:3}:{},did:md.vill?{[md.vill]:'Raise 3'}:{}};
+  const hi=SEATS6.indexOf(md.seat),n=6,chips=Object.assign({SB:.5,BB:1},sc.bets);
+  if(sc.me)chips[md.seat]=sc.me;
   const pot=Object.values(chips).reduce((a,b)=>a+b,0);
   let h=`<div class="ptable" role="img" aria-label="${md.info.replace(/"/g,'')}"><div class="oval"></div><div class="tcenter"><span class="pot"><small>Pot</small><b>${bb(pot)}bb</b></span></div>`;
   SEATS6.forEach((s,j)=>{
     const a=(90+(j-hi)*360/n)*Math.PI/180,cx=Math.cos(a),cy=Math.sin(a);
-    const you=j===hi,vill=s===md.vill,fold=!you&&!vill&&j<hi;
-    const sub=you?'You':vill?'Raise '+chips[s]:fold?'Fold':'';
-    h+=`<div class="st${you?' you':''}${fold?' fold':''}${vill?' acted':''}" style="left:${(50+43*cx).toFixed(1)}%;top:${(50+41*cy).toFixed(1)}%">${s==='BU'?'<span class="dbtn" aria-label="dealer button">D</span>':''}<b>${s}</b><i>${sub}</i></div>`;
+    const you=j===hi,did=sc.did&&sc.did[s],fold=!you&&!did&&(sc.after||j<hi);
+    const sub=you?(sc.after?'You · '+bb(sc.me):'You'):did||(fold?'Fold':'');
+    h+=`<div class="st${you?' you':''}${fold?' fold':''}${did?' acted':''}" style="left:${(50+43*cx).toFixed(1)}%;top:${(50+41*cy).toFixed(1)}%">${s==='BU'?'<span class="dbtn" aria-label="dealer button">D</span>':''}<b>${s}</b><i>${sub}</i></div>`;
     if(chips[s]&&!fold)h+=`<span class="stk ${chips[s]>=2?'d2':'d1'}" style="left:${(50+25*cx).toFixed(1)}%;top:${(50+21*cy).toFixed(1)}%">${bb(chips[s])}</span>`;
   });
   return h+'</div>';
 }
-function tiersOf(m){
-  const md=MODES[m];if(!(m.startsWith('call-')||m.startsWith('bb-')))return null;
-  if(m.startsWith('bb-'))return [CALLS['BB>UTG'],CALLS['BB>HJ'],CALLS['BB>CO']];
-  if(md.vill==='UTG')return [CALLS['UTG>HJ'],CALLS['UTG>CO'],CALLS['UTG>BU']];
-  if(md.vill==='HJ')return [CALLS['HJ>CO'],CALLS['HJ>BU']];
-  return [CALLS['CO>BU']];
-}
+const SWATCH={in:'background:var(--felt)',t2:'background:var(--cell-t2)',t3:'background:var(--cell-t3)',cl:'background:var(--cell-call)','':'background:var(--cell-fold)',
+  dyn:'background:repeating-linear-gradient(135deg,var(--cell-fold) 0 3px,var(--cell-t2) 3px 5px)',nr:'background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)'};
 function gridHTML(m,cur){
-  const md=MODES[m],tiers=tiersOf(m);let h='<div class="rg" role="img" aria-label="'+md.label+' range chart">';
-  for(let i=0;i<13;i++)for(let j=0;j<13;j++){const n=cellName(i,j);let c='';
-    if(md.set.includes(n)){c='in';if(tiers){const t=tiers.findIndex(x=>x.includes(n));c=['in','t2','t3'][t]||'in';}}
-    h+=`<div class="rc ${c}${n===cur?' cur':''}">${n}</div>`;}
+  const md=MODES[m];let h='<div class="rg" role="img" aria-label="'+md.label+' range chart">';
+  for(let i=0;i<13;i++)for(let j=0;j<13;j++){const n=cellName(i,j),t=tierOf(m,n);
+    const c=t?t[1]:md.pool?'nr':'';h+=`<div class="rc ${c}${n===cur?' cur':''}">${n}</div>`;}
   h+='</div>';
-  const L=(v,t)=>`<span><i style="background:var(${v})"></i>${t}</span>`;
-  let leg=`<div class="legend">${L('--cell-fold','Fold')}`;
-  if(!tiers)leg+=L('--felt',md.act);
-  else if(m.startsWith('bb-'))leg+=L('--felt','Call vs UTG')+L('--cell-t2','+ vs HJ')+L('--cell-t3','+ vs CO');
-  else if(md.vill==='UTG')leg+=L('--felt','Call from HJ')+L('--cell-t2','+ from CO')+L('--cell-t3','+ from BU');
-  else if(md.vill==='HJ')leg+=L('--felt','Call from CO')+L('--cell-t2','+ from BU');
-  else leg+=L('--felt','Call from BU');
-  return h+leg+`<span class="tag">${pct(rangePct(md.set))} of hands</span></div>`;
+  const seen=new Set(),items=[];
+  md.tiers.forEach(t=>{const k=t[1]+'|'+t[2];if(t[1]===''||seen.has(k))return;seen.add(k);items.push([t[1],t[2]]);});
+  items.push(['','Fold']);if(md.pool)items.push(['nr','Not in your opening range']);
+  const tag=md.pool?`${pct(md.set.reduce((a,x)=>a+combos(x),0)/md.pool.reduce((a,x)=>a+combos(x),0))} of your range plays on`:`${pct(rangePct(md.set))} of hands`;
+  return h+`<div class="legend">${items.map(([c,l])=>`<span><i style="${SWATCH[c]}"></i>${l}</span>`).join('')}<span class="tag">${tag}</span></div>`;
 }
 /* Three parts that redraw on their own, so a tap only changes what it should:
    the picker (on a spot change), the spot (new hand or answer) and the chart (peek or answer).
@@ -1044,34 +1111,44 @@ function renderRanges(){
   drawSpot();drawChart();
 }
 function drawSpot(){
-  const m=RT.cur,md=MODES[m],a=RT.answered,st=S.drills[m]||{c:0,n:0};
-  const ok=a!==null&&a===inSet(m,RT.hand),inn=inSet(m,RT.hand),deal=RT.fresh?' deal':'';RT.fresh=false;
-  const btn=yes=>`<button class="opt${yes?' go':''}${a===null?'':(yes===inn?' right':yes===a?' wrong':' dim')+(yes===a?' picked':'')}" data-yes="${yes?1:0}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${yes?1:2}</span>${yes?md.act:'Fold'}</button>`;
+  const m=RT.cur,md=MODES[m],a=RT.answered,st=S.drills[m]||{c:0,n:0},right=answerOf(m,RT.hand);
+  const ok=a!==null&&a===right,deal=RT.fresh?' deal':'';RT.fresh=false;
+  const btn=([k,t],i)=>`<button class="opt${i===0?' go':''}${a===null?'':(k===right?' right':k===a?' wrong':' dim')+(k===a?' picked':'')}" data-k="${k}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${i+1}</span>${t}</button>`;
+  const tr=tierOf(m,RT.hand),lab=(md.opts.find(o=>o[0]===right)||md.opts[md.opts.length-1])[1];
+  const why=md.opts.length===2&&!md.scene?` ${RT.hand} is ${right!=='f'?(md.act==='Call'?'a call':'a '+md.act.toLowerCase().replace(/ .*/,''))+' in this spot: it sits inside the '+pct(rangePct(md.set))+' range.':'a fold in this spot'+(tr&&tr[1]==='dyn'?': it opens at a normal table, not with this player behind you.':': it is outside the '+pct(rangePct(md.set))+' range.')}`
+    :` ${RT.hand}: ${right==='f'?'fold.':tr[2].toLowerCase()===lab.toLowerCase()?lab.toLowerCase()+'.':`${lab.toLowerCase()} (“${tr[2]}” in the book’s chart).`}`;
   $('#rt-spot').innerHTML=`<div class="spot">
       <div class="shead"><span class="topic">${md.label}</span><span class="stag"><span>Streak <b>${RT.streak}</b></span><span>Here <b>${st.n?pct(st.c/st.n):'–'}</b></span></span></div>
       ${tableHTML(md)}
       <div class="hand">${cardHTML(RT.hand[0],RT.suits[0],deal)}${cardHTML(RT.hand[1],RT.suits[1],deal)}<span class="badge">${RT.hand}</span></div>
       <p class="sinfo">${md.info}</p>
-      <div class="acts">${btn(true)}${btn(false)}</div>
-      ${a!==null?whyHTML(ok,` ${RT.hand} is ${inn?(md.act==='Call'?'a call':'a '+md.act.toLowerCase().replace(/ .*/,''))+' in this spot: it sits inside the '+pct(rangePct(md.set))+' range.':'a fold in this spot: it is outside the '+pct(rangePct(md.set))+' range.'}`):''}
+      <div class="acts${md.opts.length===3?' n3':''}">${md.opts.map(btn).join('')}</div>
+      ${a!==null?whyHTML(ok,why):''}
     </div>
     ${a!==null?`<div class="actions"><button class="btn" id="rt-next">Next hand →</button></div>`:''}`;
-  $$('#rt-spot [data-yes]').forEach(b=>b.onclick=()=>answerRT(b.dataset.yes==='1'));
+  $$('#rt-spot [data-k]').forEach(b=>b.onclick=()=>answerRT(b.dataset.k));
   const nx=$('#rt-next');if(nx)nx.onclick=nextRT;
 }
 function drawChart(){
   const m=RT.cur,md=MODES[m],a=RT.answered,show=a!==null||RT.peek;
   $('#rt-chart').innerHTML=`<div class="ch"><b>${md.label} chart</b>${a===null?`<button class="peek" id="rt-peek" aria-pressed="${RT.peek}">${RT.peek?'Hide':'Peek'}</button>`:''}</div>
     ${show?gridHTML(m,RT.hand):`<div class="hidden-chart">The chart is hidden while you decide. It opens after each answer.</div>`}
-    ${md.grp!=='Open'?`<p class="note">These are the book’s Ch. 6 calling charts, before 3-betting is introduced. Ch. 10 moves some of the top hands into 3-bet ranges depending on the spot.</p>`:''}`;
+    ${chartNote(md)}`;
   const pk=$('#rt-peek');if(pk)pk.onclick=()=>{RT.peek=!RT.peek;drawChart();$('#rt-peek').focus({preventScroll:true});};
+}
+function chartNote(md){
+  const f=md.fig?`Book figure ${md.fig}. `:'';
+  if(md.grp==='Open')return md.fig?`<p class="note">${f}Striped and gold squares are the book’s dynamic hands: they change with who is at the table.</p>`:'';
+  if(md.grp==='3-bet')return `<p class="note">${f}From Ch. 10. Each range is built for the reads in the spot description; other opponents call for other ranges.</p>`;
+  if(md.grp==='vs 3-bet')return `<p class="note">${f}From Ch. 11. Outlined squares are hands you would not have opened, so they are never dealt here.</p>`;
+  return `<p class="note">${f}These are the book’s Ch. 6 calling charts, before 3-betting is introduced. Ch. 10 moves some of the top hands into 3-bet ranges depending on the spot.</p>`;
 }
 function setMode(m){if(m===RT.mode)return;RT.mode=m;RT.streak=0;dealHand();history.replaceState(null,'','#ranges/'+m);renderRanges();}
 function nextRT(){dealHand();drawSpot();drawChart();const s=$('#v-ranges .spot');if(s&&s.getBoundingClientRect().top<0)s.scrollIntoView({block:'start'});}
-function answerRT(yes){
-  if(RT.answered!==null||VIEW!=='ranges')return;const right=inSet(RT.cur,RT.hand)===yes;
+function answerRT(k){
+  const md=MODES[RT.cur];if(RT.answered!==null||VIEW!=='ranges'||!md.opts.some(o=>o[0]===k))return;const right=answerOf(RT.cur,RT.hand)===k;
   const st=S.drills[RT.cur]||{c:0,n:0};st.n++;if(right)st.c++;S.drills[RT.cur]=st;save();markDay();
-  RT.streak=right?RT.streak+1:0;RT.answered=yes;drawSpot();drawChart();
+  RT.streak=right?RT.streak+1:0;RT.answered=k;drawSpot();drawChart();
   const nx=$('#rt-next');if(nx)nx.focus({preventScroll:true});
 }
 
@@ -1136,7 +1213,7 @@ function renderSettings(){
     <div class="srow"><div><b>Reset everything</b><small>Lessons, quiz scores and drill stats</small></div><button class="btn alt sm danger" id="reset">Reset</button></div>
   </div>
   <div class="kbd-only"><div class="sec">Keyboard</div>
-  <div class="group"><div class="srow"><div><small><b style="display:inline">1–4</b> answer · <b style="display:inline">Enter</b> next · <b style="display:inline">← →</b> lesson pages · <b style="display:inline">R / F</b> raise or fold in the range trainer</small></div></div></div></div>
+  <div class="group"><div class="srow"><div><small><b style="display:inline">1–4</b> answer · <b style="display:inline">Enter</b> next · <b style="display:inline">← →</b> lesson pages · <b style="display:inline">R / C / F</b> raise, call or fold in the range trainer</small></div></div></div></div>
   <div class="sec">About</div>
   <div class="group"><div class="srow"><div><small>A study companion for <i>The Grinder’s Manual</i> by Peter Clarke: lessons and quizzes in chapter order, the book’s default range charts and maths drills. Lesson text is a summary in our own words; the book itself is not included. Install it from your browser menu (Add to Home Screen) to use it offline.</small></div></div></div>
   <p class="ver">${buildLine()}</p>`;
@@ -1157,7 +1234,9 @@ document.addEventListener('keydown',e=>{
     if(LS.step===l.blocks.length&&LS.qi<l.quiz.length){if(num>=0)answerQuiz(num);else if(k==='Enter')nextQuiz();}
     else if(LS.step<l.blocks.length){if(k==='ArrowRight'){e.preventDefault();lessonStep(1);}else if(k==='ArrowLeft'){e.preventDefault();lessonStep(-1);}}
   }else if(VIEW==='ranges'){
-    if(k==='1'||k==='r'||k==='R')answerRT(true);else if(k==='2'||k==='f'||k==='F')answerRT(false);
+    const op=MODES[RT.cur].opts,lk=k.toLowerCase();
+    if(/^[1-3]$/.test(k)&&op[+k-1])answerRT(op[+k-1][0]);
+    else if(lk==='r')answerRT(op[0][0]);else if(lk==='c')answerRT('c');else if(lk==='f')answerRT('f');
     else if((k==='Enter'||k===' ')&&RT.answered!==null){e.preventDefault();nextRT();}
   }else if(VIEW==='math'){
     if(num>=0)answerMath(num);else if(k==='Enter'&&MT.answered!==null)nextMath();

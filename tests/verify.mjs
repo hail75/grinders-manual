@@ -19,12 +19,42 @@ for (const [k, set] of Object.entries({ ...X.RANGES, ...X.CALLS })) {
   set.forEach(h => ok(hands.has(h), `${k}: unknown hand ${h}`));
   ok(new Set(set).size === set.length, `${k}: duplicate hand`);
 }
+const SEATS = ["UTG", "HJ", "CO", "BU", "SB", "BB"];
 for (const [k, m] of Object.entries(X.MODES)) {
-  ok(["Open", "Flat", "BB defend"].includes(m.grp), `${k}: group`);
-  ok(m.set.length > 0 && m.label && m.info && m.act && m.seat, `${k}: complete mode`);
+  ok(["Open", "Flat", "BB defend", "3-bet", "vs 3-bet"].includes(m.grp), `${k}: group`);
+  ok(m.set.length > 0 && m.label && m.info && m.act && SEATS.includes(m.seat), `${k}: complete mode`);
   ok(new Set(m.set).size === m.set.length, `${k}: a hand is listed twice`);
-  ok(m.vill === null || ["UTG", "HJ", "CO"].includes(m.vill), `${k}: raiser`);
+  ok(m.vill === undefined || m.vill === null || ["UTG", "HJ", "CO"].includes(m.vill), `${k}: raiser`);
+  // answers: 2-3 options, fold last, every tier's key is one of them, every tier hand is real and in one tier only
+  ok(m.opts.length >= 2 && m.opts.length <= 3 && m.opts[m.opts.length - 1][0] === "f", `${k}: options end with Fold`);
+  const keys = m.opts.map(o => o[0]), seen = new Set();
+  m.tiers.forEach(([key, css, lab, hs]) => {
+    ok(keys.includes(key) && lab && ["in", "t2", "t3", "cl", "dyn", ""].includes(css), `${k}: tier ${lab}`);
+    hs.forEach(h => { ok(hands.has(h), `${k}: unknown hand ${h}`); ok(!seen.has(h), `${k}: ${h} in two tiers`); seen.add(h); });
+  });
+  keys.filter(x => x !== "f").forEach(x => ok(m.tiers.some(t => t[0] === x && t[3].length), `${k}: no hand answers ${x}`));
+  if (m.pool) ok(m.pool.length === seen.size && m.pool.every(h => m.ans[h]), `${k}: every dealt hand has an answer`);
+  if (m.scene) {
+    Object.keys(m.scene.bets).forEach(s => ok(SEATS.includes(s) && s !== m.seat, `${k}: bettor ${s}`));
+    ok(!m.scene.after || m.scene.me > 0, `${k}: you opened, so you have chips in`);
+  }
 }
+// the book's dynamic charts: hunting adds to the default open, a defensive range only removes from it
+for (const [k, m] of Object.entries(X.MODES)) if (m.base) {
+  const b = X.RANGES[m.base];
+  if (m.add) ok(b.every(h => m.set.includes(h)) && m.add.every(h => !b.includes(h)), `${k}: hunting adds to the default range`);
+  else ok(m.set.every(h => b.includes(h)) && m.drop.every(h => b.includes(h)), `${k}: a defensive range drops hands from the default`);
+}
+// cumulative calling charts: a wider spot keeps every call of the tighter one
+for (const [a, b] of [["call-SBvUTG", "call-SBvHJ"], ["call-SBvCO-fish", "call-SBvBU-fish"], ["call-SBvCO-nit", "call-SBvBU-nit"], ["bb-BU3", "bb-BU25"], ["bb-BU25", "bb-BU2"], ["bb-SB3", "bb-SB25"], ["bb-SB25", "bb-SB2"]])
+  ok(X.MODES[a].set.every(h => X.MODES[b].set.includes(h)), `${b} keeps every call of ${a}`);
+// vs 3-bet spots deal exactly the opening range of that seat; combos the book prints for its charts
+for (const [k, seat] of [["f3-COvSB", "CO"], ["f3-BUvBB", "BU"], ["f3-HJvSB", "HJ"], ["f3-COvBU40", "CO"]])
+  ok(X.MODES[k].pool.length === X.RANGES[seat].length && X.MODES[k].pool.every(h => X.RANGES[seat].includes(h)), `${k}: deals the ${seat} opening range`);
+const cmb = hs => hs.reduce((a, h) => a + X.combos(h), 0), tierH = (k, lab) => X.MODES[k].tiers.find(t => t[2] === lab)[3];
+ok(cmb(tierH("sq-BB", "Squeeze for value")) === 102 && cmb(tierH("sq-BB", "Squeeze bluff")) === 204, "squeeze range: 102 value and 204 bluff combos, as the book says");
+ok(cmb(tierH("3b-BUvHJ", "3-bet for value")) === 34 && cmb(tierH("3b-BUvHJ", "3-bet bluff")) === 44, "BU vs HJ: 34 value and 44 bluff combos, as the book says");
+ok(cmb(tierH("f3-BUvBB", "4-bet, call a shove")) === 40 && cmb(tierH("f3-BUvBB", "4-bet, fold to a shove")) === 88 && cmb(tierH("f3-BUvBB", "Call")) === 224, "BU vs BB defence: 40 / 88 / 224 combos, as the book says");
 // opening ranges widen from UTG to the button
 const pc = s => X.rangePct(X.RANGES[s]) * 100;
 ok(pc("UTG") < pc("HJ") && pc("HJ") < pc("CO") && pc("CO") < pc("BU"), "opening ranges widen towards the button");
