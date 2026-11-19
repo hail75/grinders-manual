@@ -296,17 +296,26 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .acts .opt.go.right{background:var(--good-bg);border-color:var(--good);color:var(--good)}
 .acts .opt.go.right .k,.acts .opt.go.wrong .k{border-color:currentColor;color:inherit}
 
-/* Press feedback: every tappable control shrinks a little while pressed; the picked answer pops back in. */
+/* Press feedback. Touch browsers apply :active late or not at all, so JS adds .press the moment a finger
+   (or mouse) goes down and removes it on release or scroll; :active stays as a fallback.
+   After an answer the picked option pops (or shakes when wrong) and both picked and right options get a mark. */
 .opt,.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.prow,.iconbtn,.pill,.swatch{touch-action:manipulation}
-.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.swatch{transition:transform .1s ease,filter .1s,background .15s,border-color .15s}
-.opt:active:not(:disabled),.btn:active:not(:disabled),.grades button:active,.peek:active,.chip:active,.tile:active,.lrow:active,.swatch:active{transform:scale(.96)}
-.opt:active:not(:disabled){border-color:var(--felt-2);background:var(--track)}
-.acts .opt.go:active:not(:disabled){background:linear-gradient(180deg,var(--felt),var(--felt-3))}
-.btn:active:not(:disabled){filter:brightness(.92)}
-.opt.picked{animation:pick .34s cubic-bezier(.3,1.6,.5,1)}
-.opt.wrong.picked{animation:shake .36s ease-out}
-@keyframes pick{from{transform:scale(.94)}to{transform:none}}
-@keyframes shake{0%{transform:scale(.96)}25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-2px)}100%{transform:none}}
+.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.prow,.swatch,.iconbtn{transition:transform .12s ease,filter .12s,background .15s,border-color .15s}
+.opt:not(:disabled):active,.opt.press:not(:disabled){transform:scale(.97);border-color:var(--felt-2);background:color-mix(in srgb,var(--felt-2) 14%,var(--surface-2));box-shadow:inset 0 0 0 1px var(--felt-2)}
+.acts .opt.go:not(:disabled):active,.acts .opt.go.press:not(:disabled){background:linear-gradient(180deg,var(--felt),var(--felt-3));box-shadow:none}
+.btn:not(:disabled):active,.btn.press:not(:disabled){transform:scale(.97);filter:brightness(.9)}
+.grades button:active,.grades button.press,.peek:active,.peek.press,.chip:active,.chip.press,.seg button.press,.swatch.press,.iconbtn.press,
+.tile:active,.tile.press,.lrow:active,.lrow.press,.prow:active,.prow.press{transform:scale(.97);filter:brightness(.95)}
+.opt.picked{animation:pick .4s cubic-bezier(.25,1.7,.5,1)}
+.opt.wrong.picked{animation:shake .4s ease-out}
+@keyframes pick{0%{transform:scale(.92)}100%{transform:none}}
+@keyframes shake{0%{transform:scale(.95)}20%{transform:translateX(-7px)}45%{transform:translateX(6px)}70%{transform:translateX(-3px)}100%{transform:none}}
+.opt.right::after,.opt.wrong::after{flex:none;margin-left:auto;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:800;line-height:1;color:#fff}
+.opt.right::after{content:"✓";background:#1f7a4f}
+.opt.wrong::after{content:"✗";background:#b3302b}
+.opt.right.picked::after,.opt.wrong.picked::after{animation:mark .35s cubic-bezier(.25,1.7,.5,1) .05s both}
+@keyframes mark{0%{transform:scale(0)}100%{transform:none}}
+.acts .opt.right::after,.acts .opt.wrong::after{position:absolute;right:12px;top:50%;margin-top:-13px}
 /* Touch screens: no keyboard hints */
 @media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt{padding:0 12px}.kbd-only{display:none!important}}
 
@@ -898,7 +907,7 @@ const MATH={
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.1.0",at:"2026-11-19T11:02Z"};
+var BUILD={v:"2.1.1",at:"2026-11-19T11:12Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -924,6 +933,13 @@ function applyTheme(){
 const PALETTES=[['felt','Felt','#1f6045','#d9a53a'],['navy','Midnight','#1d3a5e','#c9973f'],['oxblood','Oxblood','#6b1e2a','#c39236'],['teal','Slate','#0e6464','#e07a5f']];
 /* iOS Safari only shows :active press styles when the page has a touchstart listener. */
 document.addEventListener('touchstart',()=>{},{passive:true});
+const PRESSABLE='.opt,.btn,.chip,.seg button,.grades button,.peek,.tile,.lrow,.prow,.iconbtn,.swatch';
+document.addEventListener('pointerdown',e=>{
+  if(e.button>0)return;const t=e.target.closest(PRESSABLE);if(!t||t.disabled)return;
+  t.classList.add('press');
+  const off=()=>{t.classList.remove('press');['pointerup','pointercancel','pointerleave'].forEach(k=>t.removeEventListener(k,off));};
+  ['pointerup','pointercancel','pointerleave'].forEach(k=>t.addEventListener(k,off));
+},{passive:true});
 if(mqDark&&mqDark.addEventListener)mqDark.addEventListener('change',applyTheme);
 
 /* ---------- routing ---------- */
