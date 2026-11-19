@@ -81,7 +81,7 @@ X.LESSONS.forEach((l, i) => {
   ok(!/undefined|NaN|\[object/.test(txt), `lesson ${l.id}: broken text`);
   (txt.match(/href="#([^"]+)"/g) || []).forEach(a => { const h = a.slice(7, -1), [v, arg] = h.split("/");
     ok(["home", "ranges", "math", "progress", "settings"].includes(v) || v.startsWith("lesson-"), `lesson ${l.id}: link ${h}`);
-    if (v === "ranges" && arg) ok(!!X.MODES[arg], `lesson ${l.id}: link to unknown spot ${arg}`); });
+    if (v === "ranges" && arg) ok(!!X.MODES[arg] || (arg.startsWith("mix-") && Object.values(X.MODES).some(m => m.grp === arg.slice(4))), `lesson ${l.id}: link to unknown spot ${arg}`); });
 });
 ok(X.LESSONS.length === 14, "14 chapters");
 

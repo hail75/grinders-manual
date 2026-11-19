@@ -13,7 +13,7 @@ A mobile-first study companion for *The Grinder’s Manual* (Peter Clarke, 6-max
 
 ## Code map (inside `index.html`)
 Everything above `/* ===================== UI` is data and pure functions; the tests load it in Node, so keep DOM code below the marker.
-1. `RANGES` (opens by seat), `CALLS` (flat tiers), `MODES` (range-trainer spots: `grp` Open / Flat / BB defend, `seat`, `vill`, `act`, `set`, `info`), `rangePct`.
+1. `RANGES` (opens by seat), `CALLS` (flat tiers), `MODES` (the original Ch. 2/6 spots: `grp`, `seat`, `vill`, `act`, `set`, `info`), `XMODES` (26 more spots read cell by cell from the book's figures, `fig` = figure number: `opts` answers `[key,label]`, `tiers` `[key,css,legend,hands]`, `scene` chips/actions on the table, `pool` = only these hands are dealt, `base`+`add`/`drop` for the dynamic opening charts), merged into `MODES` and normalised so every spot has `opts`, `tiers`, `ans` (hand → answer key, anything else folds) and `set`. Groups: Open, Flat, BB defend, 3-bet, vs 3-bet. `rangePct`, `answerOf`, `tierOf`. The book's charts were extracted from the PDF by reading each cell's colour; the tests check the combo counts the book prints. Don't type ranges by hand.
 2. `LESSONS`: `{id, ch, title, mins, sum, tool?, blocks:[[heading, html]], quiz:[[q, options, answerIndex, why]]}`. Helpers `P` (HUD stat pill), `GB` (good/bad factor table), `KEYBOX`. Lesson text reads range sizes from the data (`rangePct`), not typed numbers.
 3. `toolHTML`/`bindTool`: the interactive lesson tools. `MATH`: drill generators returning `{q, opts, a, why}`.
 4. UI: hash routes `#home`, `#lesson-<id>`, `#ranges[/<mode>|/mix-<group>]`, `#math`, `#progress`, `#settings`. `render()` per view. The range trainer draws the table with `tableHTML` (seats on an oval, hero at the bottom, chips `.stk` between seat and pot, dealer button on BU) and the chart with `gridHTML`.
@@ -26,5 +26,6 @@ Everything above `/* ===================== UI` is data and pure functions; the t
 - Touch feedback: `.press` is added on `pointerdown` (touch browsers apply `:active` late), the picked answer pops or shakes, and right/wrong options get ✓/✗ marks. Touch screens hide the 1–4 key badges and the keyboard help (`.kbd-only`). No vibration (the owner asked for visual feedback only).
 - Cards show **10**; labels and charts use **T**. Suits are two-colour (red hearts and diamonds).
 - Before adding a CSS class, search the file for the name. v2.0.1 reused `mid` (the table’s pot-centring class) for a 5/6 quiz result and for 75–90% progress bars, and both floated over the page as absolute boxes (holdem-drill had the same bug with `chips`). The tests now fail if a class with its own rule is also used as a modifier.
-- Keyboard: 1–4 answer, Enter next, ← → lesson pages, R / F in the range trainer.
+- Keyboard: 1–4 answer, Enter next, ← → lesson pages, R / C / F in the range trainer (first answer, call, fold).
+- Lessons cover every section of the book (checked against the book in v2.5); each chapter has 5–8 quiz questions. The page heading (top left) is Instrument Sans bold (owner's choice); Fraunces stays for lesson titles, numbers and cards.
 - Lesson text is a summary in our own words; do not paste text from the book.
