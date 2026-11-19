@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Study companion for The Grinder's Manual: lessons, quizzes, range trainer, math drills and spaced-repetition review.">
+<title>Grinder's Manual Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+/* Layout: a HUD-style study console. Header + tabbed views; lessons read like a course, drills feel like a table. */
+:root{
+  --bg:#eef0f3; --surface:#ffffff; --sunk:#e3e6eb; --line:#cfd4dc; --fg:#141a24; --muted:#5a6475;
+  --accent:#1f6feb; --accent-ink:#ffffff; --accent-soft:#dbe7fd;
+  --good:#1f8a4c; --good-soft:#d9f2e3; --bad:#c2372f; --bad-soft:#f8dedc; --warn:#a86a00; --warn-soft:#fbecc9;
+  --hud-green:#2e9e57; --hud-red:#d14b3f; --hud-blue:#2f72d6; --hud-purple:#8a4fd1; --hud-pink:#d1489a;
+  --fold:#d8d2b8; --fold-ink:#5b563f; --open:#4f8fe0; --open-ink:#fff; --c2:#f2c94c; --c3:#d9692b;
+  --spade:#1a1f2b; --heart:#cf2d2d; --diamond:#2463c9; --club:#1e8a3d; --card:#fbfbf8;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e131b; --surface:#161d28; --sunk:#0b1017; --line:#2a3443; --fg:#e7ecf3; --muted:#93a0b4;
+  --accent:#5b9bff; --accent-ink:#06101f; --accent-soft:#1a2b47;
+  --good:#4cc47e; --good-soft:#143323; --bad:#ff7a6e; --bad-soft:#3a1a19; --warn:#f0b443; --warn-soft:#3a2c10;
+  --fold:#3a3a33; --fold-ink:#b9b49b; --open:#3d7fd6; --open-ink:#fff; --c2:#c9a52e; --c3:#c5612a;
+  --spade:#e7ecf3; --heart:#ff6a6a; --diamond:#6aa6ff; --club:#5fd38a; --card:#1d2533; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e131b; --surface:#161d28; --sunk:#0b1017; --line:#2a3443; --fg:#e7ecf3; --muted:#93a0b4;
+  --accent:#5b9bff; --accent-ink:#06101f; --accent-soft:#1a2b47;
+  --good:#4cc47e; --good-soft:#143323; --bad:#ff7a6e; --bad-soft:#3a1a19; --warn:#f0b443; --warn-soft:#3a2c10;
+  --fold:#3a3a33; --fold-ink:#b9b49b; --open:#3d7fd6; --open-ink:#fff; --c2:#c9a52e; --c3:#c5612a;
+  --spade:#e7ecf3; --heart:#ff6a6a; --diamond:#6aa6ff; --club:#5fd38a; --card:#1d2533; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:16px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.chip{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-family:var(--mono);font-weight:700;font-size:12px;border:3px dashed color-mix(in srgb,var(--accent-ink) 55%,transparent)}
+.brand b{font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:-.01em}
+.brand small{display:block;color:var(--muted);font-size:12px}
+nav{display:flex;gap:4px;overflow-x:auto;max-width:100%}
+nav button{border:0;background:none;padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:600;white-space:nowrap}
+nav button[aria-current="page"]{background:var(--accent-soft);color:var(--fg)}
+.due{font-family:var(--mono);font-size:11px;background:var(--bad);color:#fff;border-radius:99px;padding:1px 6px;margin-left:4px}
+main{padding-block:24px 64px}
+.view[hidden]{display:none}
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:stretch;margin-bottom:24px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.02em;margin:6px 0 8px}
+.hero p{color:var(--muted);margin:0 0 14px;max-width:60ch}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:9px 14px;border-radius:8px;font-weight:600}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hud{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:var(--sunk);border-radius:8px;padding:12px}
+.stat .n{font-family:var(--mono);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .l{font-size:12px;color:var(--muted)}
+.meter{height:6px;background:var(--sunk);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--good);border-radius:99px}
+.chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.chap{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.chap:hover{border-color:var(--accent)}
+.chap .num{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+.chap h3{font-size:17px;font-weight:700}
+.chap p{margin:0;color:var(--muted);font-size:13px}
+.tag{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:99px;background:var(--sunk);color:var(--muted)}
+.tag.done{background:var(--good-soft);color:var(--good)}
+.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:28px 0 12px;flex-wrap:wrap}
+.section-h h2{font-size:22px}
+/* lesson */
+.lesson{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px}
+.toc{position:sticky;top:76px;align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 100px);overflow:auto}
+.toc button{border:0;background:none;text-align:left;padding:6px 10px;border-radius:6px;color:var(--muted);font-size:13px}
+.toc button.on{background:var(--accent-soft);color:var(--fg);font-weight:600}
+.toc .done::after{content:" ✓";color:var(--good)}
+.lesson-body{min-width:0;max-width:760px}
+.lesson-body h1{font-size:clamp(26px,3.6vw,34px);font-weight:800;margin:6px 0 10px;letter-spacing:-.02em}
+.lede{font-size:17px;color:var(--muted);margin:0 0 20px}
+.block{margin:0 0 22px}
+.block h2{font-size:19px;margin-bottom:8px}
+.block p{margin:0 0 10px}
+.block ul{margin:0 0 10px;padding-left:20px}
+.block li{margin-bottom:5px}
+.key{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0}
+.key b{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:block;color:var(--muted);margin-bottom:2px}
+.formula{font-family:var(--mono);background:var(--sunk);padding:8px 12px;border-radius:6px;display:inline-block;font-size:14px}
+.tbl{overflow-x:auto;margin:8px 0 12px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+td.num,th.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.gb{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:8px 0 12px;font-size:14px}
+.gb div{padding:7px 12px;border-bottom:1px solid var(--line)}
+.gb .h{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.gb .g{background:var(--good-soft)} .gb .b{background:var(--bad-soft)}
+.stat-pill{font-family:var(--mono);font-size:12px;padding:1px 6px;border-radius:4px;color:#fff;white-space:nowrap}
+/* tool */
+.tool{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:12px 0 22px}
+.tool h3{font-size:15px;margin-bottom:10px;display:flex;gap:8px;align-items:center}
+.tool h3::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--hud-purple)}
+.field{display:flex;flex-direction:column;gap:4px;min-width:130px;flex:1}
+.field label{font-size:12px;color:var(--muted);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=number]{background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:7px 8px;color:var(--fg);font:inherit}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;font-weight:500}
+.verdict.good{background:var(--good-soft);color:var(--good)} .verdict.bad{background:var(--bad-soft);color:var(--bad)} .verdict.warn{background:var(--warn-soft);color:var(--warn)}
+.flow{display:flex;flex-direction:column;gap:10px}
+.flow .q{font-weight:600}
+/* quiz */
+.quiz{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:18px}
+.quiz .qn{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.quiz .qt{font-size:17px;font-weight:600;margin:4px 0 12px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{border:1px solid var(--line);background:var(--surface);padding:10px 12px;border-radius:8px;text-align:left}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{background:var(--good-soft);border-color:var(--good)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.why{margin-top:12px;padding:10px 12px;background:var(--sunk);border-radius:8px;font-size:14px}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
+/* cards & ranges */
+.cards{display:flex;gap:8px;justify-content:center}
+.pc{width:64px;height:90px;border-radius:8px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:30px;line-height:1;box-shadow:0 2px 0 var(--line)}
+.pc span{font-size:22px}
+.s-s{color:var(--spade)} .s-h{color:var(--heart)} .s-d{color:var(--diamond)} .s-c{color:var(--club)}
+.table-felt{background:var(--sunk);border:1px solid var(--line);border-radius:999px;padding:22px 16px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.seats{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}
+.seat{font-family:var(--mono);font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted);background:var(--surface)}
+.seat.hero{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.seat.vill{border-color:var(--hud-red);color:var(--hud-red)}
+.drill{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.grid13{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;font-family:var(--mono);font-size:clamp(7px,1.25vw,11px);user-select:none}
+.grid13 div{aspect-ratio:1;display:grid;place-items:center;border-radius:2px;background:var(--fold);color:var(--fold-ink);font-weight:500}
+.grid13 .in{background:var(--open);color:var(--open-ink)}
+.grid13 .t2{background:var(--c2);color:#2a2100}
+.grid13 .t3{background:var(--c3);color:#fff}
+.grid13 .cur{outline:2px solid var(--fg);outline-offset:-1px;z-index:1}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--sunk);padding:4px;border-radius:8px}
+.seg button{border:0;background:none;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--fg);box-shadow:0 1px 0 var(--line)}
+.feedback{min-height:48px;text-align:center;font-weight:600}
+.feedback.good{color:var(--good)} .feedback.bad{color:var(--bad)}
+/* flashcards */
+.fc{min-height:220px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;padding:28px}
+.fc .front{font-family:var(--display);font-size:24px;font-weight:700;max-width:30ch}
+.fc .back{font-size:16px;max-width:56ch;color:var(--fg)}
+.boxes{display:flex;gap:6px;flex-wrap:wrap}
+.boxes span{font-family:var(--mono);font-size:12px;background:var(--sunk);border-radius:6px;padding:4px 8px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media (max-width:820px){
+  .hero,.drill{grid-template-columns:1fr}
+  .lesson{grid-template-columns:1fr}
+  .toc{position:static;flex-direction:row;overflow-x:auto;max-height:none}
+  .toc button{white-space:nowrap}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <div class="brand"><span class="chip">100</span><div><b>Grinder's Manual Trainer</b><small>6-max NLHE · study companion</small></div></div>
+  <nav id="nav" aria-label="Sections">
+    <button data-v="home">Course</button>
+    <button data-v="ranges">Range trainer</button>
+    <button data-v="math">Math drills</button>
+    <button data-v="review">Review <span class="due" id="dueBadge" hidden></span></button>
+    <button data-v="progress">Progress</button>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <section class="view" id="v-home"></section>
+  <section class="view" id="v-lesson" hidden></section>
+  <section class="view" id="v-ranges" hidden></section>
+  <section class="view" id="v-math" hidden></section>
+  <section class="view" id="v-review" hidden></section>
+  <section class="view" id="v-progress" hidden></section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ---------- storage ---------- */
+const KEY='gm-trainer-v1';
+let S={lessons:{},quiz:{},drills:{},cards:{},days:[]};
+try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(S,JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function markDay(){const d=new Date().toISOString().slice(0,10);if(!S.days.includes(d)){S.days.push(d);save();}}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),1600);}
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct=x=>(Math.round(x*1000)/10).toFixed(1).replace(/\.0$/,'')+'%';
+
+/* ---------- ranges (from the book's charts) ---------- */
+const R="AKQJT98765432";
+function allHands(){const o=[];for(let i=0;i<13;i++)for(let j=0;j<13;j++)o.push(cellName(i,j));return o;}
+function cellName(i,j){if(i===j)return R[i]+R[j];return j>i?R[i]+R[j]+'s':R[j]+R[i]+'o';}
+const combos=h=>h.length===2?6:(h[2]==='s'?4:12);
+const L=s=>s.trim().split(/\s+/);
+const RANGES={
+  UTG:L("AA KK QQ JJ TT 99 88 77 AKs AQs AJs ATs KQs KJs KTs QJs QTs JTs T9s AKo AQo AJo KQo"),
+  HJ:L("AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs QJs QTs JTs T9s 98s AKo AQo AJo ATo KQo KJo"),
+  CO:L("AA KK QQ JJ TT 99 88 77 66 55 44 33 22 AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs K9s K8s QJs QTs Q9s JTs J9s T9s T8s 98s 97s 87s 76s 65s AKo AQo AJo ATo A9o KQo KJo KTo QJo QTo JTo T9o"),
+  BU:L("AA KK QQ JJ TT 99 88 77 66 55 44 33 22 AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs K9s K8s K7s K6s K5s K4s K3s K2s QJs QTs Q9s Q8s Q7s Q6s Q5s Q4s Q3s Q2s JTs J9s J8s J7s J6s T9s T8s T7s T6s 98s 97s 96s 87s 86s 76s 75s 65s 64s 54s 53s 43s 32s AKo AQo AJo ATo A9o A8o A7o A6o A5o A4o A3o A2o KQo KJo KTo K9o K8o QJo QTo Q9o Q8o JTo J9o J8o T9o T8o 98o 87o"),
+  SB:L("AA KK QQ JJ TT 99 88 77 66 55 44 33 22 AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs K9s K8s K7s K6s K5s K4s K3s K2s QJs QTs Q9s Q8s Q7s JTs J9s J8s J7s T9s T8s T7s 98s 97s 87s 86s 76s 75s 65s 54s 43s AKo AQo AJo ATo A9o A8o A7o A6o A5o A4o A3o A2o KQo KJo KTo K9o QJo QTo Q9o JTo J9o T9o T8o 98o 87o"),
+};
+const CALLS={
+  'UTG>HJ':L("AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs KQs AKo AQo"),
+  'UTG>CO':L("QJs 55"),
+  'UTG>BU':L("ATs KJs JTs T9s 44 33 22"),
+  'HJ>CO':L("AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs KQs KJs QJs JTs T9s AKo AQo AJo KQo"),
+  'HJ>BU':L("QTs 98s 55 44 33 22"),
+  'CO>BU':L("AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s A8s KQs KJs KTs QJs QTs JTs T9s 98s 87s AKo AQo AJo ATo KQo KJo"),
+  'BB>UTG':L("AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs KQs AKo AQo"),
+  'BB>HJ':L("ATs KJs QJs JTs T9s AJo KQo"),
+  'BB>CO':L("A9s KTs QTs 98s ATo KJo"),
+};
+// Drill modes: action label, set of "in" hands, info
+const MODES={
+  'open-UTG':{grp:'Open',label:'UTG open',seat:'UTG',vill:null,act:'Raise 3x',set:RANGES.UTG,info:'Folded to you UTG. Default range, no fish to hunt, no light 3-bettors.'},
+  'open-HJ':{grp:'Open',label:'HJ open',seat:'HJ',vill:null,act:'Raise 3x',set:RANGES.HJ,info:'Folded to you in the HJ. Default table.'},
+  'open-CO':{grp:'Open',label:'CO open',seat:'CO',vill:null,act:'Raise 2.5x',set:RANGES.CO,info:'Folded to you in the CO. Default table.'},
+  'open-BU':{grp:'Open',label:'BU open',seat:'BU',vill:null,act:'Raise 2x',set:RANGES.BU,info:'Folded to you on the BU with no reads on the blinds.'},
+  'open-SB':{grp:'Open',label:'SB open',seat:'SB',vill:null,act:'Raise 2.5x',set:RANGES.SB,info:'Folded to you in the SB, BB unknown.'},
+  'call-HJvUTG':{grp:'Flat',label:'HJ vs UTG',seat:'HJ',vill:'UTG',act:'Call',set:CALLS['UTG>HJ'],info:'UTG opens 3x. You are in the HJ.'},
+  'call-COvUTG':{grp:'Flat',label:'CO vs UTG',seat:'CO',vill:'UTG',act:'Call',set:[...CALLS['UTG>HJ'],...CALLS['UTG>CO']],info:'UTG opens 3x, folds to you in the CO.'},
+  'call-BUvUTG':{grp:'Flat',label:'BU vs UTG',seat:'BU',vill:'UTG',act:'Call',set:[...CALLS['UTG>HJ'],...CALLS['UTG>CO'],...CALLS['UTG>BU']],info:'UTG opens 3x, folds to you on the BU.'},
+  'call-COvHJ':{grp:'Flat',label:'CO vs HJ',seat:'CO',vill:'HJ',act:'Call',set:CALLS['HJ>CO'],info:'HJ opens 3x. You are in the CO.'},
+  'call-BUvHJ':{grp:'Flat',label:'BU vs HJ',seat:'BU',vill:'HJ',act:'Call',set:[...CALLS['HJ>CO'],...CALLS['HJ>BU']],info:'HJ opens 3x, folds to you on the BU.'},
+  'call-BUvCO':{grp:'Flat',label:'BU vs CO',seat:'BU',vill:'CO',act:'Call',set:CALLS['CO>BU'],info:'CO opens 3x. You are on the BU.'},
+  'bb-UTG':{grp:'BB defend',label:'BB vs UTG',seat:'BB',vill:'UTG',act:'Call',set:CALLS['BB>UTG'],info:'UTG opens 3x, everyone folds to you in the BB.'},
+  'bb-HJ':{grp:'BB defend',label:'BB vs HJ',seat:'BB',vill:'HJ',act:'Call',set:[...CALLS['BB>UTG'],...CALLS['BB>HJ']],info:'HJ opens 3x, folds to you in the BB.'},
+  'bb-CO':{grp:'BB defend',label:'BB vs CO',seat:'BB',vill:'CO',act:'Call',set:[...CALLS['BB>UTG'],...CALLS['BB>HJ'],...CALLS['BB>CO']],info:'CO opens 3x, folds to you in the BB.'},
+};
+const rangePct=set=>set.reduce((a,h)=>a+combos(h),0)/1326;
+
+/* ---------- lesson content (written as study notes, in our own words) ---------- */
+const P=(c,t)=>`<span class="stat-pill" style="background:var(--hud-${c})">${t}</span>`;
+const GB=(g,b,hg='Good factors',hb='Bad factors')=>`<div class="gb"><div class="h g">${hg}</div><div class="h b">${hb}</div>${g.map((x,i)=>`<div class="g">${x}</div><div class="b">${b[i]||''}</div>`).join('')}</div>`;
+const KEYBOX=(t,b)=>`<div class="key"><b>${t}</b>${b}</div>`;
+
+const LESSONS=[
+{id:'ev',ch:'1',title:'EV: the currency of poker',mins:6,sum:'Why results lie in the short run and how to judge decisions instead.',
+blocks:[
+['Judge decisions, not results',`<p>A single hand can win or lose money for reasons you don't control. <b>Expected value (EV)</b> is what a decision earns on average over many repetitions, so it's the only stable way to score a play. A raise that's worth +$15 on average is still a good raise on the night it loses $100.</p>${KEYBOX('Core idea','Every recommendation in the manual (ranges, sizings, adjustments) has one goal: pick the line with the <i>highest</i> EV, not just any +EV line.')}`],
+['EV vs All-in EV',`<p><b>All-in EV</b> only measures what you'd expect to win in hands that reach an all-in showdown. It ignores the many pots won or lost without showdown, so it's a narrow window on how lucky you've been. Don't obsess over it.</p>`],
+['Bottom-up learning',`<p>The book teaches a small set of factors for each common spot and builds on them chapter by chapter. The goal is a thought process that considers only what moves EV in that spot, and ignores what doesn't. Read the chapters in order: later chapters assume the earlier factors.</p>`],
+['The other two games',`<ul><li><b>Mental game</b> – tilt is a natural reaction to variance, but it costs EV. Work on it separately (the author recommends Jared Tendler's <i>The Mental Game of Poker</i>).</li><li><b>Practical game</b> – study habits, table selection, session length, bankroll. For beginners the suggested split is roughly <b>50% study, 50% play</b>.</li></ul>`],
+],
+quiz:[
+['You make a +$15 EV raise and lose $100 in the hand. How should you rate the decision?',['A mistake, since it lost money','A good decision; the result is variance','Neutral, since one hand means nothing either way','Only good if All-in EV agrees'],1,'EV is what the action earns on average. The $100 loss is short-term luck.'],
+['What does All-in EV leave out?',['Rake','Every pot decided without an all-in showdown','Pre-flop decisions','Bad beats'],1,'It only measures equity in all-in showdowns, so it says nothing about the many non-showdown pots.'],
+['Recommended study to play ratio for a beginner?',['10:90','25:75','About 50:50','90:10'],2,'The manual suggests roughly half study, half play while learning.'],
+['Which goal does every piece of advice in the manual serve?',['Winning the most pots','Minimising variance','Maximising EV','Avoiding tough spots'],2,'EV is the currency. Pot count and variance are not the target.'],
+]},
+{id:'open',ch:'2',title:'Opening the pot',mins:14,sum:'Default ranges by seat, open sizes, and the RFE maths behind stealing.',tool:'steal',
+blocks:[
+['Positions are relative to the button',`<p>UTG, HJ (sometimes called MP), CO, BU, SB, BB. At a short-handed table, name your seat by its distance from the BU: 4-handed, the first player to act is the <b>CO</b>, not UTG.</p>`],
+['What makes a hand worth opening',`<p>Three attributes, in order of importance at 100bb:</p><ol><li><b>Good Pair Potential (GPP)</b> – flops strong one-pair hands often. Matters even more when stacks are short.</li><li><b>Versatility (V)</b> – flops draws and different hand types. Matters more as stacks get deeper.</li><li><b>Nut Potential (NP)</b> – makes the nuts sometimes. Grows in value as stacks get deeper.</li></ol><p>That's why T9s beats ATo as a UTG open even though ATo is a 67% all-in favourite: T9s flops unique, versatile hands; ATo flops pairs that are often dominated by AJ/AQ.</p>`],
+['Seat by seat',`<div class="tbl"><table><tr><th>Seat</th><th>Default range</th><th>Size</th><th>Main reasons</th></tr>
+<tr><td>UTG</td><td class="num">~11%</td><td class="num">3x</td><td>Value, thin the field, sometimes win blinds, target weak players</td></tr>
+<tr><td>HJ</td><td class="num">~15.5%</td><td class="num">3x</td><td>Value, thin the field, semi-steals</td></tr>
+<tr><td>CO</td><td class="num">~26%</td><td class="num">2.5x</td><td>Value, semi-steals, steals</td></tr>
+<tr><td>BU</td><td class="num">~48%</td><td class="num">2x vs regs</td><td>Fold equity is huge, always in position</td></tr>
+<tr><td>SB</td><td class="num">~42%</td><td class="num">2.5x</td><td>One player to get through, but you're OOP</td></tr></table></div>
+<p>Practise these in the <a href="#ranges">Range trainer</a>.</p>`],
+['Sizing adjustments',`<ul><li>Fishy tables: go to <b>4x</b> (or 5x on very loose tables) from early seats to punish loose calls.</li><li>Aggressive 3-bettors behind: shrink to <b>2.5x</b> UTG so folding to a 3-bet costs less.</li><li>CO with a Nit on the BU: treat the CO as a pseudo-button and open wide with BU sizing.</li><li>BU/CO vs Fish in the blinds: <b>3x</b> or bigger. You want a bigger pot against fit-or-fold or call-too-much players.</li><li>Don't size by hand strength (3x AJo, 4x KK) against aware regs; it's an obvious tell.</li></ul>`],
+['Dynamic ranges',`<p>Widen when there's a <b>Fish</b> in the blinds (more implied odds, more value) or a <b>Nit</b> (more fold equity). Tighten when light <b>3-bettors</b> sit behind you: opening then folding to a 3-bet is expensive, and a tighter range is easier to defend.</p>`],
+['Required fold equity (RFE)',`<p>How often a steal must win immediately to break even if you'd give up every time it fails:</p><p class="formula">RFE = Risk / (Risk + Potential Gain)</p><p>BU min-raise: risk 2, gain 1.5 (blinds) → 2/3.5 = <b>57%</b>. SB to 2.5x: risk 2 (your 0.5 is already in), gain 1.5 → also <b>57%</b>.</p><p>Fold equity vs two players multiplies: SB folds 76% × BB folds 83% = <b>63%</b> combined.</p>${KEYBOX('Rule of thumb','Because you also win post-flop when called, you can open a bit <i>below</i> RFE. On the BU, being within <b>5–10%</b> is usually fine with neutral factors. From the SB (out of position) use <b>3–7%</b>.')}`],
+['Steal factors',GB(['Hand plays well post-flop','Blinds call rather than 3-bet','Blinds are fit-or-fold','Blinds are unaware','You have a skill edge'],['Hand plays badly post-flop','Blinds 3-bet light','Blinds fight back post-flop','Blinds are aware and will adjust','Blinds are tough'])+`<p><b>Vacuum EV vs long-term EV:</b> opening 82o against two aware regs might be +EV today, but opening ~100% invites them to adjust, which costs you future fold equity with your better hands. Against Nits who never adjust, the two are the same thing.</p>`],
+],
+quiz:[
+['You min-raise to 2bb on the BU. What is your RFE?',['33%','43%','57%','67%'],2,'Risk 2 to win 1.5: 2 / (2 + 1.5) ≈ 57%.'],
+['SB folds 80% to steals, BB folds 64%. Combined fold equity?',['51%','64%','72%','144%'],0,'Multiply independent probabilities: 0.80 × 0.64 ≈ 51%.'],
+['Why does T9s make a better UTG open than ATo despite being an all-in underdog?',['It has more Good Pair Potential','Its pairs are less often dominated, and it has more versatility and nut potential','It wins more often all-in','It is easier to fold'],1,'Ranges are built on post-flop EV at 100bb, not all-in equity.'],
+['A light 3-bettor sits on the BU. How should you adjust your CO range?',['Open wider to fight back','Tighten, dropping the weakest steals','Switch to limping','Keep it the same'],1,'Opening then folding to frequent 3-bets bleeds EV; a tighter range is easier to defend.'],
+['Default open size on the BU vs regs and nits?',['2x','2.5x','3x','4x'],0,'Smaller sizing lowers RFE, and fold equity is highest on the BU.'],
+['Which attribute is MOST important for an opening hand at 100bb?',['Nut potential','Suitedness','Good pair potential','Versatility'],2,'Strong one-pair hands come up often and win a lot, so GPP comes first.'],
+]},
+{id:'limp',ch:'3',title:'When someone limps',mins:12,sum:'The ISO triangle, the four Fish types, and how big to isolate.',tool:'iso',
+blocks:[
+['Why open-limping is bad',`<ul><li>Gives up pre-flop fold equity.</li><li>Takes no initiative, so someone else gets to c-bet.</li><li>Invites multiway pots, which devalues your hands.</li><li>Doesn't build the pot with strong hands.</li></ul><p>We exploit limpers by <b>isolating</b> (ISO raising) to get heads-up with the weak player, ideally in position.</p>`],
+['The ISO triangle',`<p>Three factors decide whether to ISO. The more of one you have, the less you need of the others.</p><ul><li><b>Frequent strength</b> – how often the hand flops good pairs and good draws. It's the only <i>absolute</i> factor: enough of it justifies an ISO alone (AA, AK, AQ, TT…).</li><li><b>Fold equity</b> – fewer limpers, fewer loose players behind, and fit-or-fold limpers all add fold equity.</li><li><b>Position</b> – the least influential, but often the tie-breaker. IP adds c-bet fold equity, pot control and information.</li></ul>${KEYBOX('Read it like this','Triangle mostly full → ISO. Mostly empty → limp behind or fold.')}`],
+['The four Fish types',`<div class="tbl"><table><tr><th>Type</th><th>Looks like</th><th>Plan</th></tr>
+<tr><td><b>A · Fit-or-fold</b></td><td>VPIP/PFR like 40/6, folds to c-bets 55–75%</td><td>ISO wide, c-bet a lot. “Build it up, take it down.”</td></tr>
+<tr><td><b>B · Station</b></td><td>90/15, 65/3, folds to c-bets ≤45%</td><td>ISO tighter (more frequent strength), then value bet hard</td></tr>
+<tr><td><b>C · Aggro</b></td><td>57/38, 44/23, raises c-bets, bluffs air</td><td>Even less fold equity. Need hands with showdown value</td></tr>
+<tr><td><b>D · Whale</b></td><td>95/80, 71/4, huge errors</td><td>The exception: ISO very wide and play straightforward value</td></tr></table></div>`],
+['Limping behind',`<p>If an ISO is out, compare limping (or completing the SB) with folding using:</p><ol><li><b>Pot odds</b> – completing 0.5bb into 2.5bb is 5:1.</li><li><b>Implied odds</b> – can you flop something big, and will someone pay you?</li><li><b>Post-flop steal potential</b> – fit-or-fold opponents leave pots you can pick up.</li></ol><p>Small pairs and suited connectors often like limping behind multiway; you play them fit-or-fold.</p>`],
+['ISO sizing rule',`<p class="formula">ISO = 3bb + 1bb per limper (+1bb if out of position to the limper)</p><ul><li>Loose callers behind: size up, as if there were an extra limper.</li><li>Aggressive 3-bettors behind: size down about 1bb.</li></ul>`],
+],
+quiz:[
+['Which ISO triangle factor can justify an ISO on its own?',['Fold equity','Position','Frequent strength','Number of limpers'],2,'Frequent strength is the absolute factor. AA never needs help from the other two.'],
+['One limper, you are in position, standard table. ISO size?',['3bb','4bb','5bb','6bb'],1,'3bb + 1 for the limper. No OOP bonus.'],
+['Two limpers, you are in the SB (out of position to them). ISO size?',['4bb','5bb','6bb','7bb'],2,'3 + 2 limpers + 1 for being OOP = 6bb.'],
+['A limper is 70/4 and folds to c-bets 35%. Best adjustment?',['ISO wider to exploit','ISO a tighter, high-frequent-strength range and value bet','Never ISO this player','Limp behind with everything'],1,'That is a Station Fish: little fold equity, so you need hands that win at showdown.'],
+['Against a Whale the usual triangle logic…',['applies strictly','is relaxed: ISO very wide since the errors are huge','means you should only ISO premiums','says to always limp'],1,'Whales are the exception. Getting heads-up with them is worth bloating some pots.'],
+]},
+{id:'cbet',ch:'4',title:'C-betting',mins:15,sum:'When to fire a light c-bet, and how big.',tool:'rfe',
+blocks:[
+['Focus: the light c-bet',`<p>Most hands miss most flops. A <b>light c-bet</b> is a continuation bet without a strong made hand. Whether it's right mostly comes down to fold equity, broken into factors:</p>`+GB(['Dry texture','Good equity when called','Villain folds a lot','No SDV or vulnerable SDV','Heads-up','Good turn/river prospects','In position'],['Wet texture','Poor equity when called','Villain doesn\'t fold','Stable (invulnerable) SDV','Multiway','No turn/river prospects','Out of position'])],
+['Board texture scale',`<p>From <b>Type 1 bone dry</b> (K72 rainbow) through dry, semi-wet and wet to <b>Type 5 soaking</b> (connected, two-tone, lots of broadways). Bone dry boards can be c-bet with almost any hand. Soaking boards need real equity.</p>`],
+['Equity when called',`<p>Count outs against Villain's <i>calling</i> range, not his whole range. If he folds, your outs don't matter. Shortcut: outs × 4 ≈ equity from flop to river (a little high for big draws).</p><p>Two overcards plus a gutshot (≈10 outs, ~38%) is a great c-bet. An underpair with 2 dirty outs (&lt;8%) needs lots of fold equity.</p>${KEYBOX('Fish flop fallacy','A loose player can have 64s on a 532 board, but his range is still mostly high cards. Wide ranges miss low boards often. They are weaker, not stronger.')}`],
+['Showdown value (SDV)',`<ul><li><b>No SDV</b> – air or draws. Bet if fold equity or equity is there.</li><li><b>Vulnerable SDV</b> – weak pair, many bad turns. Bet for <i>protection</i> when hands with real equity will fold.</li><li><b>Stable SDV</b> – fine on most turns, villain has ≤2 outs. Prefer checking: pot control and you invite bluffs.</li><li><b>Value</b> – strong enough to get called by worse. Bet.</li></ul>`],
+['Multiwayness',`<p>Fold equity collapses multiway because each player has to fold. Three opponents at 70% each fold only 0.7³ = <b>34%</b> of the time. Two opponents at 65%: 42%.</p>`],
+['Sizing',`<div class="tbl"><table><tr><th>Zone</th><th>Size</th><th>When</th></tr><tr><td>Small</td><td class="num">½–⅗ pot</td><td>Dry flop, wide/weak range (BU opens)</td></tr><tr><td>Medium</td><td class="num">⅗–⅔ pot</td><td>In between</td></tr><tr><td>Large</td><td class="num">⅔–1× pot</td><td>Wet flop, strong range (UTG opens)</td></tr></table></div>
+<p><b>Vs regs</b>: use one balanced size for your whole range on that board. <b>Vs fit-or-fold Fish</b>: go unbalanced. Bet big with value and small with air.</p>
+<div class="tbl"><table><tr><th>Bet size</th><th class="num">RFE</th></tr><tr><td>¼ pot</td><td class="num">20%</td></tr><tr><td>⅓ pot</td><td class="num">25%</td></tr><tr><td>½ pot</td><td class="num">33%</td></tr><tr><td>⅔ pot</td><td class="num">40%</td></tr><tr><td>Pot</td><td class="num">50%</td></tr><tr><td>1.5× pot</td><td class="num">60%</td></tr><tr><td>2× pot</td><td class="num">66%</td></tr></table></div><p>Memorise at least ½ pot (33%) and pot (50%).</p>`],
+['Aggro Fish',`<p>Don't fight insane aggression with bad equity. Against someone who raises c-bets a lot (${P('pink','Raise F Cbet')}), check back weak draws and wait for real hands. With stable SDV, check-call and let him bluff: Aggro Fish bet wider than they call.</p>`],
+],
+quiz:[
+['You c-bet ½ pot. How often must it work with zero equity?',['25%','33%','40%','50%'],1,'RFE = 0.5 / (1 + 0.5) = 33%.'],
+['Which hand type should usually CHECK rather than c-bet on a dry board?',['Air with backdoors','A vulnerable third pair','A stable, medium-strength made hand','A set'],2,'Stable SDV doesn\'t need protection, so checking controls the pot and invites bluffs.'],
+['You face three straightforward players who each fold 70%. Fold equity?',['70%','49%','34%','21%'],2,'0.7 × 0.7 × 0.7 ≈ 34%.'],
+['Against a regular, how should you size c-bets on a given board?',['Big with value, small with bluffs','One balanced size for the whole range','Always pot','Min-bet everything'],1,'Aware players spot size tells, so stay balanced.'],
+['A loose Fish (60% VPIP) calls your BU open. Flop 6♣4♦2♥. True or false: he usually hits this board.',['True: he plays low cards','False: his wide range is mostly higher cards and misses','True: Fish always hit','It depends only on his fold-to-cbet'],1,'The fish flop fallacy. Junk hands dilute his range; he misses low boards a lot.'],
+['Larger c-bet sizing fits best with…',['Dry boards and weak ranges','Wet boards and strong ranges','Multiway pots with air','Out-of-position bluffs'],1,'Wetter boards and stronger ranges call for bigger bets (⅔ to pot).'],
+]},
+{id:'value',ch:'5',title:'Value betting',mins:12,sum:'Three questions that decide whether to bet for value, and how big.',tool:'value',
+blocks:[
+['What a value bet is',`<p>A bet is for value only if you're ahead of the hands that <b>call</b> it. Being ahead of Villain's whole range isn't enough if the worse hands fold.</p><p>Most of our money comes from Fish, and their main leak is calling too much. So the job is to extract value, not to bluff them.</p>`],
+['The three questions',`<ol><li><b>Is my relative hand strength sufficient?</b> Relative strength (vs his calling range) matters, not absolute rank. A flush can be a monster or a bluff-catcher.</li><li><b>Do I need to build the pot?</b> Usually yes at 100bb, since early pots are small relative to stacks.</li><li><b>Should I slowplay?</b> Only if checking gets more money in than betting would.</li></ol><p>Yes → Yes → value bet. Yes → No → No → still value bet. Yes → No → Yes → check. No → check.</p>`],
+['Procedural check',`<p>When you were not the aggressor on the last street, you normally check to the player who was. Skip the value-bet questions in those spots and check.</p>`],
+['The Exponential Mistake',`<p>Skipping a value bet on an early street doesn't just lose that bet. Each later bet is a fraction of the pot, so a small flop pot means a small turn bet, a smaller river pot, and a much smaller river bet. Against passive players who won't build the pot for you, <b>start building on the flop</b>.</p>`],
+['Thick vs thin value',`<p><b>Thick</b> value: clearly ahead when called. <b>Thin</b> value: ahead only a bit more than half the time when called. Finding thin value bets, especially on the river in position, separates good players from great ones. Villain ranges that are <b>uncapped</b> (can still hold monsters) make thin value worse.</p>`],
+['Sizing and elasticity',`<p>An <b>elastic</b> range shrinks a lot as the bet gets bigger. An <b>inelastic</b> range calls just as often whatever the size. Fish ranges sit near the inelastic end: they love top pair and draws and won't fold them to a slightly bigger bet. So <b>size up your value bets against Fish</b>; you're not “blowing them off” the hand.</p>`],
+],
+quiz:[
+['Which is the definition of a value bet?',['Betting when you are ahead of Villain\'s whole range','Betting when you are ahead of the range that calls','Betting a strong absolute hand','Betting to protect'],1,'You must be ahead of the hands that continue.'],
+['You check top pair on the flop against a passive Station to “trap”. What error is this?',['Procedural error','The Exponential Mistake','Fish flop fallacy','Ghost equity'],1,'The missed flop bet shrinks every future bet, so you win far less overall.'],
+['A Fish\'s calling range is mostly…',['Elastic: size down for value','Inelastic: size up for value','Elastic: overbet','Irrelevant to sizing'],1,'Inelastic ranges call similar amounts regardless of size, so bigger value bets earn more.'],
+['Q1 = yes, Q2 = no, Q3 (slowplay?) = no. Action?',['Check','Value bet','Check-raise','Fold'],1,'Even when the pot doesn\'t urgently need building, bet if slowplaying isn\'t better.'],
+['What makes thin value bets worse?',['Villain\'s range being capped','Villain\'s range being uncapped','Being in position','A passive opponent'],1,'If he can still have strong hands, your thin value gets raised or called by better more often.'],
+]},
+{id:'call',ch:'6',title:'Calling opens',mins:10,sum:'The gap concept and when flatting beats folding or 3-betting.',
+blocks:[
+['The gap concept',`<p>You need a stronger hand to <b>call</b> an open than to <b>open</b> it yourself. You'd open ATo from the HJ but rarely call a HJ open with it, because:</p><ul><li>The opener's range is already narrowed to the top X%.</li><li>You have no initiative; you face the c-bet instead of making it.</li><li>Your strongest hands go into 3-bets, so your calling range is capped.</li></ul>`],
+['Reasons to call',`<ol><li>Your hand does well against the opening range, though not well enough against the range that continues vs a 3-bet.</li><li>You have enough <b>implied odds</b>.</li><li>You're likely to be in a pot with weaker players.</li><li>Pot odds make calling better than folding (common in the BB).</li></ol>`],
+['Implied odds factors',GB(['Small investment','Flop a big hand often','Villain\'s range is strong','Stacks deep','Villain doesn\'t fold','Multiway','Good position'],['Large investment','Rarely flop a big hand','Villain\'s range is weak','Stacks shallow','Villain folds','Heads-up','Bad position'])+`<p>Set mining: a pocket pair flops a set about <b>11.8%</b> of the time (roughly 1 in 8.5).</p>`],
+['By seat',`<ul><li><b>In position</b> – the closer to the BU, the wider you can flat. Practise: <a href="#ranges">vs UTG, HJ, CO</a>.</li><li><b>BB</b> – getting a price, but OOP. Drop the small pairs vs 3x early opens since set value falls out of position. Widen as the opener gets later.</li><li><b>SB</b> – flatting is rare. Mostly 3-bet or fold, with a few specific calling spots (e.g. a Fish in the BB).</li></ul>`],
+],
+quiz:[
+['You open ATo from the HJ. UTG opens and you hold ATo in the HJ. Usually…',['Call, it\'s in your range','Fold or 3-bet; the gap concept says calling ranges are tighter','Always 3-bet','Limp'],1,'Opening and calling are different: the opener\'s range is strong and you lack initiative.'],
+['Which favours calling for implied odds?',['Short stacks','Villain\'s range is weak','Villain rarely folds once he connects','Large investment'],2,'You need someone to pay you off when you hit.'],
+['How often does a pocket pair flop a set or better?',['~6%','~12%','~20%','~33%'],1,'About 11.8%, or roughly 1 in 8.5.'],
+['Why drop small pairs in the BB vs an early-position 3x open?',['They have no equity','Out of position it\'s harder to get paid when you hit','They\'re always dominated','The pot odds are bad'],1,'Set value relies on implied odds, which are lower OOP.'],
+]},
+{id:'eoa',ch:'7',title:'Facing bets: end of action',mins:8,sum:'Required equity and reading opponents when your call closes the action.',tool:'req',
+blocks:[
+['What counts as end of action',`<p>Your call ends the hand's betting: a river bet, or an all-in. There's no future street to worry about, so pure equity maths works.</p>`],
+['Two-step process',`<ol><li><b>What's my required equity?</b> Out of game: <span class="formula">ATC / (ATC + TP)</span>, where ATC = amount to call and TP = total pot including Villain's bet. In game: use milestones.</li><li><b>Do I have that much on average?</b> Yes → call. No → fold.</li></ol>
+<div class="tbl"><table><tr><th>Bet faced</th><th class="num">Required equity</th></tr><tr><td>⅕ pot</td><td class="num">14%</td></tr><tr><td>¼ pot</td><td class="num">17%</td></tr><tr><td>⅓ pot</td><td class="num">20%</td></tr><tr><td>½ pot</td><td class="num">25%</td></tr><tr><td>⅔ pot</td><td class="num">29%</td></tr><tr><td>¾ pot</td><td class="num">30%</td></tr><tr><td>Pot</td><td class="num">33%</td></tr><tr><td>Into empty pot</td><td class="num">50%</td></tr></table></div>`],
+['Three levels of read',`<p>From most to least precise: <b>Player read</b> (you know something about this villain) → <b>Player-type read</b> (you know how this type plays) → <b>Population read</b> (how the pool plays). Use the most precise you have.</p>`],
+],
+quiz:[
+['Villain bets pot on the river. Required equity to call?',['25%','33%','50%','66%'],1,'Call 1 into a total of 3: 1/3.'],
+['Villain bets ½ pot. Required equity?',['17%','20%','25%','33%'],2,'Call 0.5 into 2: 25%.'],
+['You know this specific villain never bluffs rivers. This is a…',['Population read','Player-type read','Player read','Ghost read'],2,'Specific knowledge about this villain is the most precise read.'],
+['Pot is 20bb, Villain bets 10bb. ATC/(ATC+TP) = ?',['10/30','10/40','10/20','20/40'],1,'TP includes his bet and your call: 20 + 10 + 10 = 40.'],
+]},
+{id:'oa',ch:'8',title:'Facing bets: open action',mins:12,sum:'True vs ghost equity, raising ranges, and donk bets.',
+blocks:[
+['Ghost equity',`<p>On the flop or turn, more betting is to come. Equity you'd have to fold before showdown is <b>ghost equity</b>; it isn't real. ATC/(ATC+TP) overrates weak SDV on early streets because it assumes you reach showdown for free.</p>`],
+['Calling with made hands',GB(['Good or true equity','Outs when behind','Invulnerable SDV','In position'],['Poor or ghost equity','No outs when behind','Vulnerable SDV','Out of position'])],
+['Calling with draws',GB(['Good equity','Good pot odds','Good implied odds','Future fold equity','In position'],['Poor equity','Bad pot odds','Bad implied odds','No future fold equity','Out of position'])+`<p>Implied odds and future fold equity are inversely related: players who don't fold pay you off when you hit.</p>`],
+['Raising draws',GB(['Fold equity','Out of position','No SDV','Bad pot odds to call','Getting 3-bet is okay'],['No fold equity','In position','SDV','Good pot odds to call','Getting 3-bet is bad'])+`<p>Note that being OOP <i>favours</i> raising: calling OOP is harder to realise.</p>`],
+['Having a raising range',GB(['No severe range disadvantage','Value is urgent','No Fish behind','Capped calling range is okay','Can represent good hands'],['Severe range disadvantage','Value not urgent','Fish behind','Capped calling range is bad','Can\'t represent good hands'])],
+['Pyramidal calling',`<p>Defend like a pyramid: a wide base on the flop, narrowing on the turn, narrowing again on the river. Keep each level <b>uncapped</b> (include some strong hands), but never make terrible calls just to keep it neat.</p>`],
+['Donk bets',`<p>A donk bet is a lead into the pre-flop raiser. Hero is always in position against one. Donking ranges, especially from Fish, are often <b>capped</b> and medium-strength, so you can raise wider for value and apply pressure. A min-donk is so small it's close to a check. Check the ${P('blue','Donk Flop')} stat.</p>`],
+],
+quiz:[
+['What is ghost equity?',['Equity from backdoor draws','Equity you\'ll often have to fold before showdown','Equity against a range of air','Equity from blockers'],1,'If you can\'t realise it, it isn\'t real.'],
+['Which factor favours raising a draw over calling?',['In position','Good pot odds','Out of position','Strong SDV'],2,'Out of position, calling is harder to realise, so raising gains value.'],
+['A Fish min-donks into you on the flop. General approach?',['Fold everything but sets','Treat it almost like a check and raise wider','Always call','Shove'],1,'Min-donks are tiny and the range is usually capped and weak.'],
+['Pyramidal calling means…',['calling every street with the same range','a range that narrows street by street but stays uncapped','raising more each street','only calling with the nuts'],1,'Wide base, narrower each street, with some strong hands at every level.'],
+]},
+{id:'combos',ch:'9',title:'Combos and blockers',mins:8,sum:'Counting hand combinations pre-flop and post-flop.',
+blocks:[
+['Counting combos',`<div class="tbl"><table><tr><th>Hand type</th><th class="num">Combos</th></tr><tr><td>Pocket pair (e.g. QQ)</td><td class="num">6</td></tr><tr><td>Suited (e.g. AKs)</td><td class="num">4</td></tr><tr><td>Offsuit (e.g. AKo)</td><td class="num">12</td></tr><tr><td>Any unpaired (AK)</td><td class="num">16</td></tr><tr><td>All starting hands</td><td class="num">1326</td></tr></table></div>`],
+['Combos post-flop',`<p>Cards on the board and in your hand remove combos. With one Ace on board, AK has 3×4 = <b>12</b> combos. A set of a board card (e.g. KK on a K-high flop) has only <b>3</b> combos. A pair matching two board cards has 1.</p><p>Compare value combos to bluff combos in Villain's line to decide whether bluff-catching pays.</p>`],
+['Blockers',`<p>Holding a card that's in Villain's strong hands reduces how often he has them. Holding the A♠ on a three-spade board means he can never have the nut flush. Good blockers make bluffs better; blocking his folding range makes bluffs worse.</p>`],
+['Pre-flop use',`<p>AK makes a strong 4-bet/call candidate because 16 combos of AK help balance the value side, and holding an A or K blocks AA/KK/AK in Villain's range.</p>`],
+],
+quiz:[
+['How many combos of AKo?',['4','6','12','16'],2,'4 × 4 = 16 total AK, minus 4 suited = 12.'],
+['How many combos of a pocket pair?',['4','6','12','16'],1,'Choose 2 of 4 suits = 6.'],
+['Flop K♠7♦2♣. How many combos of KK remain?',['1','3','6','4'],1,'One K is on the board, so choose 2 of the remaining 3 = 3.'],
+['Board A♥8♣4♦. How many AK combos are possible?',['16','12','9','8'],1,'3 aces left × 4 kings = 12.'],
+]},
+{id:'3bet',ch:'10',title:'3-betting',mins:14,sum:'Polar vs linear ranges, squeezes, and 3-bet sizing.',tool:'polar',
+blocks:[
+['First question: polar or linear?',`<p>Always decide the <b>shape</b> of your 3-bet range first.</p><ul><li><b>Polar</b>: strong value hands + bluffs, with a flatting range in between. Use when you have <b>fold equity</b> (a reg folding to 3-bets more than ~50%) and you <b>want a calling range</b>.</li><li><b>Linear</b>: 3-bet the top of your playing range, flat little or nothing. Use when fold equity is limited (e.g. vs Fish) or when you don't want to flat (SB, short stacks, squeezers behind).</li></ul>`],
+['The polar spectrum',`<p>From weak to strong: <b>Fold</b> → <b>3-bet bluff</b> → <b>Call</b> → <b>3-bet value</b>. Bluffs come from just below the calling range. Pick them for playability, board coverage and blockers (suited Ax, suited connectors). Against players who fold to 3-bets a lot, raise the bluff-to-value ratio. Still, don't 3-bet 75o: long-term EV catches up.</p>`],
+['Linear vs Fish',`<p>Fish call 3-bets too much and fold too little. Isolate them with a wide linear range of hands that play well post-flop, and value bet. If they fold to c-bets, widen further.</p>`],
+['Squeezing',`<p>A 3-bet after an open and one or more callers. The caller's range is capped, so fold equity is often good. Squeezes are sized larger since there's more dead money and more players.</p>`],
+['3-bet sizing',`<div class="tbl"><table><tr><th>Spot</th><th class="num">vs 2bb</th><th class="num">vs 2.5bb</th><th class="num">vs 3bb</th><th class="num">vs 4bb</th></tr>
+<tr><td>In position</td><td class="num">6.5</td><td class="num">7</td><td class="num">8</td><td class="num">11</td></tr>
+<tr><td>Out of position</td><td class="num">7</td><td class="num">8</td><td class="num">10</td><td class="num">12</td></tr>
+<tr><td>IP squeeze</td><td class="num">8</td><td class="num">10</td><td class="num">11</td><td class="num">12</td></tr>
+<tr><td>OOP squeeze</td><td class="num">9</td><td class="num">11</td><td class="num">12</td><td class="num">13</td></tr></table></div><p>Bigger out of position, bigger with callers in, and adjusted for stack depth (vs short stacks, size so a light shove isn't cheap).</p>`],
+],
+quiz:[
+['A reg opens CO and folds to 3-bets 65%. You\'re on the BU and want to flat some hands. Range shape?',['Linear','Polar','Call only','Fold everything'],1,'Fold equity plus a desire to flat points to polar.'],
+['A loose passive Fish opens. Your 3-bet range should usually be…',['Polar with many bluffs','Linear, built for value','Only AA/KK','Never 3-bet'],1,'Limited fold equity means you 3-bet hands that are ahead, not bluffs.'],
+['On the polar spectrum, 3-bet bluffs sit…',['above the value hands','between calls and value','just below the calling range','among the very worst hands'],2,'Fold → bluff → call → value.'],
+['IP 3-bet size vs a 2.5bb open?',['6.5bb','7bb','8bb','10bb'],1,'From the sizing table: 7bb.'],
+['Why use a linear range from the SB more often?',['The SB has position','You rarely want to flat from the SB','SB opens are always weak','You can\'t 4-bet from the SB'],1,'Flatting OOP with the BB still to act is unattractive, so 3-bet or fold.'],
+]},
+{id:'f3b',ch:'11',title:'Facing 3-bets',mins:12,sum:'Flatting, 4-betting, and how much of your range to defend.',
+blocks:[
+['When flatting a 3-bet works',GB(['In position','Frequent strength good vs Villain\'s range','Good versatility','Known post-flop weaknesses in Villain'],['Out of position','Frequent strength poor vs Villain\'s range','Poor versatility','No known post-flop weaknesses'])+`<p>Or simply: <b>sufficient implied odds = call</b> (e.g. set mining when stacks are deep enough).</p>`],
+['Polar 4-betting',`<p>4-bet value hands plus some bluffs (often with blockers like Ax). A common 4-bet size is about <b>2.2–2.5×</b> the 3-bet. Strong hands like AK can 4-bet/call against active regs.</p>`],
+['Minimum defence frequency (MDF)',`<p>If Villain's 3-bet bluffs need X% folds to break even, defending (calling + 4-betting) about 1 − X of your opening range stops automatic profit. Opening ranges that you can't defend properly invite exploitation, so open a bit tighter against frequent 3-bettors.</p>`],
+['When to leave balance',`<p>Exploit instead of balancing when: (A) Villain is badly unbalanced, (B) the pot is big, (C) the spot is rare, or (D) Villain isn't the type to notice or adjust.</p>`],
+['Preemptive adjustments',`<ul><li>Open tighter in front of light 3-bettors.</li><li>Open smaller so folding costs less and their RFE rises.</li><li>Flat more in position; light 3-bettors often c-bet and give up.</li><li>Change tables if the spot is bad enough.</li></ul>`],
+],
+quiz:[
+['Which factor most favours flatting a 3-bet?',['Out of position','Poor versatility','Being in position','Villain has no leaks'],2,'Position makes realising equity much easier.'],
+['Typical 4-bet size relative to the 3-bet?',['1.5x','2.2–2.5x','3–4x','Always shove'],1,'Around 2.2–2.5x the 3-bet is standard at 100bb.'],
+['When is leaving balance to exploit most justified?',['Common small pots vs aware regs','Rare, big spots vs players who won\'t adjust','Always','Never'],1,'Big, rare spots vs unaware players have little long-term downside.'],
+['Against a very light 3-bettor, one preemptive adjustment is…',['Open bigger with weak hands','Open tighter and/or smaller','Limp more','Never fold to 3-bets'],1,'Tighter, smaller opens are easier to defend and cheaper to fold.'],
+]},
+{id:'barrel',ch:'12',title:'Bluffing the turn and river',mins:12,sum:'Double and triple barrels, delayed c-bets and turn probes.',
+blocks:[
+['Double barrel (turn)',`<div class="tbl"><table><tr><th>vs Regs: good</th><th>vs Regs: bad</th><th>vs Fish: good</th><th>vs Fish: bad</th></tr>
+<tr><td>Turn improves Hero's range</td><td>Turn doesn't</td><td>Turn looks scary</td><td>Turn doesn't</td></tr>
+<tr><td>Good equity</td><td>Poor equity</td><td>Good equity</td><td>Poor equity</td></tr>
+<tr><td>River fold equity</td><td>None</td><td>Scary river cards exist</td><td>None</td></tr>
+<tr><td>Tight reg</td><td>Warring reg</td><td>Passive Fish</td><td>Station or Aggro Fish</td></tr>
+<tr><td>Low fold to F Cbet</td><td>High fold to F Cbet</td><td>Low fold to F Cbet</td><td>High fold to F Cbet</td></tr>
+<tr><td>No SDV</td><td>SDV</td><td>No SDV</td><td>SDV</td></tr></table></div>
+<p>A <i>low</i> fold-to-flop-c-bet is good for the turn barrel: his flop calling range is wide and weak, and he folds more later.</p>`],
+['Triple barrel (river)',`<p>Good signs: the river improves your range (vs regs) or looks scary (vs Fish); you have no SDV; you block his calling range rather than his folding range; his turn-calling range got weaker. Bad: you block the weakest hands in his range, or his range is still strong.</p>`],
+['Delayed c-bet',`<p>Check the flop in position, then bet the turn. Good when the flop was poor to c-bet but the turn gives equity or fold equity, and Villain's turn check shows weakness.</p>`],
+['Probing the turn',`<p>The pre-flop raiser checked back the flop; you lead the turn.</p>`+GB(['His check-back range is mostly air','Good equity','No SDV','Turn card doesn\'t help him'],['His check-back range is mostly SDV','Poor equity','SDV','Turn card helps him'])],
+['Bluff-raising later streets',`<p>Turn and river bluff-raises are expensive and need a believable story, good blockers and a villain capable of folding. Don't bluff-raise Station Fish.</p>`],
+],
+quiz:[
+['Against a Station Fish, multi-street bluffs are usually…',['Great','Poor; he doesn\'t fold','Fine with SDV','Required'],1,'Stations are listed as a bad factor for barrels.'],
+['Vs a reg, which turn card is good for a double barrel?',['One that improves your perceived range','One that pairs the bottom card and helps his calls','A blank that changes nothing','Any card'],0,'Barrel cards that shift range advantage to you.'],
+['For a river bluff, it\'s good to block…',['his folding range','his calling range','nothing','your own outs'],1,'Blocking his calls means he folds more often.'],
+['A turn probe works best when his flop check-back range is…',['weighted toward SDV','weighted toward air','very strong','unknown'],1,'Air gives up to the probe.'],
+]},
+{id:'3bp',ch:'13',title:'3-bet pots and balance',mins:8,sum:'Playing low-SPR pots as aggressor and defender.',
+blocks:[
+['C-betting 3-bet pots',`<p>Stacks are shallower relative to the pot, so top pair often plays for stacks and smaller c-bets achieve the same leverage. The 3-bettor usually has the range advantage on high-card boards.</p>`],
+['As the aggressor',`<p>Choose c-bet frequency by how your polar or linear 3-bet range hits the board. Polar ranges have lots of air on middling boards; linear ranges connect more often.</p>`],
+['As the defender',`<p>Defend enough of your flatting range against c-bets that light 3-bettors can't auto-profit. Light 3-bettors often fire once and give up, so floating and calling down can be strong in position.</p>`],
+['Balance vs exploitation',`<p>Use balance against aware regs in common spots. Leave it when Villain is badly unbalanced, the pot is big, the spot is rare, or he won't adjust.</p>`],
+],
+quiz:[
+['Why do smaller c-bets work in 3-bet pots?',['Fish fold more','The low SPR gives the same leverage with less risk','The rake is lower','They\'re always balanced'],1,'With less behind, a smaller bet still threatens stacks.'],
+['Against a light 3-bettor who c-bets and gives up, in position you should…',['fold more','defend wider and float more','4-bet everything','check-raise always'],1,'Make his single barrels unprofitable.'],
+]},
+{id:'stack',ch:'14',title:'Stack depth',mins:8,sum:'How deep and shallow stacks change pre-flop and post-flop play.',
+blocks:[
+['Deep stacks',`<ul><li>More implied odds: widen flats, set mine more, flat 3-bets more.</li><li>Nut potential and versatility gain value; one-pair hands lose it.</li><li>Be careful stacking off with one pair. Bigger pots need stronger hands.</li><li>Sitting 300bb deep with a tough aggressive reg on your left? Often just leave.</li></ul>`],
+['Shallow stacks',`<ul><li>Good Pair Potential dominates: top pair is often enough to get it in.</li><li>Implied odds shrink: fewer set-mining calls and speculative flats.</li><li>3-bet/shove more, with linear ranges.</li><li>Against short-stacked 3-bettors (e.g. 40bb), call or shove wider, and size opens and 3-bets so their shoves aren't cheap.</li></ul>`],
+['Why it matters',`<p>Avoiding non-standard stacks gives up EV. Favourable deep and shallow spots are where a lot of money is. Learn to adapt instead.</p>`],
+],
+quiz:[
+['Which attribute gains most value when stacks get deeper?',['Good pair potential','Nut potential','High card strength','Suitedness only'],1,'Bigger pots need bigger hands, so nut potential rises.'],
+['With 25bb effective, set mining a 3x open is…',['better than usual','worse; implied odds are small','unchanged','required'],1,'Not enough behind to get paid when you hit.'],
+['Short-stacked play favours…',['wide polar flatting','linear 3-bet/shove ranges','lots of floats','slowplaying'],1,'With little behind, 3-bet/shove with linear ranges.'],
+]},
+];
+
+/* ---------- flashcards ---------- */
+const CARDS=[
+['EV','Expected value: what a decision earns or loses on average over many repetitions. The real scoreboard of poker decisions.'],
+['All-in EV','Expected winnings from all-in showdowns only. A narrow window on luck; it ignores non-showdown pots.'],
+['RFE (formula)','Required fold equity = Risk / (Risk + Potential Gain). How often a bet must win immediately to break even.'],
+['RFE of a 2x BU steal','57%: risk 2 to win 1.5.'],
+['RFE of a ½-pot bet','33%'],
+['RFE of a pot-sized bet','50%'],
+['RFE of a ⅔-pot bet','40%'],
+['Required equity facing a pot-sized bet','33%'],
+['Required equity facing a ½-pot bet','25%'],
+['Required equity facing a ⅓-pot bet','20%'],
+['ATC / (ATC + TP)','Required equity when calling: amount to call ÷ (amount to call + total pot including Villain\'s bet).'],
+['Combined fold equity vs two players','Multiply their fold frequencies, e.g. 0.76 × 0.83 = 63%.'],
+['BU steal margin rule','With neutral factors, an open is usually fine if fold equity is within 5–10% of RFE (3–7% from the SB).'],
+['Three opening-hand attributes (in order)','Good Pair Potential, Versatility, Nut Potential.'],
+['Default open sizes','UTG 3x · HJ 3x · CO 2.5x · BU 2x vs regs · SB 2.5x. Size up vs Fish.'],
+['UTG default range','77+, ATs+, KTs+, QTs+, JTs, T9s, AJo+, KQo (~11%).'],
+['Vacuum EV vs long-term EV','Vacuum EV ignores how opponents adjust. Long-term EV includes future fold equity lost when aware players adapt.'],
+['ISO triangle','Frequent strength, fold equity, position. Full triangle = ISO; empty = limp or fold. Frequent strength alone can justify an ISO.'],
+['ISO sizing rule','3bb + 1bb per limper, +1bb if out of position to the limper. Size up vs loose callers, down vs 3-bettors.'],
+['Fish type A','Fit-or-fold (e.g. 40/6, folds to c-bets 55–75%). ISO wide and c-bet: build it up, take it down.'],
+['Fish type B','Station (e.g. 65/3, fold to c-bet ≤45%). ISO tighter, value bet relentlessly.'],
+['Fish type C','Aggro Fish (e.g. 57/38). Raises c-bets and bluffs air. Need SDV; don\'t fight aggression with bad equity.'],
+['Fish type D','Whale (e.g. 95/80). ISO very wide and play straightforward value.'],
+['Complete','Calling the extra 0.5bb from the SB after limpers. A form of limping behind.'],
+['Light c-bet factors (good)','Dry board, equity when called, villain folds, no/vulnerable SDV, heads-up, turn/river prospects, in position.'],
+['Fish flop fallacy','The belief that loose players hit low boards a lot. Their wide ranges are mostly high cards and miss low boards.'],
+['Vulnerable vs stable SDV','Vulnerable: many bad turns and folding hands have equity, so bet for protection. Stable: few bad turns, so check for pot control.'],
+['C-bet sizing zones','Small ½–⅗ (dry, weak range) · Medium ⅗–⅔ · Large ⅔–1× (wet, strong range).'],
+['Balanced vs unbalanced sizing','Vs regs: one size for the whole range. Vs fit-or-fold Fish: big with value, small with air.'],
+['Value bet (definition)','A bet that is ahead of the range that calls it.'],
+['Value-bet questions','Q1 Relative hand strength sufficient? Q2 Need to build the pot? Q3 Should I slowplay?'],
+['Procedural check','Checking to the aggressor of the previous street. Skip the value-bet questions in these spots.'],
+['Exponential Mistake','Failing to build the pot early, so every later bet (a fraction of the pot) is smaller too.'],
+['Elastic vs inelastic range','Elastic ranges fold more to bigger bets. Inelastic ranges (most Fish) don\'t, so size up for value.'],
+['Thin value','A bet that\'s ahead only slightly more than half the time when called. Worse vs uncapped ranges.'],
+['Gap concept','You need a stronger hand to call an open than to open yourself.'],
+['Set-mining frequency','A pocket pair flops a set or better about 11.8% of the time (≈1 in 8.5).'],
+['Implied odds factors (good)','Small investment, flops big hands often, villain\'s range strong, deep stacks, villain doesn\'t fold, multiway, good position.'],
+['Three specificities of read','Player read (precise) → player-type read → population read (vague).'],
+['Ghost equity','Equity you\'ll often have to fold before showdown on later streets. It isn\'t real.'],
+['Pyramidal calling','Defend wide on the flop, narrower on the turn, narrower on the river, keeping each level uncapped.'],
+['Donk bet','A lead into the previous street\'s aggressor. Often capped and weak from Fish, so raise wider.'],
+['Combos: pair / suited / offsuit','6 / 4 / 12. Any unpaired hand = 16. Total = 1326.'],
+['AK combos with an A on board','12 (3 aces × 4 kings).'],
+['Blocker','A card in your hand that reduces the combos of certain hands in Villain\'s range.'],
+['Polar 3-bet range','Value + bluffs with a flatting range in between. Use with fold equity and when you want to flat.'],
+['Linear 3-bet range','The top of your playing range, little or no flatting. Use vs Fish, from the SB, short-stacked, or with squeezers behind.'],
+['Polar spectrum (weak → strong)','Fold → 3-bet bluff → Call → 3-bet value.'],
+['Squeeze','A 3-bet after an open and one or more callers. Sized bigger.'],
+['3-bet size IP vs 2.5bb open','7bb (OOP: 8bb).'],
+['3-bet size OOP vs 3bb open','10bb (IP: 8bb).'],
+['Flatting 3-bets: good factors','In position, frequent strength vs his range, versatility, known post-flop weaknesses, or simply enough implied odds.'],
+['Typical 4-bet size','About 2.2–2.5× the 3-bet.'],
+['When to leave balance','Villain very unbalanced, big pot, rare spot, or villain won\'t adjust.'],
+['Turn barrel vs a Station','Bad idea: stations don\'t fold.'],
+['River bluff blockers','Good: block his calling range. Bad: block his folding (weakest) hands.'],
+['Probe bet','Leading the turn after the pre-flop raiser checked back the flop.'],
+['Deep stacks favour…','Nut potential, versatility, implied-odds hands. Be wary of stacking off with one pair.'],
+['Shallow stacks favour…','Good pair potential, linear 3-bet/shove ranges, fewer speculative calls.'],
+['Outs → equity shortcut','Flop to river ≈ outs × 4 (slightly high for big draws). One card ≈ outs × 2.'],
+['HUD: VPIP / PFR','Voluntarily put $ in pot % / Pre-flop raise %. A big gap between them suggests a passive Fish.'],
+['HUD: Fold to F Cbet','How often a player folds to a flop c-bet. Key to light c-bets and ISO decisions.'],
+];
+const CARD_IDS=CARDS.map((c,i)=>'c'+i);
+
+/* ---------- router ---------- */
+const views=['home','lesson','ranges','math','review','progress'];
+function go(h){location.hash=h;}
+function route(){
+  let h=(location.hash||'#home').slice(1);
+  let v=h.startsWith('lesson-')?'lesson':(views.includes(h)?h:'home');
+  views.forEach(x=>$('#v-'+x).hidden=x!==v);
+  document.querySelectorAll('#nav button').forEach(b=>b.setAttribute('aria-current',(b.dataset.v===v||(v==='lesson'&&b.dataset.v==='home'))?'page':'false'));
+  if(v==='home')renderHome();
+  if(v==='lesson')renderLesson(h.slice(7));
+  if(v==='ranges')renderRanges();
+  if(v==='math')renderMath();
+  if(v==='review')renderReview();
+  if(v==='progress')renderProgress();
+  updateDue();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+window.addEventListener('hashchange',route);
+
+/* ---------- home ---------- */
+function lessonDone(id){return !!S.lessons[id];}
+function renderHome(){
+  const done=LESSONS.filter(l=>lessonDone(l.id)).length;
+  const next=LESSONS.find(l=>!lessonDone(l.id))||LESSONS[0];
+  const d=dueCards().length;
+  const acc=drillAcc();
+  $('#v-home').innerHTML=`
+  <div class="hero">
+    <div class="panel">
+      <div class="eyebrow">The Grinder's Manual · Peter Clarke · study companion</div>
+      <h1>From opening ranges to 3-bet pots, one spot at a time.</h1>
+      <p>Fourteen lessons that follow the book's chapter order, each ending in a short quiz. Then drill the ranges, the maths, and the concepts until they're automatic.</p>
+      <div class="row"><button class="btn primary" onclick="go('lesson-${next.id}')">${done?'Continue':'Start'}: Ch. ${next.ch} ${esc(next.title)}</button><button class="btn" onclick="go('ranges')">Drill ranges</button></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Your HUD</div>
+      <div class="hud" style="margin-top:10px">
+        <div class="stat"><div class="n">${done}/${LESSONS.length}</div><div class="l">Lessons done</div></div>
+        <div class="stat"><div class="n" style="color:var(--hud-red)">${d}</div><div class="l">Cards due</div></div>
+        <div class="stat"><div class="n" style="color:var(--hud-green)">${acc.n?pct(acc.c/acc.n):'–'}</div><div class="l">Range accuracy</div></div>
+        <div class="stat"><div class="n" style="color:var(--hud-blue)">${S.days.length}</div><div class="l">Study days</div></div>
+      </div>
+      <div class="meter" style="margin-top:14px"><i style="width:${done/LESSONS.length*100}%"></i></div>
+    </div>
+  </div>
+  <div class="section-h"><h2>Chapters</h2><span class="muted small">Read in order. Later chapters build on earlier factors.</span></div>
+  <div class="chapters">${LESSONS.map(l=>{const q=S.quiz[l.id];return `<button class="chap" onclick="go('lesson-${l.id}')">
+    <div class="num"><span>CH ${l.ch.padStart(2,'0')} · ${l.mins} min</span>${lessonDone(l.id)?`<span class="tag done">done${q!=null?' · '+q+'/'+l.quiz.length:''}</span>`:`<span class="tag">${l.quiz.length} Qs</span>`}</div>
+    <h3>${esc(l.title)}</h3><p>${esc(l.sum)}</p></button>`}).join('')}</div>`;
+}
+
+/* ---------- lesson ---------- */
+let LS={id:null,step:0,qi:0,score:0,answered:false};
+function renderLesson(id){
+  const l=LESSONS.find(x=>x.id===id);if(!l)return go('home');
+  if(LS.id!==id)LS={id,step:0,qi:0,score:0,answered:false};
+  const steps=[...l.blocks.map(b=>b[0]),'Quiz'];
+  const el=$('#v-lesson');
+  const idx=LESSONS.indexOf(l);
+  let body;
+  if(LS.step<l.blocks.length){
+    const b=l.blocks[LS.step];
+    body=`<div class="eyebrow">Chapter ${l.ch} · part ${LS.step+1} of ${l.blocks.length}</div><h1>${esc(l.title)}</h1>${LS.step===0?`<p class="lede">${esc(l.sum)}</p>`:''}
+    <div class="block"><h2>${b[0]}</h2>${b[1]}</div>
+    ${l.tool&&LS.step===l.blocks.length-1?toolHTML(l.tool):''}
+    <div class="pager"><button class="btn" ${LS.step===0?'disabled':''} id="prevB">Back</button><button class="btn primary" id="nextB">${LS.step===l.blocks.length-1?'Take the quiz':'Next'}</button></div>`;
+  } else body=quizHTML(l);
+  el.innerHTML=`<div class="lesson"><div class="toc">${steps.map((s,i)=>`<button class="${i===LS.step?'on':''}" data-s="${i}">${esc(s)}</button>`).join('')}
+    <div style="height:10px"></div>
+    ${idx>0?`<button onclick="go('lesson-${LESSONS[idx-1].id}')">← Ch. ${LESSONS[idx-1].ch}</button>`:''}
+    ${idx<LESSONS.length-1?`<button onclick="go('lesson-${LESSONS[idx+1].id}')">Ch. ${LESSONS[idx+1].ch} →</button>`:''}</div>
+    <article class="lesson-body">${body}</article></div>`;
+  el.querySelectorAll('.toc button[data-s]').forEach(b=>b.onclick=()=>{LS.step=+b.dataset.s;LS.qi=0;LS.score=0;LS.answered=false;renderLesson(id);window.scrollTo(0,0);});
+  const p=$('#prevB'),n=$('#nextB');
+  if(p)p.onclick=()=>{LS.step--;renderLesson(id);window.scrollTo(0,0);};
+  if(n)n.onclick=()=>{LS.step++;renderLesson(id);window.scrollTo(0,0);};
+  if(l.tool&&LS.step===l.blocks.length-1)bindTool(l.tool);
+  if(LS.step===l.blocks.length)bindQuiz(l);
+  markDay();
+}
+function quizHTML(l){
+  if(LS.qi>=l.quiz.length){
+    const s=LS.score,t=l.quiz.length;
+    return `<div class="eyebrow">Chapter ${l.ch} · quiz complete</div><h1>${s}/${t} correct</h1><p class="lede">${s===t?'Clean sweep. This chapter\'s cards are in your review deck.':s>=t*0.7?'Solid. Re-read any part you missed, then move on.':'Worth another pass through the chapter before moving on.'}</p>
+    <div class="row"><button class="btn" id="retry">Retry quiz</button>${LESSONS.indexOf(l)<LESSONS.length-1?`<button class="btn primary" onclick="go('lesson-${LESSONS[LESSONS.indexOf(l)+1].id}')">Next chapter</button>`:`<button class="btn primary" onclick="go('review')">Go to review</button>`}</div>`;
+  }
+  const q=l.quiz[LS.qi];
+  return `<div class="eyebrow">Chapter ${l.ch} quiz</div><h1>${esc(l.title)}</h1><div class="quiz"><div class="qn">Question ${LS.qi+1} of ${l.quiz.length} · score ${LS.score}</div><div class="qt">${q[0]}</div>
+  <div class="opts">${q[1].map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')}</div><div id="why"></div></div>
+  <div class="pager"><button class="btn" id="backRead">Back to reading</button><button class="btn primary" id="qnext" hidden>${LS.qi===l.quiz.length-1?'Finish':'Next question'}</button></div>`;
+}
+function bindQuiz(l){
+  const r=$('#retry');if(r)r.onclick=()=>{LS.qi=0;LS.score=0;renderLesson(l.id);};
+  const br=$('#backRead');if(br)br.onclick=()=>{LS.step=0;renderLesson(l.id);};
+  if(LS.qi>=l.quiz.length)return;
+  const q=l.quiz[LS.qi];
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;const ok=i===q[2];if(ok)LS.score++;
+    document.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(+x.dataset.i===q[2])x.classList.add('right');});
+    if(!ok)b.classList.add('wrong');
+    $('#why').innerHTML=`<div class="why"><b style="color:var(--${ok?'good':'bad'})">${ok?'Correct.':'Not quite.'}</b> ${q[3]}</div>`;
+    const n=$('#qnext');n.hidden=false;n.focus();
+    n.onclick=()=>{LS.qi++;if(LS.qi>=l.quiz.length){S.lessons[l.id]=1;S.quiz[l.id]=Math.max(S.quiz[l.id]||0,LS.score);save();}renderLesson(l.id);};
+  });
+}
+
+/* ---------- interactive tools ---------- */
+function toolHTML(t){
+  if(t==='steal')return `<div class="tool"><h3>Steal calculator</h3>
+  <div class="row"><div class="field"><label for="st-pos">Seat</label><select id="st-pos"><option value="BU">Button</option><option value="SB">Small blind</option></select></div>
+  <div class="field"><label for="st-size">Open size (bb)</label><select id="st-size"><option>2</option><option selected>2.5</option><option>3</option></select></div></div>
+  <div class="row" style="margin-top:10px"><div class="field" id="st-sbf"><label for="st-sb">SB Fold vs BTN Open: <span id="st-sbv"></span></label><input type="range" id="st-sb" min="20" max="95" value="76"></div>
+  <div class="field"><label for="st-bb">BB fold vs steal: <span id="st-bbv"></span></label><input type="range" id="st-bb" min="20" max="95" value="83"></div></div>
+  <div class="readout"><div class="stat"><div class="n" id="st-rfe"></div><div class="l">RFE</div></div><div class="stat"><div class="n" id="st-fe"></div><div class="l">Fold equity</div></div><div class="stat"><div class="n" id="st-gap"></div><div class="l">Gap</div></div></div>
+  <div class="verdict" id="st-v"></div></div>`;
+  if(t==='iso')return `<div class="tool"><h3>ISO size calculator</h3>
+  <div class="row"><div class="field"><label for="is-n">Limpers</label><select id="is-n"><option>1</option><option>2</option><option>3</option></select></div>
+  <div class="field"><label for="is-oop">Position vs limper</label><select id="is-oop"><option value="0">In position</option><option value="1">Out of position</option></select></div>
+  <div class="field"><label for="is-adj">Players behind</label><select id="is-adj"><option value="0">Normal</option><option value="1">Loose callers (+1)</option><option value="-1">Light 3-bettors (−1)</option></select></div></div>
+  <div class="readout"><div class="stat"><div class="n" id="is-out"></div><div class="l">ISO to</div></div></div><p class="small muted" id="is-why" style="margin:8px 0 0"></p></div>`;
+  if(t==='rfe')return `<div class="tool"><h3>Bet size vs. RFE</h3>
+  <div class="field"><label for="rf-s">Bet size: <span id="rf-sv"></span> of pot</label><input type="range" id="rf-s" min="10" max="200" step="5" value="50"></div>
+  <div class="row" style="margin-top:8px"><div class="field"><label for="rf-o">Your outs when called</label><input type="range" id="rf-o" min="0" max="15" value="0"></div></div>
+  <div class="readout"><div class="stat"><div class="n" id="rf-r"></div><div class="l">RFE (no equity)</div></div><div class="stat"><div class="n" id="rf-e"></div><div class="l">Equity when called (to river)</div></div><div class="stat"><div class="n" id="rf-c"></div><div class="l">Villain needs to call</div></div></div>
+  <p class="small muted" style="margin:8px 0 0">Equity when called lowers the folds you really need. The more outs and implied odds, the further below RFE you can go.</p></div>`;
+  if(t==='req')return `<div class="tool"><h3>Required equity (end of action)</h3>
+  <div class="row"><div class="field"><label for="rq-p">Pot before the bet (bb)</label><input type="number" id="rq-p" value="20" min="1"></div><div class="field"><label for="rq-b">Villain bets (bb)</label><input type="number" id="rq-b" value="10" min="0"></div><div class="field"><label for="rq-e">Your estimated equity %</label><input type="number" id="rq-e" value="30" min="0" max="100"></div></div>
+  <div class="readout"><div class="stat"><div class="n" id="rq-o"></div><div class="l">ATC / (ATC + TP)</div></div></div><div class="verdict" id="rq-v"></div></div>`;
+  if(t==='value')return `<div class="tool"><h3>Value-bet flowchart</h3><div class="flow" id="vf"></div></div>`;
+  if(t==='polar')return `<div class="tool"><h3>3-bet shape helper</h3>
+  <div class="row"><div class="field"><label for="pl-f">Villain Fold to 3-bet after open %</label><input type="number" id="pl-f" value="60" min="0" max="100"></div>
+  <div class="field"><label for="pl-t">Villain type</label><select id="pl-t"><option value="reg">Regular</option><option value="fish">Fish</option></select></div>
+  <div class="field"><label for="pl-w">Do you want a flatting range?</label><select id="pl-w"><option value="1">Yes (in position, no squeezers)</option><option value="0">No (SB, short stack, squeezers behind)</option></select></div></div>
+  <div class="verdict" id="pl-v"></div></div>`;
+  return '';
+}
+function bindTool(t){
+  if(t==='steal'){const f=()=>{const pos=$('#st-pos').value,size=+$('#st-size').value,sb=+$('#st-sb').value/100,bb=+$('#st-bb').value/100;
+    $('#st-sbf').hidden=pos==='SB';$('#st-sbv').textContent=Math.round(sb*100)+'%';$('#st-bbv').textContent=Math.round(bb*100)+'%';
+    const risk=pos==='SB'?size-0.5:size;const rfe=risk/(risk+1.5);const fe=pos==='SB'?bb:sb*bb;const gap=fe-rfe;
+    $('#st-rfe').textContent=pct(rfe);$('#st-fe').textContent=pct(fe);$('#st-gap').textContent=(gap>=0?'+':'')+pct(gap);
+    const m=pos==='SB'?[0.03,0.07]:[0.05,0.10];const v=$('#st-v');
+    if(gap>=0){v.className='verdict good';v.textContent='Meets RFE. Profitable in a vacuum with any two cards. Still fold the worst junk against aware regs who will adjust.';}
+    else if(-gap<=m[0]){v.className='verdict good';v.textContent=`Within ${m[0]*100}% of RFE. With neutral steal factors, open.`;}
+    else if(-gap<=m[1]){v.className='verdict warn';v.textContent=`${Math.round(-gap*100)}% short. Open only if steal factors are good: playable hand, blinds call rather than 3-bet, fit-or-fold or weak blinds.`;}
+    else{v.className='verdict bad';v.textContent=`${Math.round(-gap*100)}% short. Needs a strong hand or a big post-flop edge (e.g. a Fish in the blinds) to open.`;}};
+    ['st-pos','st-size','st-sb','st-bb'].forEach(i=>$('#'+i).oninput=f);f();}
+  if(t==='iso'){const f=()=>{const n=+$('#is-n').value,o=+$('#is-oop').value,a=+$('#is-adj').value;$('#is-out').textContent=(3+n+o+a)+'bb';$('#is-why').textContent=`3bb + ${n} for limper${n>1?'s':''}${o?' + 1 OOP':''}${a>0?' + 1 for loose callers':a<0?' − 1 vs 3-bettors':''}`;};['is-n','is-oop','is-adj'].forEach(i=>$('#'+i).oninput=f);f();}
+  if(t==='rfe'){const f=()=>{const s=+$('#rf-s').value/100,o=+$('#rf-o').value;$('#rf-sv').textContent=Math.round(s*100)+'%';$('#rf-r').textContent=pct(s/(1+s));$('#rf-e').textContent=pct(eq2(o));$('#rf-c').textContent=pct(s/(1+2*s));};['rf-s','rf-o'].forEach(i=>$('#'+i).oninput=f);f();}
+  if(t==='req'){const f=()=>{const p=+$('#rq-p').value||0,b=+$('#rq-b').value||0,e=(+$('#rq-e').value||0)/100;const r=b/(p+2*b||1);$('#rq-o').textContent=pct(r);const v=$('#rq-v');v.className='verdict '+(e>=r?'good':'bad');v.textContent=e>=r?`Call: ${Math.round(e*100)}% ≥ ${pct(r)} needed.`:`Fold: ${Math.round(e*100)}% < ${pct(r)} needed.`;};['rq-p','rq-b','rq-e'].forEach(i=>$('#'+i).oninput=f);f();}
+  if(t==='value'){const qs=[['Q1. Is my relative hand strength sufficient? (Ahead of his calling range)'],['Q2. Do I need to build the pot?'],['Q3. Should I slowplay? (Will checking get more in?)']];
+    const st={i:0,path:[]};const r=()=>{const el=$('#vf');let html=st.path.map((p,k)=>`<div class="small muted">${qs[k][0]} → <b>${p?'Yes':'No'}</b></div>`).join('');
+      let res=null;if(st.path[0]===false)res=['bad','CHECK. Not strong enough relative to his calling range.'];else if(st.path[1]===true)res=['good','VALUE BET. Start building the pot.'];else if(st.path[2]===false)res=['good','VALUE BET. Slowplaying isn\'t better.'];else if(st.path[2]===true)res=['warn','CHECK. Let him put the money in (e.g. vs an Aggro Fish who bluffs).'];
+      if(res)html+=`<div class="verdict ${res[0]}">${res[1]}</div><div><button class="btn" id="vf-r">Start again</button></div>`;
+      else html+=`<div class="q">${qs[st.path.length][0]}</div><div class="row"><button class="btn" id="vf-y">Yes</button><button class="btn" id="vf-n">No</button></div>`;
+      el.innerHTML=html;const y=$('#vf-y'),n=$('#vf-n'),rr=$('#vf-r');if(y)y.onclick=()=>{st.path.push(true);r();};if(n)n.onclick=()=>{st.path.push(false);r();};if(rr)rr.onclick=()=>{st.path=[];r();};};r();}
+  if(t==='polar'){const f=()=>{const fo=+$('#pl-f').value,ty=$('#pl-t').value,w=$('#pl-w').value==='1';const v=$('#pl-v');
+    if(ty==='reg'&&fo>50&&w){v.className='verdict good';v.textContent='POLAR: 3-bet value + bluffs (suited Ax, suited connectors with blockers), flat the middle.';}
+    else if(ty==='fish'||fo<=50){v.className='verdict warn';v.textContent=`LINEAR: fold equity is limited${ty==='fish'?' vs a Fish':''}. 3-bet the top of your playing range for value${w?', flat some hands behind it':''}.`;}
+    else{v.className='verdict warn';v.textContent='LINEAR: you have fold equity but don\'t want to flat. 3-bet a linear range (some 3-bet/fold, some 3-bet/get it in).';}};['pl-f','pl-t','pl-w'].forEach(i=>$('#'+i).oninput=f);f();}
+}
+function eq2(o){if(o<=0)return 0;return 1-((47-o)/47)*((46-o)/46);}
+
+/* ---------- range trainer ---------- */
+let RT={mode:'open-UTG',hand:null,suits:null,answered:false,show:false,streak:0};
+function inSet(m,h){return MODES[m].set.includes(h);}
+function edgeHands(set){const s=new Set(set);const out=[];for(let i=0;i<13;i++)for(let j=0;j<13;j++){const h=cellName(i,j);const nb=[[i-1,j],[i+1,j],[i,j-1],[i,j+1]].filter(([a,b])=>a>=0&&b>=0&&a<13&&b<13).map(([a,b])=>cellName(a,b));if(nb.some(x=>s.has(x)!==s.has(h)))out.push(h);}return out;}
+function dealHand(){const set=MODES[RT.mode].set;let h;
+  if(Math.random()<0.6){const e=edgeHands(set);h=e[Math.floor(Math.random()*e.length)];}
+  else{const all=allHands();let tot=0;const w=all.map(x=>tot+=combos(x));const r=Math.random()*tot;h=all[w.findIndex(x=>x>r)];}
+  const su=['s','h','d','c'];const a=su[Math.floor(Math.random()*4)];let b;
+  if(h.length===2||h[2]==='o'){do b=su[Math.floor(Math.random()*4)];while(b===a);}else b=a;
+  RT.hand=h;RT.suits=[a,b];RT.answered=false;}
+const SUIT={s:'♠',h:'♥',d:'♦',c:'♣'};
+function cardHTML(r,s){return `<div class="pc s-${s}">${r==='T'?'10':r}<span>${SUIT[s]}</span></div>`;}
+function gridHTML(m,cur){const md=MODES[m];
+  let tiers=null;
+  if(m.startsWith('call-')||m.startsWith('bb-')){
+    const v=md.vill;const key=m.startsWith('bb-')?'BB>':'';
+    if(m.startsWith('bb-')){tiers=[CALLS['BB>UTG'],CALLS['BB>HJ'],CALLS['BB>CO']];}
+    else if(v==='UTG')tiers=[CALLS['UTG>HJ'],CALLS['UTG>CO'],CALLS['UTG>BU']];
+    else if(v==='HJ')tiers=[CALLS['HJ>CO'],CALLS['HJ>BU']];
+    else tiers=[CALLS['CO>BU']];
+  }
+  let h='<div class="grid13">';
+  for(let i=0;i<13;i++)for(let j=0;j<13;j++){const n=cellName(i,j);let c='';
+    if(md.set.includes(n)){c='in';if(tiers){const t=tiers.findIndex(x=>x.includes(n));c=['in','t2','t3'][t]||'in';}}
+    h+=`<div class="${c}${n===cur?' cur':''}" title="${n}">${n}</div>`;}
+  h+='</div>';
+  let leg=`<div class="legend"><span><i style="background:var(--fold)"></i>Fold</span>`;
+  if(!tiers)leg+=`<span><i style="background:var(--open)"></i>${md.act}</span>`;
+  else if(m.startsWith('bb-'))leg+=`<span><i style="background:var(--open)"></i>Call vs UTG</span><span><i style="background:var(--c2)"></i>+ vs HJ</span><span><i style="background:var(--c3)"></i>+ vs CO</span>`;
+  else if(md.vill==='UTG')leg+=`<span><i style="background:var(--open)"></i>Call from HJ</span><span><i style="background:var(--c2)"></i>+ from CO</span><span><i style="background:var(--c3)"></i>+ from BU</span>`;
+  else if(md.vill==='HJ')leg+=`<span><i style="background:var(--open)"></i>Call from CO</span><span><i style="background:var(--c2)"></i>+ from BU</span>`;
+  else leg+=`<span><i style="background:var(--open)"></i>Call from BU</span>`;
+  leg+=`<span class="tag" style="margin-left:auto">${pct(rangePct(md.set))} of hands</span></div>`;
+  return h+leg;}
+function renderRanges(){
+  if(!RT.hand)dealHand();
+  const md=MODES[RT.mode];const grp=[...new Set(Object.values(MODES).map(x=>x.grp))];
+  const stats=S.drills[RT.mode]||{c:0,n:0};
+  const seats=['UTG','HJ','CO','BU','SB','BB'];
+  const show=RT.answered||RT.show;
+  $('#v-ranges').innerHTML=`<div class="section-h"><h2>Range trainer</h2><span class="muted small">Ranges from the book's default charts (Ch. 2 opens, Ch. 6 flats). 60% of deals come from the edge of the range.</span></div>
+  ${grp.map(g=>`<div class="row" style="margin-bottom:8px"><span class="eyebrow" style="width:80px">${g}</span><div class="seg">${Object.entries(MODES).filter(([k,v])=>v.grp===g).map(([k,v])=>`<button class="${k===RT.mode?'on':''}" data-m="${k}">${v.label}</button>`).join('')}</div></div>`).join('')}
+  <div class="drill" style="margin-top:16px">
+    <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+      <div class="table-felt">
+        <div class="seats">${seats.map(s=>`<span class="seat ${s===md.seat?'hero':''} ${s===md.vill?'vill':''}">${s}${s===md.vill?' · raises':''}</span>`).join('')}</div>
+        <div class="cards">${cardHTML(RT.hand[0],RT.suits[0])}${cardHTML(RT.hand[1],RT.suits[1])}</div>
+        <div class="small muted">${md.info}</div>
+      </div>
+      <div class="row" style="justify-content:center"><button class="btn primary" id="rt-yes" ${RT.answered?'disabled':''}>${md.act} <kbd class="tag">R</kbd></button><button class="btn" id="rt-no" ${RT.answered?'disabled':''}>Fold <kbd class="tag">F</kbd></button><button class="btn" id="rt-next">Next hand <kbd class="tag">Space</kbd></button></div>
+      <div class="feedback" id="rt-fb">${RT.fb||''}</div>
+      <div class="hud"><div class="stat"><div class="n">${stats.n?pct(stats.c/stats.n):'–'}</div><div class="l">Accuracy here (${stats.n} hands)</div></div><div class="stat"><div class="n">${RT.streak}</div><div class="l">Current streak</div></div></div>
+    </div>
+    <div class="panel"><div class="row" style="justify-content:space-between;margin-bottom:10px"><b>${md.label} chart</b><button class="btn" id="rt-show">${show?'Hide':'Show'} chart</button></div>
+      ${show?gridHTML(RT.mode,RT.hand):`<div class="muted small" style="padding:40px 0;text-align:center">Chart hidden while you answer. It appears after each decision.</div>`}
+      ${RT.mode.startsWith('call')||RT.mode.startsWith('bb')?'<p class="small muted" style="margin:10px 0 0">These are the book\'s Ch. 6 calling charts, before 3-betting is introduced. Ch. 10 moves some of the top hands into 3-bet ranges depending on the spot.</p>':''}
+    </div>
+  </div>`;
+  document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{RT.mode=b.dataset.m;RT.fb='';RT.streak=0;dealHand();renderRanges();});
+  $('#rt-yes').onclick=()=>answerRT(true);$('#rt-no').onclick=()=>answerRT(false);
+  $('#rt-next').onclick=()=>{RT.fb='';dealHand();renderRanges();};
+  $('#rt-show').onclick=()=>{RT.show=!RT.show;renderRanges();};
+}
+function answerRT(yes){if(RT.answered)return;const right=inSet(RT.mode,RT.hand)===yes;const md=MODES[RT.mode];
+  const st=S.drills[RT.mode]||{c:0,n:0};st.n++;if(right)st.c++;S.drills[RT.mode]=st;save();markDay();
+  RT.streak=right?RT.streak+1:0;RT.answered=true;
+  RT.fb=right?`Correct. ${RT.hand} is a ${inSet(RT.mode,RT.hand)?md.act.toLowerCase():'fold'} here.`:`${RT.hand} is a ${inSet(RT.mode,RT.hand)?md.act.toLowerCase():'fold'} in this spot.`;
+  renderRanges();$('#rt-fb').className='feedback '+(right?'good':'bad');}
+document.addEventListener('keydown',e=>{if($('#v-ranges').hidden||e.target.matches('input,select,textarea'))return;
+  if(e.key==='r'||e.key==='R')answerRT(true);else if(e.key==='f'||e.key==='F')answerRT(false);else if(e.key===' '){e.preventDefault();RT.fb='';dealHand();renderRanges();}});
+function drillAcc(){let c=0,n=0;Object.values(S.drills).forEach(x=>{c+=x.c;n+=x.n;});return {c,n};}
+
+/* ---------- math drills ---------- */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function mkOpts(ans,fmt,spread){const s=new Set([fmt(ans)]);let guard=0;while(s.size<4&&guard++<50){const d=ans+(Math.random()<.5?-1:1)*spread*(1+Math.floor(Math.random()*3));if(d>0&&d<1.0)s.add(fmt(d));}
+  const arr=[...s];arr.sort(()=>Math.random()-.5);return {opts:arr,a:arr.indexOf(fmt(ans))};}
+const P0=x=>Math.round(x*100)+'%';
+const MATH={
+  rfe:{label:'RFE of a bet',gen(){const pot=rnd(4,40);const f=pick([0.25,0.33,0.5,0.66,0.75,1,1.5]);const b=Math.round(pot*f*2)/2;const a=b/(b+pot);const o=mkOpts(a,P0,0.07);return {q:`You bet <b>${b}bb</b> into <b>${pot}bb</b> with no equity. How often must Villain fold?`,...o,why:`RFE = ${b} / (${b} + ${pot}) = ${P0(a)}.`};}},
+  call:{label:'Equity to call',gen(){const pot=rnd(6,60);const f=pick([0.2,0.25,0.33,0.5,0.66,0.75,1]);const b=Math.round(pot*f*2)/2;const a=b/(pot+2*b);const o=mkOpts(a,P0,0.05);return {q:`Pot is <b>${pot}bb</b>. Villain bets <b>${b}bb</b> on the river. What equity do you need to call?`,...o,why:`ATC/(ATC+TP) = ${b} / (${b} + ${pot+b}) = ${P0(a)}.`};}},
+  outs:{label:'Outs to equity',gen(){const outs=pick([2,4,6,8,9,10,11,12,15]);const two=Math.random()<.6;const a=two?eq2(outs):outs/46;const o=mkOpts(a,P0,0.06);return {q:`You have <b>${outs} outs</b> on the ${two?'flop with two cards to come':'turn with one card to come'}. Roughly what is your equity?`,...o,why:two?`1 − (${47-outs}/47 × ${46-outs}/46) ≈ ${P0(a)}. Rule of 4 says ≈ ${outs*4}%.`:`${outs}/46 ≈ ${P0(a)}. Rule of 2 says ≈ ${outs*2}%.`};}},
+  fold:{label:'Combined fold %',gen(){const n=Math.random()<.7?2:3;const f=Array.from({length:n},()=>rnd(45,88)/100);const a=f.reduce((x,y)=>x*y,1);const o=mkOpts(a,P0,0.06);return {q:`${n===2?'SB folds '+P0(f[0])+' and BB folds '+P0(f[1])+' to your steal':'Three players each continue independently, folding '+f.map(P0).join(', ')}. How often does everyone fold?`,...o,why:`Multiply: ${f.map(x=>x.toFixed(2)).join(' × ')} = ${P0(a)}.`};}},
+  combos:{label:'Combos',gen(){const qs=[
+    ['How many combos of a specific pocket pair (e.g. JJ)?','6',['4','6','12','16']],
+    ['How many combos of a specific suited hand (e.g. KQs)?','4',['4','6','8','12']],
+    ['How many combos of a specific offsuit hand (e.g. KQo)?','12',['6','9','12','16']],
+    ['How many combos of AK in total?','16',['12','16','8','24']],
+    ['Flop A♠9♦4♣. How many AK combos can Villain have?','12',['16','12','9','8']],
+    ['Flop K♥8♥3♠. How many combos of KK remain?','3',['1','3','6','4']],
+    ['Flop Q♦Q♣5♠. How many combos of QQ (quads) remain?','1',['1','2','3','6']],
+    ['Flop Q♦7♣2♠. How many Q7 combos remain (two pair)?','9',['9','12','16','6']],
+    ['How many total starting hands are there?','1326',['169','1326','2652','1225']],
+    ['You hold A♠. Board has three spades. How many nut-flush combos (A♠x♠) can Villain have?','0',['0','1','4','9']],
+  ];const c=pick(qs);const opts=[...c[2]].sort(()=>Math.random()-.5);return {q:c[0],opts,a:opts.indexOf(c[1]),why:{
+    '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
+};
+let MT={type:'rfe',cur:null,answered:false,score:0,n:0};
+function renderMath(){
+  if(!MT.cur)MT.cur=MATH[MT.type].gen();
+  const c=MT.cur;
+  $('#v-math').innerHTML=`<div class="section-h"><h2>Math drills</h2><span class="muted small">Endless, randomised. Answer in your head first, like at the table.</span></div>
+  <div class="seg" style="margin-bottom:14px;display:inline-flex">${Object.entries(MATH).map(([k,v])=>`<button class="${k===MT.type?'on':''}" data-t="${k}">${v.label}</button>`).join('')}</div>
+  <div class="drill"><div class="quiz"><div class="qn">${MATH[MT.type].label} · session ${MT.score}/${MT.n}</div><div class="qt">${c.q}</div>
+  <div class="opts">${c.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')}</div><div id="mwhy"></div>
+  <div class="pager"><span></span><button class="btn primary" id="mnext">Next</button></div></div>
+  <div class="panel"><b>Milestones to memorise</b>
+  <div class="tbl"><table><tr><th>Bet</th><th class="num">RFE (bettor)</th><th class="num">Equity to call</th></tr>
+  ${[[.25,'¼'],[.33,'⅓'],[.5,'½'],[.66,'⅔'],[.75,'¾'],[1,'Pot'],[1.5,'1.5×'],[2,'2×']].map(([f,l])=>`<tr><td>${l}${f<1.5&&l!=='Pot'?' pot':l==='Pot'?'':' pot'}</td><td class="num">${P0(f/(1+f))}</td><td class="num">${P0(f/(1+2*f))}</td></tr>`).join('')}</table></div>
+  <p class="small muted">Outs: ×4 on the flop (to the river), ×2 on the turn.</p></div></div>`;
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{MT.type=b.dataset.t;MT.cur=MATH[MT.type].gen();renderMath();});
+  document.querySelectorAll('#v-math .opt').forEach(b=>b.onclick=()=>{if(MT.answered)return;MT.answered=true;const i=+b.dataset.i;const ok=i===c.a;MT.n++;if(ok)MT.score++;markDay();
+    document.querySelectorAll('#v-math .opt').forEach(x=>{x.disabled=true;if(+x.dataset.i===c.a)x.classList.add('right');});if(!ok)b.classList.add('wrong');
+    $('#mwhy').innerHTML=`<div class="why"><b style="color:var(--${ok?'good':'bad'})">${ok?'Correct.':'Not quite.'}</b> ${c.why}</div>`;});
+  $('#mnext').onclick=()=>{MT.cur=MATH[MT.type].gen();MT.answered=false;renderMath();};
+}
+
+/* ---------- review (Leitner spaced repetition) ---------- */
+const INTERVAL=[0,1,2,4,8,16,32];
+const today=()=>Math.floor(Date.now()/86400000);
+function dueCards(){return CARD_IDS.filter(id=>{const c=S.cards[id];return !c||c.due<=today();});}
+let RV={queue:null,flip:false};
+function renderReview(){
+  if(!RV.queue){RV.queue=dueCards().sort(()=>Math.random()-.5);}
+  const boxes=[0,0,0,0,0,0,0];CARD_IDS.forEach(id=>{boxes[(S.cards[id]||{box:0}).box]++;});
+  const el=$('#v-review');
+  const head=`<div class="section-h"><h2>Review</h2><div class="boxes">${boxes.map((n,i)=>`<span title="Box ${i}">B${i} · ${n}</span>`).join('')}</div></div>`;
+  if(!RV.queue.length){el.innerHTML=head+`<div class="panel fc"><div class="front">Nothing due. Deck clear.</div><p class="muted">Cards come back on a schedule: 1, 2, 4, 8, 16 and 32 days as you keep getting them right.</p><div class="row"><button class="btn" id="rv-all">Review all ${CARDS.length} cards anyway</button><button class="btn primary" onclick="go('ranges')">Drill ranges</button></div></div>`;
+    $('#rv-all').onclick=()=>{RV.queue=[...CARD_IDS].sort(()=>Math.random()-.5);RV.flip=false;renderReview();};return;}
+  const id=RV.queue[0];const c=CARDS[+id.slice(1)];
+  el.innerHTML=head+`<div class="panel fc"><div class="eyebrow">${RV.queue.length} left in this session</div><div class="front">${c[0]}</div>
+  ${RV.flip?`<div class="back">${c[1]}</div><div class="row"><button class="btn" data-g="0">Again</button><button class="btn" data-g="1">Hard</button><button class="btn primary" data-g="2">Good</button><button class="btn" data-g="3">Easy</button></div>`:`<button class="btn primary" id="rv-flip">Show answer <kbd class="tag">Space</kbd></button>`}</div>`;
+  const f=$('#rv-flip');if(f)f.onclick=()=>{RV.flip=true;renderReview();};
+  document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>grade(+b.dataset.g));
+}
+function grade(g){const id=RV.queue.shift();const c=S.cards[id]||{box:0,due:0};
+  if(g===0){c.box=0;c.due=today();RV.queue.push(id);}else{c.box=Math.min(6,Math.max(1,c.box+(g===1?0:g===2?1:2)));c.due=today()+INTERVAL[c.box];}
+  S.cards[id]=c;save();markDay();RV.flip=false;renderReview();updateDue();}
+document.addEventListener('keydown',e=>{if($('#v-review').hidden||e.target.matches('input,select,textarea'))return;
+  if(e.key===' '&&!RV.flip&&RV.queue&&RV.queue.length){e.preventDefault();RV.flip=true;renderReview();}
+  else if(RV.flip&&['1','2','3','4'].includes(e.key))grade(+e.key-1);});
+function updateDue(){const n=dueCards().length;const b=$('#dueBadge');b.hidden=!n;b.textContent=n;}
+
+/* ---------- progress ---------- */
+function renderProgress(){
+  const acc=drillAcc();
+  $('#v-progress').innerHTML=`<div class="section-h"><h2>Progress</h2><span class="muted small">Saved in this browser only.</span></div>
+  <div class="panel"><b>Lessons</b><div class="tbl"><table><tr><th>Ch</th><th>Lesson</th><th class="num">Best quiz</th><th>Status</th></tr>
+  ${LESSONS.map(l=>`<tr><td class="num">${l.ch}</td><td><a href="#lesson-${l.id}">${esc(l.title)}</a></td><td class="num">${S.quiz[l.id]!=null?S.quiz[l.id]+'/'+l.quiz.length:'–'}</td><td>${lessonDone(l.id)?'<span class="tag done">done</span>':'<span class="tag">to do</span>'}</td></tr>`).join('')}</table></div></div>
+  <div class="panel" style="margin-top:16px"><b>Range trainer</b> <span class="muted small">overall ${acc.n?pct(acc.c/acc.n):'–'} over ${acc.n} hands</span>
+  <div class="tbl"><table><tr><th>Spot</th><th class="num">Hands</th><th class="num">Accuracy</th><th style="width:40%"></th></tr>
+  ${Object.entries(MODES).map(([k,m])=>{const s=S.drills[k]||{c:0,n:0};const a=s.n?s.c/s.n:0;return `<tr><td>${m.label}</td><td class="num">${s.n}</td><td class="num">${s.n?pct(a):'–'}</td><td><div class="meter"><i style="width:${a*100}%;background:${a>=.9?'var(--good)':a>=.75?'var(--warn)':'var(--bad)'}"></i></div></td></tr>`}).join('')}</table></div></div>
+  <div class="row" style="margin-top:16px"><button class="btn" id="reset">Reset all progress</button><span id="resetc"></span></div>`;
+  $('#reset').onclick=()=>{$('#resetc').innerHTML='<span class="small">Erase everything?</span> <button class="btn" id="reset-yes">Yes, erase</button> <button class="btn" id="reset-no">Cancel</button>';
+    $('#reset-yes').onclick=()=>{S={lessons:{},quiz:{},drills:{},cards:{},days:[]};save();toast('Progress reset');renderProgress();updateDue();};
+    $('#reset-no').onclick=()=>{$('#resetc').innerHTML='';};};
+}
+route();
+</script>
+</body>
+</html>
