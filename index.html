@@ -269,8 +269,9 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .stk.d1::before{background:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2016%2016'%3E%3Ccircle%20cx%3D'8'%20cy%3D'8'%20r%3D'7.6'%20fill%3D'%23f4efe2'%2F%3E%3Ccircle%20cx%3D'8'%20cy%3D'8'%20r%3D'6.3'%20fill%3D'none'%20stroke%3D'%233d6fb5'%20stroke-width%3D'2.5'%20stroke-dasharray%3D'3.3%203.3'%2F%3E%3Ccircle%20cx%3D'8'%20cy%3D'8'%20r%3D'3.4'%20fill%3D'none'%20stroke%3D'%233d6fb5'%20stroke-opacity%3D'.75'%20stroke-width%3D'.9'%2F%3E%3C%2Fsvg%3E") center/contain no-repeat}
 .stk.d2::before{background:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2016%2016'%3E%3Ccircle%20cx%3D'8'%20cy%3D'8'%20r%3D'7.6'%20fill%3D'%23c8372d'%2F%3E%3Ccircle%20cx%3D'8'%20cy%3D'8'%20r%3D'6.3'%20fill%3D'none'%20stroke%3D'%23fff'%20stroke-width%3D'2.5'%20stroke-dasharray%3D'3.3%203.3'%2F%3E%3Ccircle%20cx%3D'8'%20cy%3D'8'%20r%3D'3.4'%20fill%3D'none'%20stroke%3D'%23fff'%20stroke-opacity%3D'.75'%20stroke-width%3D'.9'%2F%3E%3C%2Fsvg%3E") center/contain no-repeat}
 .hand{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:6px}
-.pc{width:52px;height:72px;border-radius:9px;background:var(--card);color:var(--card-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--serif);font-weight:700;font-size:24px;line-height:1.05;box-shadow:var(--card-edge);animation:deal .22s ease-out both}
-.pc+.pc{animation-delay:.05s}
+.pc{width:52px;height:72px;border-radius:9px;background:var(--card);color:var(--card-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--serif);font-weight:700;font-size:24px;line-height:1.05;box-shadow:var(--card-edge)}
+.pc.deal{animation:deal .22s ease-out both}
+.pc.deal+.pc.deal{animation-delay:.05s}
 .pc.r{color:var(--card-red)}
 .pc .ten{letter-spacing:-1.5px}
 .pc small{font-size:22px;font-family:var(--sans);font-weight:500}
@@ -870,7 +871,7 @@ const MATH={
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.0.2",at:"2026-11-19T10:28Z"};
+var BUILD={v:"2.0.3",at:"2026-11-19T10:57Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -1051,10 +1052,10 @@ function dealHand(){
   else{const all=allHands();let tot=0;const w=all.map(x=>tot+=combos(x));const r=Math.random()*tot;h=all[w.findIndex(x=>x>r)];}
   const su=['s','h','d','c'];const a=su[Math.floor(Math.random()*4)];let b;
   if(h.length===2||h[2]==='o'){do b=su[Math.floor(Math.random()*4)];while(b===a);}else b=a;
-  RT.hand=h;RT.suits=[a,b];RT.answered=null;
+  RT.hand=h;RT.suits=[a,b];RT.answered=null;RT.fresh=true;
 }
 const SUIT={s:'♠',h:'♥',d:'♦',c:'♣'};
-function cardHTML(r,s){return `<div class="pc${s==='h'||s==='d'?' r':''}" aria-label="${r==='T'?'10':r} of ${{s:'spades',h:'hearts',d:'diamonds',c:'clubs'}[s]}">${r==='T'?'<span class="ten">10</span>':r}<small aria-hidden="true">${SUIT[s]}</small></div>`;}
+function cardHTML(r,s,x){return `<div class="pc${s==='h'||s==='d'?' r':''}${x||''}" aria-label="${r==='T'?'10':r} of ${{s:'spades',h:'hearts',d:'diamonds',c:'clubs'}[s]}">${r==='T'?'<span class="ten">10</span>':r}<small aria-hidden="true">${SUIT[s]}</small></div>`;}
 const bb=x=>(x%1?x.toFixed(1):x)+'';
 function tableHTML(md){
   const hi=SEATS6.indexOf(md.seat),n=6,chips={SB:.5,BB:1};
@@ -1092,45 +1093,50 @@ function gridHTML(m,cur){
   else leg+=L('--felt','Call from BU');
   return h+leg+`<span class="tag">${pct(rangePct(md.set))} of hands</span></div>`;
 }
+/* Three parts that redraw on their own, so a tap only changes what it should:
+   the picker (on a spot change), the spot (new hand or answer) and the chart (peek or answer).
+   Cards play the deal animation only when a new hand is dealt (RT.fresh). */
 function renderRanges(){
   if(!RT.hand)dealHand();
-  const m=RT.cur,md=MODES[m],g=grpOf(RT.mode),a=RT.answered,show=a!==null||RT.peek;
-  const st=S.drills[m]||{c:0,n:0};
-  const ok=a!==null&&a===inSet(m,RT.hand),inn=inSet(m,RT.hand);
-  const btn=(yes,cls)=>`<button class="opt${yes?' go':''}${a===null?'':(yes===inn?' right':yes===a?' wrong':' dim')}" data-yes="${yes?1:0}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${yes?1:2}</span>${yes?md.act:'Fold'}</button>`;
+  const g=grpOf(RT.mode);
   $('#v-ranges').innerHTML=`
   <div class="seg" role="group" aria-label="Spot type">${GROUPS.map(x=>`<button data-g="${x}" aria-pressed="${x===g}">${x}</button>`).join('')}</div>
   <div class="chips" role="group" aria-label="Spot">${[['mix-'+g,'Mix']].concat(Object.entries(MODES).filter(([k,v])=>v.grp===g).map(([k,v])=>[k,v.label])).map(([k,t])=>`<button class="chip" data-m="${k}" aria-pressed="${k===RT.mode}">${t}</button>`).join('')}</div>
-  <div class="drill">
-    <div class="left">
-      <div class="spot">
-        <div class="shead"><span class="topic">${md.label}</span><span class="stag"><span>Streak <b>${RT.streak}</b></span><span>Here <b>${st.n?pct(st.c/st.n):'–'}</b></span></span></div>
-        ${tableHTML(md)}
-        <div class="hand">${cardHTML(RT.hand[0],RT.suits[0])}${cardHTML(RT.hand[1],RT.suits[1])}<span class="badge">${RT.hand}</span></div>
-        <p class="sinfo">${md.info}</p>
-        <div class="acts">${btn(true)}${btn(false)}</div>
-        ${a!==null?whyHTML(ok,` ${RT.hand} is ${inn?(md.act==='Call'?'a call':'a '+md.act.toLowerCase().replace(/ .*/,''))+' in this spot: it sits inside the '+pct(rangePct(md.set))+' range.':'a fold in this spot: it is outside the '+pct(rangePct(md.set))+' range.'}`):''}
-      </div>
-      ${a!==null?`<div class="actions"><button class="btn" id="rt-next">Next hand →</button></div>`:''}
-    </div>
-    <div class="box chartbox"><div class="ch"><b>${md.label} chart</b>${a===null?`<button class="peek" id="rt-peek" aria-pressed="${RT.peek}">${RT.peek?'Hide':'Peek'}</button>`:''}</div>
-      ${show?gridHTML(m,a!==null||RT.peek?RT.hand:null):`<div class="hidden-chart">The chart is hidden while you decide. It opens after each answer.</div>`}
-      ${md.grp!=='Open'?`<p class="note">These are the book’s Ch. 6 calling charts, before 3-betting is introduced. Ch. 10 moves some of the top hands into 3-bet ranges depending on the spot.</p>`:''}
-    </div>
-  </div>`;
+  <div class="drill"><div class="left" id="rt-spot"></div><div class="box chartbox" id="rt-chart"></div></div>`;
   $$('#v-ranges [data-g]').forEach(b=>b.onclick=()=>setMode('mix-'+b.dataset.g));
   $$('#v-ranges [data-m]').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
-  $$('#v-ranges [data-yes]').forEach(b=>b.onclick=()=>answerRT(b.dataset.yes==='1'));
-  const nx=$('#rt-next');if(nx){nx.onclick=nextRT;}
-  const pk=$('#rt-peek');if(pk)pk.onclick=()=>{RT.peek=!RT.peek;renderRanges();};
   const sel=$('#v-ranges .chip[aria-pressed="true"]');if(sel){const pr=sel.parentNode.getBoundingClientRect(),r=sel.getBoundingClientRect();if(r.right>pr.right-14)sel.parentNode.scrollLeft+=r.right-pr.right+28;}
+  drawSpot();drawChart();
+}
+function drawSpot(){
+  const m=RT.cur,md=MODES[m],a=RT.answered,st=S.drills[m]||{c:0,n:0};
+  const ok=a!==null&&a===inSet(m,RT.hand),inn=inSet(m,RT.hand),deal=RT.fresh?' deal':'';RT.fresh=false;
+  const btn=yes=>`<button class="opt${yes?' go':''}${a===null?'':(yes===inn?' right':yes===a?' wrong':' dim')}" data-yes="${yes?1:0}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${yes?1:2}</span>${yes?md.act:'Fold'}</button>`;
+  $('#rt-spot').innerHTML=`<div class="spot">
+      <div class="shead"><span class="topic">${md.label}</span><span class="stag"><span>Streak <b>${RT.streak}</b></span><span>Here <b>${st.n?pct(st.c/st.n):'–'}</b></span></span></div>
+      ${tableHTML(md)}
+      <div class="hand">${cardHTML(RT.hand[0],RT.suits[0],deal)}${cardHTML(RT.hand[1],RT.suits[1],deal)}<span class="badge">${RT.hand}</span></div>
+      <p class="sinfo">${md.info}</p>
+      <div class="acts">${btn(true)}${btn(false)}</div>
+      ${a!==null?whyHTML(ok,` ${RT.hand} is ${inn?(md.act==='Call'?'a call':'a '+md.act.toLowerCase().replace(/ .*/,''))+' in this spot: it sits inside the '+pct(rangePct(md.set))+' range.':'a fold in this spot: it is outside the '+pct(rangePct(md.set))+' range.'}`):''}
+    </div>
+    ${a!==null?`<div class="actions"><button class="btn" id="rt-next">Next hand →</button></div>`:''}`;
+  $$('#rt-spot [data-yes]').forEach(b=>b.onclick=()=>answerRT(b.dataset.yes==='1'));
+  const nx=$('#rt-next');if(nx)nx.onclick=nextRT;
+}
+function drawChart(){
+  const m=RT.cur,md=MODES[m],a=RT.answered,show=a!==null||RT.peek;
+  $('#rt-chart').innerHTML=`<div class="ch"><b>${md.label} chart</b>${a===null?`<button class="peek" id="rt-peek" aria-pressed="${RT.peek}">${RT.peek?'Hide':'Peek'}</button>`:''}</div>
+    ${show?gridHTML(m,RT.hand):`<div class="hidden-chart">The chart is hidden while you decide. It opens after each answer.</div>`}
+    ${md.grp!=='Open'?`<p class="note">These are the book’s Ch. 6 calling charts, before 3-betting is introduced. Ch. 10 moves some of the top hands into 3-bet ranges depending on the spot.</p>`:''}`;
+  const pk=$('#rt-peek');if(pk)pk.onclick=()=>{RT.peek=!RT.peek;drawChart();$('#rt-peek').focus({preventScroll:true});};
 }
 function setMode(m){if(m===RT.mode)return;RT.mode=m;RT.streak=0;dealHand();history.replaceState(null,'','#ranges/'+m);renderRanges();}
-function nextRT(){dealHand();renderRanges();const s=$('#v-ranges .spot');if(s&&s.getBoundingClientRect().top<0)s.scrollIntoView({block:'start'});}
+function nextRT(){dealHand();drawSpot();drawChart();const s=$('#v-ranges .spot');if(s&&s.getBoundingClientRect().top<0)s.scrollIntoView({block:'start'});}
 function answerRT(yes){
-  if(RT.answered!==null)return;const right=inSet(RT.cur,RT.hand)===yes;
+  if(RT.answered!==null||VIEW!=='ranges')return;const right=inSet(RT.cur,RT.hand)===yes;
   const st=S.drills[RT.cur]||{c:0,n:0};st.n++;if(right)st.c++;S.drills[RT.cur]=st;save();markDay();
-  RT.streak=right?RT.streak+1:0;RT.answered=yes;renderRanges();
+  RT.streak=right?RT.streak+1:0;RT.answered=yes;drawSpot();drawChart();
   const nx=$('#rt-next');if(nx)nx.focus({preventScroll:true});
 }
 
@@ -1184,11 +1190,21 @@ function renderReview(){
     <div class="face front" aria-hidden="${RV.flip}"><div class="eyebrow">${box?'Box '+box:'New card'}</div><h2>${c[0]}</h2><small>Say the answer, then tap to check</small></div>
     <div class="face back" aria-hidden="${!RV.flip}"><div class="eyebrow">${c[0]}</div><p>${c[1]}</p></div>
   </div></div>
-  <div class="actions">${RV.flip?`<div class="grades" style="flex:1;margin:0">${['Again','Hard','Good','Easy'].map((t,g)=>`<button class="g${g}" data-g="${g}">${t}<small>${ivl(INTERVAL[nextBox(box,g)])}</small></button>`).join('')}</div>`:`<button class="btn" id="rv-flip">Show answer</button>`}</div>`;
-  const flip=()=>{if(!RV.flip){RV.flip=true;renderReview();const g=$('#v-review [data-g="2"]');if(g)g.focus({preventScroll:true});}};
-  $('#rv-card').onclick=flip;$('#rv-card').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();flip();}};
-  const f=$('#rv-flip');if(f)f.onclick=flip;
+  <div class="actions">${RV.flip?gradesHTML(box):`<button class="btn" id="rv-flip">Show answer</button>`}</div>`;
+  $('#rv-card').onclick=flipCard;$('#rv-card').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();flipCard();}};
+  const f=$('#rv-flip');if(f)f.onclick=flipCard;
   $$('#v-review [data-g]').forEach(b=>b.onclick=()=>grade(+b.dataset.g));
+}
+function gradesHTML(box){return `<div class="grades" style="flex:1;margin:0">${['Again','Hard','Good','Easy'].map((t,g)=>`<button class="g${g}" data-g="${g}">${t}<small>${ivl(INTERVAL[nextBox(box,g)])}</small></button>`).join('')}</div>`;}
+/* Flip the card in place so the turn animates; only the buttons below it are swapped. */
+function flipCard(){
+  if(RV.flip||!RV.queue||!RV.queue.length)return;RV.flip=true;
+  const card=$('#rv-card'),id=RV.queue[0];
+  card.classList.add('on');card.setAttribute('aria-label','Answer shown');
+  card.querySelector('.front').setAttribute('aria-hidden','true');card.querySelector('.back').setAttribute('aria-hidden','false');
+  $('#v-review .actions').innerHTML=gradesHTML((S.cards[id]||{box:0}).box);
+  $$('#v-review [data-g]').forEach(b=>b.onclick=()=>grade(+b.dataset.g));
+  $('#v-review [data-g="2"]').focus({preventScroll:true});
 }
 function grade(g){
   if(!RV.flip||!RV.queue||!RV.queue.length)return;
@@ -1256,7 +1272,7 @@ document.addEventListener('keydown',e=>{
   }else if(VIEW==='math'){
     if(num>=0)answerMath(num);else if(k==='Enter'&&MT.answered!==null)nextMath();
   }else if(VIEW==='review'){
-    if(k===' '||k==='Enter'){if(!RV.flip&&RV.queue&&RV.queue.length){e.preventDefault();RV.flip=true;renderReview();}}
+    if(k===' '||k==='Enter'){if(!RV.flip&&RV.queue&&RV.queue.length){e.preventDefault();flipCard();}}
     else if(RV.flip&&num>=0)grade(num);
   }
 });
