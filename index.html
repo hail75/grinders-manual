@@ -156,7 +156,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .lrow .lm{flex:none;text-align:right;font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 
 /* Lesson */
-.back{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 4px;border:0;background:none;color:var(--muted);font-size:14.5px;font-weight:600;text-decoration:none}
+.backlink{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 4px;border:0;background:none;color:var(--muted);font-size:14.5px;font-weight:600;text-decoration:none}
 .lhead h2{font-size:27px;margin:2px 0 0}
 .steps{display:flex;gap:4px;margin:14px 0 6px}
 .steps button{flex:1;height:28px;border:0;background:none;padding:0;display:flex;align-items:center}
@@ -231,7 +231,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .why.good b{color:var(--good)} .why.bad b{color:var(--bad)}
 @keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .result{text-align:center;border-radius:20px;padding:24px 16px;border:1.5px solid var(--line);margin-top:12px}
-.result.good{background:var(--good-bg);border-color:var(--good)} .result.bad{background:var(--bad-bg);border-color:var(--bad)} .result.mid{background:var(--warn-bg);border-color:var(--warn)}
+.result.good{background:var(--good-bg);border-color:var(--good)} .result.bad{background:var(--bad-bg);border-color:var(--bad)} .result.warn{background:var(--warn-bg);border-color:var(--warn)}
 .result small{font-size:12.5px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .result b{display:block;font-family:var(--serif);font-size:48px;line-height:1.1;margin:4px 0}
 .result p{font-size:15.5px;max-width:42ch;margin:0 auto}
@@ -251,7 +251,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
   background:radial-gradient(90% 120% at 50% 35%,var(--felt-2) 0%,var(--felt) 55%,var(--felt-3) 100%);
   box-shadow:0 0 0 5px #3b2a1a,0 0 0 6.5px rgba(217,165,58,.45),inset 0 0 26px rgba(0,0,0,.35)}
 .oval::after{content:"";position:absolute;inset:14px 18%;border-radius:999px;border:1px solid rgba(255,255,255,.07)}
-.mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
+.tcenter{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
 .pot{display:flex;flex-direction:column;align-items:center;line-height:1;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .pot small{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#bfe3d0}
 .pot b{font-size:19px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;margin-top:2px}
@@ -870,7 +870,7 @@ const MATH={
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.0.1",at:"2026-11-19T10:21Z"};
+var BUILD={v:"2.0.2",at:"2026-11-19T10:28Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -982,7 +982,7 @@ function renderLesson(id){
   $('#v-lesson').innerHTML=`<div class="lesson">
     <div class="toc" aria-label="Contents">${stepBtns(true)}<hr>${prev?`<button data-go="lesson-${prev.id}">← Ch. ${prev.ch} ${esc(prev.title)}</button>`:''}${nxt?`<button data-go="lesson-${nxt.id}">Ch. ${nxt.ch} ${esc(nxt.title)} →</button>`:''}</div>
     <div class="lesson-main">
-      <a class="back" href="#home">‹ All chapters</a>
+      <a class="backlink" href="#home">‹ All chapters</a>
       <div class="lhead"><div class="eyebrow">Chapter ${l.ch} · ${l.mins} min</div><h2>${esc(l.title)}</h2></div>
       <div class="steps">${stepBtns(false)}</div>
       <div class="stepname">${LS.step<n?`Part ${LS.step+1} of ${n} · ${steps[LS.step]}`:`Quiz · ${l.quiz.length} questions`}</div>
@@ -1004,7 +1004,7 @@ function quizHTML(l){
   if(LS.qi>=t){
     const s=LS.score,f=s/t,idx=LESSONS.indexOf(l),nxt=LESSONS[idx+1];
     const missed=l.quiz.map((q,i)=>LS.res[i]===false?`<div><b>${q[0]}</b>Answer: <span>${q[1][q[2]]}</span><br><span class="muted" style="color:var(--muted);font-weight:400">${q[3]}</span></div>`:'').join('');
-    return `<div class="result ${s===t?'good':f>=.7?'mid':'bad'}"><small>Chapter ${l.ch} quiz</small><b>${s}/${t}</b><p>${s===t?'Clean sweep. On to the next chapter.':f>=.7?'Solid. Look over the misses below, then move on.':'Worth another pass through the chapter before moving on.'}</p></div>
+    return `<div class="result ${s===t?'good':f>=.7?'warn':'bad'}"><small>Chapter ${l.ch} quiz</small><b>${s}/${t}</b><p>${s===t?'Clean sweep. On to the next chapter.':f>=.7?'Solid. Look over the misses below, then move on.':'Worth another pass through the chapter before moving on.'}</p></div>
     ${missed?`<div class="sec">What you missed</div><div class="missed">${missed}</div>`:''}
     <div class="actions"><button class="btn alt" id="retry">Retry</button>${nxt?`<a class="btn" href="#lesson-${nxt.id}">Chapter ${nxt.ch} →</a>`:`<a class="btn" href="#review">Go to review →</a>`}</div>`;
   }
@@ -1060,7 +1060,7 @@ function tableHTML(md){
   const hi=SEATS6.indexOf(md.seat),n=6,chips={SB:.5,BB:1};
   if(md.vill)chips[md.vill]=3;
   const pot=Object.values(chips).reduce((a,b)=>a+b,0);
-  let h=`<div class="ptable" role="img" aria-label="${md.info.replace(/"/g,'')}"><div class="oval"></div><div class="mid"><span class="pot"><small>Pot</small><b>${bb(pot)}bb</b></span></div>`;
+  let h=`<div class="ptable" role="img" aria-label="${md.info.replace(/"/g,'')}"><div class="oval"></div><div class="tcenter"><span class="pot"><small>Pot</small><b>${bb(pot)}bb</b></span></div>`;
   SEATS6.forEach((s,j)=>{
     const a=(90+(j-hi)*360/n)*Math.PI/180,cx=Math.cos(a),cy=Math.sin(a);
     const you=j===hi,vill=s===md.vill,fold=!you&&!vill&&j<hi;

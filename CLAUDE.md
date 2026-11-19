@@ -24,6 +24,6 @@ Everything above `/* ===================== UI` is data and pure functions; the t
 - Phone first: tap targets at least 44px, the main action in the sticky `.actions` bar above the bottom nav. At 960px and up the nav becomes a left rail and drills go two columns.
 - Every colour is a CSS variable with light and dark values (`:root`, the dark media query, and `[data-theme="dark"]`). Check both themes and both widths after a visual change.
 - Cards show **10**; labels and charts use **T**. Suits are two-colour (red hearts and diamonds).
-- Before adding a CSS class, search the file for the name (holdem-drill once broke a page by reusing `chips`).
+- Before adding a CSS class, search the file for the name. v2.0.1 reused `mid` (the table’s pot-centring class) for a 5/6 quiz result and for 75–90% progress bars, and both floated over the page as absolute boxes (holdem-drill had the same bug with `chips`). The tests now fail if a class with its own rule is also used as a modifier.
 - Keyboard: 1–4 answer, Enter next, ← → lesson pages, R / F in the range trainer, Space flips a card.
 - Lesson text is a summary in our own words; do not paste text from the book.

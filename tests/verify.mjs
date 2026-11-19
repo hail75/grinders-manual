@@ -83,5 +83,14 @@ ok(!/fonts\.googleapis|fonts\.gstatic/.test(html), "no fonts from Google: they a
 const idsInHtml = [...html.matchAll(/\sid="([^"$]+)"/g)].map(m => m[1]);
 ok(idsInHtml.length === new Set(idsInHtml).size, "no duplicate ids in the page shell: " + idsInHtml.filter((x, i) => idsInHtml.indexOf(x) !== i));
 
+// 6. CSS: a class with its own rule must not also be used as a modifier of another component
+// (v2.0.1: a 5/6 quiz result had class "mid", the table's pot centring class, and floated over the page)
+{ const css = html.slice(html.indexOf("<style>"), html.indexOf("</style>"));
+  const own = new Set([...css.matchAll(/(?:^|[},])\s*\.([a-zA-Z][\w-]*)(?=[\s{:,.\[>])/gm)].map(m => m[1]));
+  const mods = new Set([...css.matchAll(/[\w\])]\.([a-zA-Z][\w-]*)/g)].map(m => m[1]));
+  const clash = [...mods].filter(n => own.has(n) && !["num"].includes(n));
+  ok(clash.length === 0, "class names used both on their own and as a modifier: " + clash.join(", "));
+  ok(own.size > 40, "found the stylesheet's classes"); }
+
 console.log(fails ? `${fails} check(s) failed` : "All checks passed");
 process.exit(fails ? 1 : 0);
