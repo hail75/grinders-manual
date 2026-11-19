@@ -311,7 +311,8 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .opt.wrong::after{content:"✗";background:var(--bad-mark)}
 .opt.right.picked::after,.opt.wrong.picked::after{animation:mark .35s cubic-bezier(.25,1.7,.5,1) .05s both}
 @keyframes mark{0%{transform:scale(0)}100%{transform:none}}
-.acts .opt.right::after,.acts .opt.wrong::after{position:absolute;right:12px;top:50%;margin-top:-13px}
+.acts .opt.right::after,.acts .opt.wrong::after{margin:0}
+.acts .opt.right{color:var(--good)} .acts .opt.wrong{color:var(--bad)}
 /* Touch screens: no keyboard hints */
 @media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt{padding:0 12px}.kbd-only{display:none!important}}
 
@@ -899,7 +900,7 @@ const MATH={
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.2.0",at:"2026-11-19T11:15Z"};
+var BUILD={v:"2.2.1",at:"2026-11-19T11:17Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
