@@ -33,7 +33,8 @@
   --card:#fffdf8; --card-ink:#141b26; --card-red:#c4262d; --txt-red:#c4262d;
   --card-edge:0 0 0 1px rgba(18,28,44,.22),0 2px 0 rgba(18,28,44,.28),0 6px 14px rgba(18,28,44,.22);
   --shadow:0 1px 2px rgba(18,28,44,.06),0 6px 20px rgba(18,28,44,.08);
-  --cell-fold:#dde4ee; --cell-fold-ink:#67748a; --cell-call:#2e8b7f; --cell-t2:#d9a53a; --cell-t2-ink:#3a2a00; --cell-t3:#b8432f;
+  --cell-fold:#dde4ee; --cell-fold-ink:#67748a; --cell-call:#2e8b7f;
+  --cell-r1:#1d3a5e; --cell-r2:#4c72a6; --cell-r3:#a8bedb; --cell-r3-ink:#1d3a5e; --cell-c1:#2e8b7f; --cell-c2:#5fb2a6; --cell-c3:#b3dcd5; --cell-c3-ink:#134d45;
   --hud-green:#1f8a4c; --hud-red:#c2372f; --hud-blue:#2f72d6; --hud-purple:#8a4fd1; --hud-pink:#d1489a;
   --serif:"Fraunces",Georgia,"Times New Roman",serif;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -49,6 +50,7 @@
     --warn:#f0c46a; --warn-bg:#3a2d12; --txt-red:#ff8a8f;
     --card-edge:0 2px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.18); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
     --cell-fold:#19253a; --cell-fold-ink:#7d8ca5; --cell-call:#2a7d72;
+  --cell-r1:#3f78c2; --cell-r2:#2f5a92; --cell-r3:#24416a; --cell-r3-ink:#c9d8ee; --cell-c1:#2fa290; --cell-c2:#237a6d; --cell-c3:#1b5951; --cell-c3-ink:#c5ece6;
     --hud-green:#5fd38a; --hud-red:#ff7a6e; --hud-blue:#6aa6ff; --hud-purple:#b68cff; --hud-pink:#ff7cc3;
   }
 }
@@ -60,6 +62,7 @@
   --warn:#f0c46a; --warn-bg:#3a2d12; --txt-red:#ff8a8f;
   --card-edge:0 2px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.18); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
   --cell-fold:#19253a; --cell-fold-ink:#7d8ca5; --cell-call:#2a7d72;
+  --cell-r1:#3f78c2; --cell-r2:#2f5a92; --cell-r3:#24416a; --cell-r3-ink:#c9d8ee; --cell-c1:#2fa290; --cell-c2:#237a6d; --cell-c3:#1b5951; --cell-c3-ink:#c5ece6;
   --hud-green:#5fd38a; --hud-red:#ff7a6e; --hud-blue:#6aa6ff; --hud-purple:#b68cff; --hud-pink:#ff7cc3;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -338,17 +341,55 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 .acts .opt.right{color:var(--good)} .acts .opt.wrong{color:var(--bad)}
 /* Touch screens: no keyboard hints */
 @media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt,.acts.n3 .opt{padding:0 8px}.kbd-only{display:none!important}}
-@media (max-width:440px){#v-ranges>.seg button{font-size:12.5px;padding:0 4px}}
+@media (max-width:440px){#v-ranges>.seg button{font-size:12.5px;padding:0 9px}}
+/* Trainer: group row scrolls on phones; post-flop spots */
+.gseg{overflow-x:auto;scrollbar-width:none}
+.gseg::-webkit-scrollbar{display:none}
+.gseg button{flex:1 0 auto}
+.rvtag{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:999px;background:var(--gold);color:var(--gold-ink);font-size:10.5px;letter-spacing:.06em}
+.ptable.post{height:206px}
+.pboard{display:flex;gap:3px;margin-top:5px}
+.pboard .pc.mini{width:29px;height:40px;font-size:15px}
+.pfhud{text-align:center;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.45}
+.pfhud b{color:var(--ink)}
+.acts.pacts .opt{min-height:56px;font-size:16px}
+.acts .opt .ol{display:flex;flex-direction:column;align-items:center;line-height:1.15;white-space:nowrap}
+.acts .opt .ol small{font-size:12px;font-weight:600;opacity:.72;margin-top:2px;font-variant-numeric:tabular-nums}
+.why .verd{display:inline;font-size:inherit}
+.why .wnot,.why .wprin{display:block;margin-top:8px}
+.why .wnot b{display:inline;font-size:inherit;color:inherit}
+.why .wprin{color:var(--muted);font-style:italic}
+.chk li[data-v="-"]::before{content:"✗";position:absolute;left:0;top:2px;width:19px;height:19px;border-radius:50%;background:var(--bad-mark);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center}
+#rt-chart .chk{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:7px;font-size:14px}
+.pread{margin:4px 0 0;font-size:14.5px;line-height:1.5}
+.fmeter{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.fmeter div{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column}
+.fmeter span{font-size:12px;color:var(--muted)}
+.fmeter b{font-family:var(--serif);font-size:20px}
+.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:12px}
+.zones span{text-align:center;padding:7px 4px;border-radius:10px;border:1.5px solid var(--line);font-size:13px;font-weight:700;color:var(--muted)}
+.zones span small{display:block;font-size:11px;font-weight:500}
+.zones span.on{border-color:var(--felt-2);background:color-mix(in srgb,var(--felt-2) 14%,var(--surface));color:var(--ink)}
+.qflow{list-style:none;padding:0;margin:6px 0 0;display:grid;gap:6px;font-size:14px}
+.qflow li{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2)}
+.qflow li b{flex:1;font-weight:600}
+.qflow .yn{font-weight:800;font-size:12.5px;padding:2px 9px;border-radius:999px;color:#fff;background:var(--good-mark)}
+.qflow li.n .yn{background:var(--bad-mark)}
+.qflow li.end{border-color:var(--felt-2);background:color-mix(in srgb,var(--felt-2) 12%,var(--surface))}
+.qflow li.end b{font-weight:800}
+
 
 /* Range chart */
 .rg{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;user-select:none}
 .rc{font-size:8.5px;font-weight:600;text-align:center;padding:5px 0;border-radius:3px;line-height:1.1;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;font-variant-numeric:tabular-nums;background:var(--cell-fold);color:var(--cell-fold-ink)}
 @media (min-width:400px){.rc{font-size:9.5px}}
-.rc.in{background:var(--felt);color:var(--felt-ink)}
-.rc.t2{background:var(--cell-t2);color:var(--cell-t2-ink)}
-.rc.t3{background:var(--cell-t3);color:#fff}
-.rc.cl{background:var(--cell-call);color:#fff}
-.rc.dyn{background:repeating-linear-gradient(135deg,var(--cell-fold) 0 4px,color-mix(in srgb,var(--cell-t2) 50%,var(--cell-fold)) 4px 8px);color:var(--cell-fold-ink)}
+.rc.in{background:var(--cell-r1);color:#fff}
+.rc.in2{background:var(--cell-r2);color:#fff}
+.rc.in3{background:var(--cell-r3);color:var(--cell-r3-ink)}
+.rc.cl{background:var(--cell-c1);color:#fff}
+.rc.cl2{background:var(--cell-c2);color:#fff}
+.rc.cl3{background:var(--cell-c3);color:var(--cell-c3-ink)}
+.rc.dyn{background:repeating-linear-gradient(135deg,var(--cell-fold) 0 4px,var(--cell-r3) 4px 8px);color:var(--cell-fold-ink)}
 .rc.nr{background:transparent;color:color-mix(in srgb,var(--muted) 50%,transparent);box-shadow:inset 0 0 0 1px var(--line)}
 .rc.cur{outline:2.5px solid var(--gold);outline-offset:0;position:relative;z-index:1;box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;margin-top:10px;align-items:center;color:var(--muted)}
@@ -480,7 +521,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 <rect width="100" height="100" rx="22" fill="url(#gmFelt2)"/>
 <g ><path d="M50 59C42 54 31 53 18 55V81C31 79 42 80 50 85Z" fill="#fffdf8"/><path d="M50 59C58 54 69 53 82 55V81C69 79 58 80 50 85Z" fill="#ece2cc"/><path d="M25 62.6c6.5-.9 12.5-.4 18.5 1.9M25 68.6c6.5-.9 12.5-.4 18.5 1.9M25 74.6c6.5-.9 12.5-.4 18.5 1.9M75 62.6c-6.5-.9-12.5-.4-18.5 1.9M75 68.6c-6.5-.9-12.5-.4-18.5 1.9M75 74.6c-6.5-.9-12.5-.4-18.5 1.9" fill="none" stroke="#c9bb9a" stroke-width="1.7" stroke-linecap="round"/><circle cx="50" cy="32" r="18" fill="#c9973f"/><circle cx="50" cy="32" r="14.6" fill="none" stroke="#fffdf8" stroke-width="5" stroke-dasharray="5.73 5.73"/><circle cx="50" cy="32" r="10" fill="#b5852f"/><path d="M50 25.4c-3 3.3-6.1 5.5-6.1 8.3a3.1 3.1 0 0 0 5.3 2.2c-.2 1.6-.9 2.9-1.9 3.7h5.4c-1-.8-1.7-2.1-1.9-3.7a3.1 3.1 0 0 0 5.3-2.2c0-2.8-3.1-5-6.1-8.3z" fill="#fffdf8"/></g></svg><div>Grinder’s Manual<small>Study companion</small></div></div>
   <button data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/></svg>Course</button>
-  <button data-v="ranges"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.2h17M3.5 14.8h17M9.2 3.5v17M14.8 3.5v17"/></svg>Ranges</button>
+  <button data-v="ranges"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.2h17M3.5 14.8h17M9.2 3.5v17M14.8 3.5v17"/></svg>Trainer</button>
   <button data-v="math"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M18.5 5.5l-13 13"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></svg>Math</button>
   <button data-v="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-5"/></svg>Progress</button>
   <button data-v="settings" class="rail-set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Settings</button>
@@ -593,6 +634,11 @@ Object.assign(MODES,XMODES);
       m.opts=[['y',m.act],['f','Fold']];
       m.tiers=k.startsWith('open-')?[['y','in',m.act,m.set]]:callTiers(k,m);
     }
+    // One colour family per action in every chart: navy = raise (open, 3-bet, squeeze, 4-bet, shove), teal = call,
+    // grey = fold. A chart's second and third tiers of the same action get lighter shades.
+    const fam=key=>key==='f'?'f':/^call/i.test((m.opts.find(o=>o[0]===key)||['',''])[1])?'c':'r',used={r:0,c:0};
+    m.tiers=m.tiers.map(([a,c,l,hs])=>{const f=fam(a);if(f==='f')return [a,c==='dyn'?'dyn':'',l,hs];
+      const i=Math.min(used[f]++,2);return [a,(f==='r'?['in','in2','in3']:['cl','cl2','cl3'])[i],l,hs];});
     m.ans={};m.tiers.forEach(t=>t[3].forEach(h=>{if(!(h in m.ans))m.ans[h]=t[0];}));
     m.pool=m.pool?Object.keys(m.ans):null;
   }
@@ -631,7 +677,7 @@ blocks:[
 <tr><td>CO</td><td class="num">${'~'+pct(rangePct(RANGES.CO))}</td><td class="num">2.5x</td><td>Value, semi-steals, steals</td></tr>
 <tr><td>BU</td><td class="num">${'~'+pct(rangePct(RANGES.BU))}</td><td class="num">2x vs regs</td><td>Fold equity is huge, always in position</td></tr>
 <tr><td>SB</td><td class="num">${'~'+pct(rangePct(RANGES.SB))}</td><td class="num">2.5x</td><td>One player to get through, but you're OOP</td></tr></table></div>
-<p>Practise these in the <a href="#ranges/open-UTG">Range trainer</a>.</p>`],
+<p>Practise these in the <a href="#ranges/open-UTG">Trainer</a>.</p>`],
 ['Sizing adjustments',`<ul><li>Fishy tables: go to <b>4x</b> (or 5x on very loose tables) from early seats to punish loose calls.</li><li>Aggressive 3-bettors behind: shrink to <b>2.5x</b> UTG so folding to a 3-bet costs less.</li><li>CO with a Nit on the BU: treat the CO as a pseudo-button and open wide with BU sizing.</li><li>BU/CO vs Fish in the blinds: <b>3x</b> or bigger. You want a bigger pot against fit-or-fold or call-too-much players.</li><li>Don't size by hand strength (3x AJo, 4x KK) against aware regs; it's an obvious tell.</li></ul>`],
 ['Dynamic ranges',`<p>The book draws these adjustments as charts, now in the trainer: <a href="#ranges/open-UTG-fish">UTG fish hunting</a>, <a href="#ranges/open-HJ-fish">HJ</a> and <a href="#ranges/open-CO-fish">CO hunting</a>, <a href="#ranges/open-CO-nit">CO with a Nit on the BU</a>, and the defensive <a href="#ranges/open-HJ-def">HJ</a> and <a href="#ranges/open-CO-def">CO</a> ranges.</p><p>Widen when there's a <b>Fish</b> in the blinds (more implied odds, more value) or a <b>Nit</b> (more fold equity). Tighten when light <b>3-bettors</b> sit behind you: opening then folding to a 3-bet is expensive, and a tighter range is easier to defend.</p>`],
 ['Required fold equity (RFE)',`<p>How often a steal must win immediately to break even if you'd give up every time it fails:</p><p class="formula">RFE = Risk / (Risk + Potential Gain)</p><p>BU min-raise: risk 2, gain 1.5 (blinds) → 2/3.5 = <b>57%</b>. SB to 2.5x: risk 2 (your 0.5 is already in), gain 1.5 → also <b>57%</b>.</p><p>Fold equity vs two players multiplies: SB folds 76% × BB folds 83% = <b>63%</b> combined.</p>${KEYBOX('Rule of thumb','Because you also win post-flop when called, you can open a bit <i>below</i> RFE. On the BU, being within <b>5–10%</b> is usually fine with neutral factors. From the SB (out of position) use <b>3–7%</b>.')}`],
@@ -685,7 +731,7 @@ blocks:[
 ['Sizing: small, medium or large',`<p>Small c-bets are often best: RFE is risk ÷ (risk + pot), so a smaller bet needs to work less often. Two forces push the size:</p><ul><li><b>Wetter boards → bigger.</b> You want value in early before scare cards kill your action, your c-betting range on wet boards holds less air (you check more of it) and more strong hands, and bigger bets charge the draws Villain calls with.</li><li><b>Wide c-bet ranges → smaller.</b> On dry boards you bet lots of air, and both players usually have little, so risk the minimum.</li></ul><p>Size for the bulk of your c-betting range.</p><div class="tbl"><table><tr><th>Zone</th><th class="num">Size</th><th>Use on</th></tr><tr><td>Small</td><td class="num">½–⅗ pot</td><td>Dry flops, weak or wide ranges (BU opens)</td></tr><tr><td>Medium</td><td class="num">⅗–⅔ pot</td><td>In between</td></tr><tr><td>Large</td><td class="num">⅔–1× pot</td><td>Wet flops, strong ranges (UTG opens)</td></tr></table></div><p><b>Examples.</b> BU opens 2bb, BB calls, flop ${FL('K♣ 7♦ 2♥')} (pot 4.5bb): you c-bet almost your whole wide range, so ½ pot, 2.25bb. UTG opens 3bb, BU calls, flop ${FL('K♠ J♥ 6♥')} (pot 7.5bb): your range is strong here (AA, KK, JJ, AK, KQ, KJs), so between medium and large, about 5bb.</p>`],
 ['Balanced vs unbalanced sizing',`<p><b>Against Regs</b>, use one size for your whole range on a given board: top pair, sets and air all bet the same, or an aware player reads your hand from the size.</p><p><b>Against a fit-or-fold Fish</b>, break the balance on purpose. He calls when he connects and folds when he misses, almost whatever the size, and he isn't watching your patterns. So bet <b>big with value</b> to build the pot (e.g. 6.5bb with a set) and <b>small with air</b> to lower your RFE and lose little when he has it (e.g. 3bb into the same pot).</p>`],
 ['Is it the best line?',`<p>To check a c-bet is +EV, find the RFE for your size and compare it with the folds you expect:</p><p class="formula">½ pot: risk 4.75 to win 9.5 → 4.75 / (4.75 + 9.5) = 33%</p><div class="tbl"><table><tr><th>Bet size</th><th class="num">RFE</th></tr><tr><td>¼ pot</td><td class="num">20%</td></tr><tr><td>⅓ pot</td><td class="num">25%</td></tr><tr><td>½ pot</td><td class="num">33%</td></tr><tr><td>⅔ pot</td><td class="num">40%</td></tr><tr><td>Pot</td><td class="num">50%</td></tr><tr><td>1.5× pot</td><td class="num">60%</td></tr><tr><td>2× pot</td><td class="num">66%</td></tr></table></div><p>Memorise at least ½ pot (33%) and pot (50%). RFE ignores your equity, so lower it for outs: with 9 outs and some implied odds, a c-bet can be +EV with no folds at all.</p>${KEYBOX('+EV is not enough','The goal is the <i>most</i> +EV line. Against an Aggro Fish, a hand with stable SDV wins more by check/calling, because he bets wider than he calls: checking lets him bluff into you. Against a passive player, betting a vulnerable hand beats checking because it protects it and stops him taking the pot on the turn.')}`],
-['Three more spots',`<ol><li><b>Multiway, wet board, an Aggro Fish in the pot, 4 outs.</b> Three bad factors, and the equity can't redeem them: fold equity is low now and later. Check, realise your few outs for free, and fold to a bet.</li><li><b>Heads-up in position vs a passive fit-or-fold player, bone-dry board, an underpair with 2 outs.</b> Everything is good except equity. RFE at ½ pot is 33%, and this player folds far more than that on this board. Bet small: it also protects your hand and stops him stabbing the turn.</li><li><b>Dry board vs an Aggro Fish, your weak ace has stable SDV.</b> A c-bet would be +EV, but check/calling is better: he bets wider than he calls, and few turns hurt you. Plan to call down, and play your other calling hands the same way.</li></ol><p>Review your own c-bet spots from your database the same way: frequency makes this the best use of study time early on.</p>`],
+['Three more spots',`<ol><li><b>Multiway, wet board, an Aggro Fish in the pot, 4 outs.</b> Three bad factors, and the equity can't redeem them: fold equity is low now and later. Check, realise your few outs for free, and fold to a bet.</li><li><b>Heads-up in position vs a passive fit-or-fold player, bone-dry board, an underpair with 2 outs.</b> Everything is good except equity. RFE at ½ pot is 33%, and this player folds far more than that on this board. Bet small: it also protects your hand and stops him stabbing the turn.</li><li><b>Dry board vs an Aggro Fish, your weak ace has stable SDV.</b> A c-bet would be +EV, but check/calling is better: he bets wider than he calls, and few turns hurt you. Plan to call down, and play your other calling hands the same way.</li></ol><p>Review your own c-bet spots from your database the same way: frequency makes this the best use of study time early on. Then drill endless dealt spots that use these factors and the sizing guide: <a href="#ranges/mix-C-bet">C-bet spots</a>.</p>`],
 ],
 quiz:[
 ['Which board type is the best for a light c-bet with no equity?',['Type 1, bone dry like K♣7♦2♥','Type 3, semi-wet like J♠8♠6♦','Type 4, wet like 9♥8♥6♦','Type 5, soaking like J♣9♣7♣'],0,'Bone-dry boards miss almost every range, so fold equity is high even with air.'],
@@ -717,7 +763,7 @@ blocks:[
 ['River lines out of position',`<p>With a once-strong hand that is now marginal on the river out of position, you have three lines:</p><ul><li><b>Bet/fold</b> (thin value): when Villain’s calling range is weaker than the range he would bet if you checked, and you are ahead often enough when called.</li><li><b>Check/call</b> (bluff-catch): when his betting range after your check is weaker than his calling range, and you have the required equity to call.</li><li><b>Check/fold</b>: when the hands that call a bet beat you and the hands that bet after a check beat you too. You can still win when he checks back worse.</li></ul>`],
 ['Sizing value bets',`<p><b>Value c-bets.</b> Against Regs, keep the balanced sizes from Ch. 4. Against Fish, go bigger with value: they call with any piece of the board whatever the size, so bigger bets build the pot faster, while your light c-bets stay small.</p><p><b>Odd stacks.</b> With short or unusual effective stacks, count how many bets get the money in and size each street so you don't leave an awkward bet for later.</p>`],
 ['Elasticity',`<p>A range is <b>elastic</b> when it folds more as the bet grows, and <b>inelastic</b> when it calls about as often whatever the size.</p><figure class="elast" role="img" aria-label="Calls by bet size: an elastic range falls steeply, an inelastic range stays flat"><svg viewBox="0 0 220 110"><line x1="30" y1="90" x2="210" y2="90" class="eax"/><line x1="30" y1="10" x2="30" y2="90" class="eax"/><path d="M30 18 C80 22 120 60 205 84" class="ce"/><path d="M30 26 L205 34" class="ci"/><text x="120" y="104" text-anchor="middle">bet size →</text><text x="12" y="52" transform="rotate(-90 12 52)" text-anchor="middle">calls</text></svg><figcaption><span><i class="sw-ci"></i>Inelastic: calls about as often</span><span><i class="sw-ce"></i>Elastic: folds more to bigger bets</span></figcaption></figure><ul><li><b>Inelastic</b> (most Fish: top pair, draws, even second pair): size <b>up</b> for value, size <b>down</b> with bluffs. “I don't want to blow him off his hand” is the wrong worry.</li><li><b>Elastic</b> (a solid Reg with a wide range of weak hands, e.g. blind vs blind): size <b>smaller</b> for thin value so his worse hands still call.</li></ul><p>Example from the book: AA against a loose Fish, big bets on flop and turn. On a river that pairs the board, his top pairs became full houses that never fold, and his missed draws fold to any size. His range is inelastic, so shove (75bb). With air in the same spot, a small bluff would fold the draws just as well.</p>`],
-['Milking syndrome',`<p>Betting tiny for fear of a fold is a costly habit. Compare the EV of sizes:</p><p class="formula">EV ≈ bet × how often it’s called</p><p>A Nit with full houses calls a 7bb river bet every time: 7 × 100% = 7bb. He folds 60% to a 20bb bet: 20 × 40% = 8bb. The bigger bet wins more even though he folds more often. Run this check on your own river sizes; usually bigger is better against inelastic ranges.</p>`],
+['Milking syndrome',`<p>Betting tiny for fear of a fold is a costly habit. Compare the EV of sizes:</p><p class="formula">EV ≈ bet × how often it’s called</p><p>A Nit with full houses calls a 7bb river bet every time: 7 × 100% = 7bb. He folds 60% to a 20bb bet: 20 × 40% = 8bb. The bigger bet wins more even though he folds more often. Run this check on your own river sizes; usually bigger is better against inelastic ranges.</p><p>Drill the three questions and sizing on dealt turns and rivers: <a href="#ranges/mix-Value%20bet">Value bet spots</a>.</p>`],
 ],
 quiz:[
 ['Which is the definition of a value bet?',['Betting when you’re ahead of Villain’s whole range','Betting when you’re ahead of the range that calls','Betting a strong absolute hand','Betting to protect'],1,'You must be ahead of the hands that continue.'],
@@ -1057,14 +1103,431 @@ const MATH={
   ];const c=pick(qs);const opts=[...c[2]].sort(()=>Math.random()-.5);return {q:c[0],opts,a:opts.indexOf(c[1]),why:{
     '6':'Choose 2 suits from 4.','4':'One per suit.','12':'16 total minus 4 suited.','16':'4 × 4.','3':'Choose 2 of the 3 remaining.','1':'Only one combination of the last two cards.','9':'3 remaining of one rank × 3 of the other.','1326':'52 × 51 / 2.','0':'You hold the card they would need.'}[c[1]]+(c[0].includes('AK combos')&&c[1]==='12'?' 3 aces × 4 kings.':'')};}},
 };
+/* ---------- post-flop spots (Ch. 4 c-bets, Ch. 5 value bets), dealt by code ----------
+   Each spot is generated: seats, the opponent's type and HUD stats, your hand (drawn from your opening range) and the
+   board. pfRead reads your hand against the board, pfTexture rates the flop 1-5 (Ch. 4's texture types), pfOuts counts
+   outs the way Ch. 4's table does. cbGrade and vbGrade apply the book's factors and give one right answer, the reasons,
+   and a why-not line for every other option. Spots are plain JSON. */
+const PF_R='23456789TJQKA';
+const pfCap=s=>s[0].toUpperCase()+s.slice(1);
+const pfA=w=>(/^[AEIOU]/i.test(w)?'an ':'a ')+w;
+const pfSeat=s=>s==='UTG'?'UTG':s==='SB'?'from the SB':'on the '+s;
+const pfV=c=>PF_R.indexOf(c[0])+2;
+const pfRand=n=>Math.floor(Math.random()*n);
+const pfPick=a=>a[pfRand(a.length)];
+const pfIn=([a,b])=>a+pfRand(b-a+1);
+const pfClamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const pfRV=v=>v===14?'A':v===13?'K':v===12?'Q':v===11?'J':v===10?'T':String(v);
+const PF_NAME={14:'ace',13:'king',12:'queen',11:'jack',10:'ten',9:'nine',8:'eight',7:'seven',6:'six',5:'five',4:'four',3:'three',2:'two'};
+const pfCard=c=>(c[0]==='T'?'10':c[0])+{s:'♠',h:'♥',d:'♦',c:'♣'}[c[1]];
+const pfCards=a=>a.map(pfCard).join(' ');
+function pfDeck(){const d=[];for(const r of PF_R)for(const s of 'shdc')d.push(r+s);return d;}
+function pfCmp(a,b){for(let i=0;i<Math.max(a.length,b.length);i++){const d=(a[i]||0)-(b[i]||0);if(d)return d;}return 0;}
+function pfStraight(vals){const u=[...new Set(vals)].sort((x,y)=>y-x);if(u[0]===14)u.push(1);for(let i=0;i+4<u.length;i++)if(u[i]-u[i+4]===4)return u[i];return 0;}
+/* Best five-card score of 5-7 cards: [category, tiebreaks...], 8 straight flush ... 0 high card. */
+function pfScore(cs){
+  const vs=cs.map(pfV).sort((a,b)=>b-a),suits={};
+  cs.forEach(c=>(suits[c[1]]=suits[c[1]]||[]).push(pfV(c)));
+  const fl=Object.values(suits).find(a=>a.length>=5);
+  if(fl){const h=pfStraight(fl);if(h)return [8,h];}
+  const cnt={};vs.forEach(v=>cnt[v]=(cnt[v]||0)+1);
+  const g=Object.keys(cnt).map(v=>[cnt[v],+v]).sort((a,b)=>b[0]-a[0]||b[1]-a[1]);
+  const kick=(ex,n)=>vs.filter(v=>!ex.includes(v)).slice(0,n);
+  if(g[0][0]===4)return [7,g[0][1],...kick([g[0][1]],1)];
+  if(g[0][0]===3&&g[1]&&g[1][0]>=2)return [6,g[0][1],g[1][1]];
+  if(fl)return [5,...fl.sort((a,b)=>b-a).slice(0,5)];
+  const st=pfStraight(vs);if(st)return [4,st];
+  if(g[0][0]===3)return [3,g[0][1],...kick([g[0][1]],2)];
+  if(g[0][0]===2&&g[1]&&g[1][0]===2)return [2,g[0][1],g[1][1],...kick([g[0][1],g[1][1]],1)];
+  if(g[0][0]===2)return [1,g[0][1],...kick([g[0][1]],3)];
+  return [0,...vs.slice(0,5)];
+}
+/* Flop texture, Ch. 4: 1 bone dry, 2 dry, 3 semi-wet, 4 wet, 5 soaking. Points for suits (two-tone 1, monotone 3),
+   for each pair of ranks close enough to share a straight (gap 3 or less 1, gap 4 half, ace-low half), for three cards
+   inside one straight window (1, and 1 more if they are within three ranks), minus 1 for a paired board. */
+function pfWet(flop){
+  const v=flop.map(pfV),u=[...new Set(v)].sort((a,b)=>b-a),ns=new Set(flop.map(c=>c[1])).size;
+  let w=ns===1?3:ns===2?1:0;
+  if(u.length<3)w-=1;
+  for(let i=0;i<u.length;i++)for(let j=i+1;j<u.length;j++){
+    const hi=Math.abs(u[i]-u[j]),lo=u[i]===14?Math.abs(1-u[j]):99,d=Math.min(hi,lo),wheel=lo<hi;
+    if(d<=3)w+=wheel?.5:1;else if(d===4)w+=.5;
+  }
+  if(u.length===3){
+    const reps=[u,u.map(x=>x===14?1:x)];
+    const span=Math.min(...reps.map(r=>Math.max(...r)-Math.min(...r)));
+    if(span<=4)w+=1;if(span<=2)w+=1;
+  }
+  return w;
+}
+function pfTexture(flop){const w=pfWet(flop);return w<=.5?1:w<=2?2:w<=4?3:w<=5.5?4:5;}
+const TEX_NAME=['','bone dry','dry','semi-wet','wet','soaking'];
+/* Your hand against the board. cls: strong (two pair or better using your cards), over (overpair), top (top pair),
+   mid (second pair, or a pocket pair between the top two cards), low (a lower pair), under (pocket pair below the
+   board), none (no pair). */
+function pfRead(hole,board){
+  const all=hole.concat(board),sc=pfScore(all),h=hole.map(pfV).sort((a,b)=>b-a),bv=board.map(pfV);
+  const br=[...new Set(bv)].sort((a,b)=>b-a),pp=h[0]===h[1],inB=v=>bv.includes(v);
+  const bs=board.length>=5?pfScore(board):null,playsBoard=bs&&pfCmp(sc,bs)===0;
+  const out={sc,cls:'none',name:'',kick:0};
+  const CAT=['','','two pair','three of a kind','a straight','a flush','a full house','four of a kind','a straight flush'];
+  if(playsBoard){out.cls='board';out.name='the board';return out;}
+  if(sc[0]>=4){out.cls='strong';out.name=CAT[sc[0]];
+    if(sc[0]===5){const fs=Object.entries(all.reduce((o,c)=>(o[c[1]]=(o[c[1]]||0)+1,o),{})).find(x=>x[1]>=5)[0];
+      if(hole.some(c=>c[1]===fs&&c[0]==='A'))out.name='the nut flush';}
+    return out;}
+  if(sc[0]===3){
+    if(pp&&inB(h[0])){out.cls='strong';out.name='a set of '+PF_NAME[h[0]]+'s';out.set=h[0];return out;}
+    const t=h.find(x=>bv.filter(y=>y===x).length===2);
+    if(t){out.cls='strong';out.name='trips';return out;}
+    out.cls='board';return out;
+  }
+  if(sc[0]===2&&!pp&&h.every(inB)){out.cls='strong';out.name='two pair';return out;}
+  if(sc[0]===2&&!pp&&!h.some(inB)){out.cls='board';return out;}
+  if(pp){
+    if(h[0]>br[0]){out.cls='over';out.name='an overpair';}
+    else if(h[0]>br[1]){out.cls='mid';out.name='a pocket pair below the top card';}
+    else if(h[0]>br[br.length-1]){out.cls='low';out.name='a pocket pair below two board cards';}
+    else{out.cls='under';out.name='an underpair';}
+    return out;
+  }
+  const m=h.filter(inB).sort((a,b)=>b-a)[0];
+  if(m){const k=h.find(x=>x!==m)||m;out.kick=k;
+    if(m===br[0]){out.cls='top';out.name='top pair, '+(k>=12?'good':'weak')+' kicker';out.good=k>=12;}
+    else if(m===br[1]){out.cls='mid';out.name='second pair';}
+    else{out.cls='low';out.name=(m===br[br.length-1]?'bottom':'third')+' pair';}
+    return out;
+  }
+  out.name=h[0]===14?'ace high':'no pair';return out;
+}
+/* Outs when called, the Ch. 4 way: flush draw 9, open-ender 8, gutshot 4 (one less each with a flush draw),
+   3 per overcard with no pair, 5 for an unpaired pair to two pair or trips, 2 for a pocket pair to a set. */
+const PF_EQ=[0,4,8,12,16,20,24,27,31,35,38,42,45,48,51,54,57,59,62,64,66,68];
+function pfOuts(hole,board,rd){
+  const all=hole.concat(board),parts=[];let outs=0;
+  if(rd.cls==='strong'||rd.cls==='board')return {outs:0,parts,eq:0,bd:[]};
+  const cnt={};all.forEach(c=>cnt[c[1]]=(cnt[c[1]]||0)+1);
+  const fd=Object.keys(cnt).find(s=>cnt[s]===4&&hole.some(c=>c[1]===s));
+  if(fd&&board.length<5){outs+=9;parts.push(hole.some(c=>c[1]===fd&&c[0]==='A')?'a nut flush draw (9)':'a flush draw (9)');}
+  const vs=all.map(pfV),bvs=board.map(pfV);let n=0;
+  if(board.length<5)for(let r=2;r<=14;r++){if(vs.includes(r))continue;if(!pfStraight(vs.concat(r)))continue;if(board.length===4&&pfStraight(bvs.concat(r)))continue;n++;}
+  if(n>=2){outs+=fd?6:8;parts.push(fd?'an open-ended straight draw (6 more)':'an open-ended straight draw (8)');}
+  else if(n===1){outs+=fd?3:4;parts.push(fd?'a gutshot (3 more)':'a gutshot (4)');}
+  const top=Math.max(...bvs),hv=hole.map(pfV);
+  if(rd.cls==='none'){const oc=hv.filter(v=>v>top).length;if(oc){outs+=3*oc;parts.push(oc===2?'two overcards (6)':'an overcard (3)');}}
+  const pp=hv[0]===hv[1];
+  if(!pp&&(rd.cls==='mid'||rd.cls==='low')){outs+=5;parts.push('5 outs to two pair or trips');}
+  if(pp&&(rd.cls==='mid'||rd.cls==='low'||rd.cls==='under')){outs+=2;parts.push('2 outs to a set');}
+  if(board.length>=5)outs=0;
+  const eq=board.length===3?PF_EQ[Math.min(outs,PF_EQ.length-1)]:board.length===4?Math.round(outs*100/46):0;
+  // backdoors (flop only): three to a flush with your card, or three to a straight with your card
+  const bd=[];
+  if(board.length===3&&!fd){const s=Object.keys(cnt).find(x=>cnt[x]===3&&hole.some(c=>c[1]===x));if(s)bd.push('backdoor flush draw');}
+  if(board.length===3&&!n){
+    const rs=[...new Set(vs.concat(vs.includes(14)?[1]:[]))];
+    const hr=hv.concat(hv.includes(14)?[1]:[]);
+    for(let lo=1;lo<=10;lo++){const win=rs.filter(x=>x>=lo&&x<=lo+4);if(win.length>=3&&win.some(x=>hr.includes(x))){bd.push('backdoor straight draw');break;}}
+  }
+  return {outs,parts,eq,bd};
+}
+/* Opponent types (Ch. 3's Fish types, Nits and Regs) with HUD ranges. fcb = Fold to F Cbet, rcb = Raise F Cbet. */
+const PF_TYPES={
+  reg:{name:'Reg',short:'Reg',vp:[19,25],pf:[15,21],fcb:[38,60],wtsd:[24,28],aware:1},
+  nit:{name:'Nit',short:'Nit',vp:[10,14],pf:[8,11],fcb:[50,62],wtsd:[22,26],aware:1,tight:1},
+  ff:{name:'Fit-or-fold Fish',short:'Fish',vp:[34,45],pf:[5,11],fcb:[58,72],wtsd:[27,31],fish:1},
+  st:{name:'Station Fish',short:'Station',vp:[55,90],pf:[3,15],fcb:[25,40],wtsd:[36,45],fish:1,calls:1},
+  ag:{name:'Aggro Fish',short:'Aggro',vp:[44,57],pf:[23,38],fcb:[28,40],rcb:[18,30],wtsd:[30,36],fish:1,aggro:1},
+};
+const PF_OPEN={UTG:3,HJ:3,CO:2.5,BU:2,SB:2.5};
+const PF_STR={UTG:2,HJ:2,CO:1,BU:0,SB:1};   // how strong the opening range is, for c-bet sizing
+const PF_ORDER=['SB','BB','UTG','HJ','CO','BU'];   // post-flop order of action
+const pfAfter=(a,b)=>PF_ORDER.indexOf(a)>PF_ORDER.indexOf(b);
+const SIZES={s:[.5,'½'],m:[2/3,'⅔'],l:[1,'pot']};
+const pfRFE=f=>f/(1+f);
+const bbr=x=>{const r=Math.round(x*2)/2;return (r%1?r.toFixed(1):String(r))+'bb';};
+function pfVillain(type,seat){const t=PF_TYPES[type],v={seat,type,vp:pfIn(t.vp),fcb:pfIn(t.fcb),wtsd:pfIn(t.wtsd)};
+  v.pf=Math.min(pfIn(t.pf),v.vp-2);if(t.rcb)v.rcb=pfIn(t.rcb);return v;}
+const pfHud=v=>`${PF_TYPES[v.type].name} ${v.vp}/${v.pf}`;
+function pfHandFrom(range,deck){
+  let tot=0;const w=range.map(x=>tot+=combos(x));const r=Math.random()*tot,h=range[w.findIndex(x=>x>r)];
+  const su=['s','h','d','c'];let a=pfPick(su),b;
+  if(h.length===2||h[2]==='o'){do b=pfPick(su);while(b===a);}else b=a;
+  const c1=h[0]+a,c2=h[1]+b;if(!deck.includes(c1)||!deck.includes(c2))return null;return [c1,c2];
+}
+function pfDraw(deck,n){const out=[];for(let i=0;i<n;i++){const j=pfRand(deck.length);out.push(deck.splice(j,1)[0]);}return out;}
+/* Sizing for a c-bet. Against aware players one size for the whole range: Figure 22's zones, drier boards and weaker
+   ranges smaller. Against Fish who aren't watching, big with value and small with light c-bets (Ch. 4). */
+function cbSize(sp,value){
+  const fishOnly=sp.vill.every(v=>!PF_TYPES[v.type].aware);
+  if(fishOnly)return {k:value?'l':'s',why:value?'Every opponent here is a Fish who isn’t watching your sizes, so bet big with value to build the pot: pot.':'Every opponent here is a Fish who isn’t watching your sizes, so keep light c-bets small: ½ pot needs the fewest folds and loses least when he has it.',fish:1};
+  const z=(sp.tex-1)+PF_STR[sp.seat],k=z<=1?'s':z<=4?'m':'l';
+  const rs=PF_STR[sp.seat]===2?'a strong '+sp.seat+' range':PF_STR[sp.seat]===0?'a wide BU range':'a medium '+sp.seat+' range';
+  return {k,z,why:`Against ${sp.vill.length>1?'aware players':'an aware player'} use one size for your whole range on this board. A ${TEX_NAME[sp.tex]} flop and ${rs} put it in the ${{s:'small (½–⅗ pot)',m:'medium (⅗–⅔ pot)',l:'large (⅔–1× pot)'}[k]} zone of the sizing guide: ${{s:'½ pot',m:'⅔ pot',l:'pot'}[k]}.`};
+}
+/* How often each opponent folds to a flop c-bet: his Fold to F Cbet, moved by texture, by how his range meets the
+   board, by position, and by how often he raises c-bets. Rough estimates, as at the table. */
+function cbFold(v,sp){
+  const t=PF_TYPES[v.type],top=Math.max(...sp.board.map(pfV)),bw=sp.board.filter(c=>pfV(c)>=10).length,notes=[];
+  let f=v.fcb;
+  const tx={1:15,2:7,3:0,4:-10,5:-20}[sp.tex];f+=tx;
+  if(tx)notes.push(`${tx>0?'+'+tx:'−'+(-tx)} for a ${TEX_NAME[sp.tex]} board`);
+  if(t.fish&&top<=9){f+=8;notes.push('+8: his wide range misses low boards');}
+  if(t.tight&&bw>=2&&top<14){f-=15;notes.push('−15: a Nit’s range hits high, connected boards');}
+  const ip=pfAfter(sp.seat,v.seat);
+  f+=ip?5:-5;notes.push(ip?'+5: he’s out of position':'−5: he has position');
+  if(v.rcb){f-=v.rcb;notes.push(`−${v.rcb}: he raises c-bets ${v.rcb}%`);}
+  return {f:pfClamp(Math.round(f),5,92),notes};
+}
+const PF_OPTS=[['x','Check'],['s','Bet ½'],['m','Bet ⅔'],['l','Bet pot']];
+function cbGrade(sp){
+  const rd=pfRead(sp.hole,sp.board),od=pfOuts(sp.hole,sp.board,rd),hu=sp.vill.length===1;
+  const sdv=rd.cls==='strong'||rd.cls==='over'||rd.cls==='top'?'value':rd.cls==='mid'?(sp.tex<=2?'stable':'vuln'):rd.cls==='none'?'none':'vuln';
+  const folds=sp.vill.map(v=>cbFold(v,sp)),fall=folds.reduce((a,x)=>a*x.f/100,1);
+  const aggro=sp.vill.some(v=>PF_TYPES[v.type].aggro),stn=sp.vill.some(v=>PF_TYPES[v.type].calls);
+  const top=Math.max(...sp.board.map(pfV)),hasDraw=od.parts.some(p=>/draw|gutshot/.test(p));
+  const pros=od.bd.length&&!hasDraw?5:(top>=13&&!od.bd.length&&!hasDraw?-5:0);
+  const r={rd,od,sdv,folds,fall:Math.round(fall*100),pros,sp};
+  const sz=cbSize(sp,sdv==='value');r.sz=sz;
+  if(sdv==='value'){r.ans=sz.k;r.kind='value';return r;}
+  if(sdv==='stable'){r.ans='x';r.kind='stable';return r;}
+  const f=SIZES[sz.k][0],rfe=Math.round(pfRFE(f)*100),need=Math.max(0,rfe-od.eq);
+  r.rfe=rfe;r.need=need;r.margin=r.fall-need+pros;
+  if(aggro&&od.eq<30){r.ans='x';r.kind='aggro';return r;}
+  if(r.margin>=8){r.ans=sz.k;r.kind='light';}
+  else if(r.margin<=-8){r.ans='x';r.kind='nofe';}
+  else r.close=1;
+  return r;
+}
+/* Ch. 4's seven factors as a checklist for the read panel: [good?, text]. */
+function cbFactors(g){
+  const sp=g.sp,v=sp.vill,fs=v.map(x=>x.fcb);
+  return [
+    [sp.tex<=2,`Texture: ${TEX_NAME[sp.tex]} (type ${sp.tex})`],
+    [g.od.eq>=25,g.od.parts.length?`Equity when called: ${g.od.outs} outs, about ${g.od.eq}%`:'Equity when called: little or none'],
+    [Math.min(...fs)>=55&&!v.some(x=>x.rcb),v.map(x=>`${PF_TYPES[x.type].name} folds to c-bets ${x.fcb}%${x.rcb?`, raises ${x.rcb}%`:''}`).join('; ')],
+    [g.sdv==='none'||g.sdv==='vuln'||g.sdv==='value',{none:'SDV: none, so checking gives up',vuln:'SDV: vulnerable, wants protection',stable:'SDV: stable, no need to protect it',value:'Value: worse hands call'}[g.sdv]],
+    [v.length===1,v.length===1?'Heads-up':`${v.length+1}-way: every player must fold`],
+    [g.pros>=0,g.od.bd.length?`Turn prospects: ${g.od.bd.join(', ')}`:g.pros<0?'Turn prospects: poor (high board, no backdoors)':'Turn prospects: average'],
+    [v.every(x=>pfAfter(sp.seat,x.seat)),v.every(x=>pfAfter(sp.seat,x.seat))?'In position':'Out of position'],
+  ];
+}
+/* Builds a c-bet spot for a mode: cb-ip, cb-oop, cb-mw. */
+const CB_SEATS={
+  'cb-ip':()=>{const s=pfPick(['UTG','HJ','CO','BU','BU','CO']);return [s,[s==='BU'&&Math.random()<.3?'SB':'BB']];},
+  'cb-oop':()=>{if(Math.random()<.25)return ['SB',['BB']];const s=pfPick(['UTG','HJ','CO']);const later=['HJ','CO','BU'].filter(x=>pfAfter(x,s));return [s,[pfPick(later)]];},
+  'cb-mw':()=>{const s=pfPick(['UTG','HJ','CO']);const later=['HJ','CO','BU'].filter(x=>pfAfter(x,s));return [s,[pfPick(later),'BB']];},
+};
+function cbGen(mode){
+  for(let tries=0;tries<400;tries++){
+    const [seat,vs]=CB_SEATS[mode](),types=vs.map(()=>pfPick(['reg','reg','nit','ff','ff','st','ag']));
+    const want=pfPick(['value','value','stable','vuln','none','none','none']);
+    const vill=vs.map((s,i)=>pfVillain(types[i],s));
+    const open=seat==='BU'&&vill.some(v=>PF_TYPES[v.type].fish)?2.5:PF_OPEN[seat];
+    let pot=open*(1+vill.length);if(seat!=='SB'&&!vs.includes('SB'))pot+=.5;if(!vs.includes('BB'))pot+=1;
+    for(let k=0;k<40;k++){
+      const deck=pfDeck(),hole=pfHandFrom(RANGES[seat],deck);if(!hole)continue;
+      hole.forEach(c=>deck.splice(deck.indexOf(c),1));
+      const board=pfDraw(deck,3).sort((a,b)=>pfV(b)-pfV(a));
+      const sp={mode,kind:'cb',seat,vill,open,pot,hole,board,tex:pfTexture(board)};
+      const g=cbGrade(sp);if(g.close||g.rd.cls==='board')continue;
+      if(g.sdv!==want&&k<39)continue;
+      return cbBuild(sp,g);
+    }
+  }
+  return null;
+}
+function cbBuild(sp,g){
+  const opts=PF_OPTS.map(([k,t])=>k==='x'?[k,t]:[k,t,bbr(sp.pot*SIZES[k][0])]);
+  const before=sp.vill.filter(v=>pfAfter(sp.seat,v.seat));   // they act first and check
+  const callers=sp.vill.map(v=>v.seat==='BB'?'the BB calls':`${v.seat} calls`);
+  const hud=sp.vill.map(v=>`<b>${v.seat}</b>: ${pfHud(v)}, folds to c-bets ${v.fcb}%${v.rcb?`, raises c-bets ${v.rcb}%`:''}`).join('<br>');
+  const info=`You open ${bbr(sp.open)} ${pfSeat(sp.seat)}, ${callers.join(' and ')}. Flop, ${bbr(sp.pot)} in the pot: ${before.length?before.map(v=>v.seat).join(' and ')+' check'+(before.length>1?'':'s')+' to you':'you act first'}.`;
+  const did={};sp.vill.forEach(v=>did[v.seat]=pfAfter(sp.seat,v.seat)?'Check':PF_TYPES[v.type].short);
+  const sub={};sp.vill.forEach(v=>sub[v.seat]=PF_TYPES[v.type].short);
+  // explanation
+  const rd=g.rd,od=g.od,sz=g.sz,ans=g.ans;
+  const hand=`${pfCards(sp.hole)}: ${rd.name}${od.parts.length?', with '+od.parts.join(' and ')+`, about ${od.eq}% equity when called`:''}.`;
+  const foldTxt=sp.vill.length===1?`He folds to c-bets ${sp.vill[0].fcb}%; here expect about ${g.folds[0].f}% (${g.folds[0].notes.join('; ')}).`
+    :`Both must fold: ${g.folds.map((f,i)=>`${sp.vill[i].seat} about ${f.f}%`).join(', ')}, together about ${g.fall}%.`;
+  let why='',principle='';
+  if(g.kind==='value'){why=`${hand} That’s a value hand: worse hands call, so bet and build the pot. ${sz.why}`;principle='Value hands bet; the size depends on who is watching.';}
+  else if(g.kind==='stable'){why=`${hand} On a ${TEX_NAME[sp.tex]} board that’s stable showdown value: few turns hurt it, and his worse hands mostly fold to a bet. Check: keep the pot small, value-bet later if needed, and let him bluff.`;principle='Stable SDV checks; only vulnerable SDV wants protection (Ch. 4, factor 4).';}
+  else if(g.kind==='aggro'){why=`${hand} An Aggro Fish raises c-bets with any piece and some air, so a light c-bet has little fold equity, and your equity is too thin to call his raise. Check, take the free card, and wait for a hand.`;principle='Don’t fight insane aggression with poor equity.';}
+  else {
+    const fe=`${foldTxt} A ${{s:'½',m:'⅔',l:'pot'}[sz.k]}-pot c-bet needs ${g.rfe}%${od.eq?`, less your ${od.eq}% equity: about ${g.need}%`:''}.${g.pros>0?' Backdoors add turn prospects.':g.pros<0?' Few turns help you on this high board.':''}`;
+    if(g.kind==='light'){why=`${hand} ${g.sdv==='vuln'?'Vulnerable showdown value: a bet protects it and folds out his equity. ':''}${fe} He folds more than you need, so c-bet. ${sz.why}`;principle='C-bet when expected folds beat the folds you need (RFE minus your equity).';}
+    else {why=`${hand} ${fe} That’s not enough folds${sp.vill.length>1?' with more than one player to get through':''}, so check${g.sdv==='vuln'?' and keep the pot small':' and give up if he bets'}.`;principle='Without fold equity or equity, a light c-bet just burns money.';}
+  }
+  const notes={};
+  opts.forEach(([k])=>{if(k===ans)return;
+    if(ans==='x')notes[k]=g.kind==='stable'?'Betting turns a hand that wins at showdown into a bluff: his worse hands fold and his better ones call.':g.kind==='aggro'?'He raises too often for a light c-bet, and you can’t continue.':'Not enough folds for this bet to show a profit.';
+    else if(k==='x')notes[k]=g.kind==='value'?'Checking gives up value: worse hands would call, and the pot stays small for later streets.':'Checking gives up the fold equity this spot has.';
+    else notes[k]=`Right to bet, wrong size. ${sz.fish?(sz.k==='l'?'Bet big with value against Fish.':'Keep light bets small against Fish.'):'Use the zone the sizing guide gives for this board and range.'}`;
+  });
+  return {mode:sp.mode,kind:'cb',seat:sp.seat,vill:sp.vill,hole:sp.hole,board:sp.board,pot:sp.pot,tex:sp.tex,did,sub,
+    info,hud,opts,ans,why,principle,notes,verdict:ans==='x'?'Check.':`Bet ${{s:'½ pot',m:'⅔ pot',l:'pot'}[ans]}.`,
+    factors:g.kind==='value'||g.kind==='stable'?[]:cbFactors(g),
+    read:g.kind==='value'?'A value hand: worse hands call, so bet. The light c-bet factors don’t decide this one; only the size does.':g.kind==='stable'?'Stable showdown value: it wins often unimproved, few turns hurt it, and a bet folds out the worse hands. Check: Ch. 4, factor 4.':'',sz:{k:sz.k,z:sz.z==null?null:sz.z,fish:!!sz.fish},
+    fold:g.fall,need:g.need==null?null:g.need,rfe:g.rfe==null?null:g.rfe,eq:od.eq,outs:od.outs};
+}
+
+/* ---------- value bets (Ch. 5): turn and river ---------- */
+/* Strength classes against the whole board: strong (two pair or better, not beaten by a scare card), thick (overpair,
+   top pair good kicker), thin (top pair weak kicker, second pair). scare: the last card puts three of a suit or four to
+   a straight on the board when you don't have that hand. */
+function vbScare(hole,board){
+  const last=board[board.length-1],prev=board.slice(0,-1),rd=pfRead(hole,board);
+  const suitN=s=>board.filter(c=>c[1]===s).length,sc=rd.sc[0];
+  const fl=suitN(last[1])===3&&prev.filter(c=>c[1]===last[1]).length===2&&sc<5;
+  const four=v=>{const u=[...new Set(v)];const r=u.concat(u.includes(14)?[1]:[]);for(let lo=1;lo<=10;lo++)if(r.filter(x=>x>=lo&&x<=lo+4).length>=4)return true;return false;};
+  const bv=board.map(pfV),pv=prev.map(pfV);
+  const st=sc<4&&four(bv)&&!four(pv);
+  return fl?'flush':st?'straight':'';
+}
+function vbClass(hole,board){
+  const rd=pfRead(hole,board),sc=vbScare(hole,board);
+  let c=rd.cls==='strong'?'strong':rd.cls==='over'||(rd.cls==='top'&&rd.good)?'thick':(rd.cls==='top'||rd.cls==='mid')?'thin':'';
+  if(c==='strong'&&sc)c='thick';
+  return {c,rd,scare:sc};
+}
+const VB_TYPES=['reg','reg','reg','ff','st','ag'];
+function pfDanger(b){const n={};b.forEach(c=>n[c[1]]=(n[c[1]]||0)+1);if(Object.values(n).some(x=>x>=3))return true;
+  const u=[...new Set(b.map(pfV))],r=u.concat(u.includes(14)?[1]:[]);for(let lo=1;lo<=10;lo++)if(r.filter(x=>x>=lo&&x<=lo+4).length>=4)return true;return false;}
+function vbGen(mode){
+  const river=mode==='vb-river',want=pfPick(river?['strong','thick','thick','thin','thin']:['strong','thick','thick']),wantScare=Math.random()<.4;
+  for(let tries=0;tries<1500;tries++){
+    const ip=Math.random()<.6,seat=ip?pfPick(['UTG','HJ','CO','BU']):pfPick(['UTG','HJ','CO']);
+    const vseat=ip?'BB':pfPick(['HJ','CO','BU'].filter(x=>pfAfter(x,seat)));
+    const type=pfPick(VB_TYPES),v=pfVillain(type,vseat),t=PF_TYPES[type];
+    const short=!river&&Math.random()<.3;
+    const eff=short?pfPick([18,20,22,25]):100;
+    const open=seat==='BU'&&t.fish?2.5:PF_OPEN[seat];
+    let pot=open*2+(vseat==='BB'?.5:1.5);
+    const deck=pfDeck(),hole=pfHandFrom(RANGES[seat],deck);if(!hole)continue;
+    hole.forEach(c=>deck.splice(deck.indexOf(c),1));
+    const board=pfDraw(deck,river?5:4);
+    const flop=board.slice(0,3).sort((a,b)=>pfV(b)-pfV(a));board.splice(0,3,...flop);
+    if(new Set(board.map(c=>c[0])).size<board.length)continue;   // no paired boards
+    if(pfDanger(board.slice(0,-1)))continue;   // the board was safe until the last card
+    const cl=vbClass(hole,board);if(!cl.c||cl.rd.cls==='board')continue;
+    if(tries<1400&&(cl.c!==want||(cl.c!=='strong'&&!!cl.scare!==wantScare)))continue;
+    // flop: you c-bet 2/3 (or less with a short stack), he calls
+    let stack=eff-open;const lines=[];
+    const fb=Math.min(stack,Math.round(pot*2/3*2)/2);stack-=fb;pot+=2*fb;
+    lines.push(`Flop ${pfCards(flop)}: you bet ${bbr(fb)}, he calls.`);
+    let capped=false;
+    if(river){
+      const turnBet=Math.random()<.65;
+      if(turnBet){const tb=Math.round(pot*2/3*2)/2;stack-=tb;pot+=2*tb;lines.push(`Turn ${pfCard(board[3])}: you bet ${bbr(tb)}, he calls.`);}
+      else{if(!ip)continue;capped=true;lines.push(`Turn ${pfCard(board[3])}: he checks, you check behind.`);}
+    }
+    if(stack<=0)continue;
+    const sp={mode,kind:'vb',seat,ip,vill:[v],open,pot,stack,eff,hole,board,lines,capped,short,river,cl,tex:pfTexture(flop)};
+    const g=vbGrade(sp);if(!g)continue;
+    return vbBuild(sp,g);
+  }
+  return null;
+}
+/* The Ch. 5 flowchart: Q1 relative strength, Q2 build the pot, Q3 slowplay; then sizing by elasticity. Returns null
+   for spots the book doesn't settle clearly (they are not dealt). */
+function vbGrade(sp){
+  const t=PF_TYPES[sp.vill[0].type],c=sp.cl.c,scare=sp.cl.scare,last=sp.river?'river':'turn';
+  const out={q:[]};
+  // Q1
+  let q1,q1why;
+  if(c==='strong'){q1=true;q1why=`${sp.cl.rd.name[0].toUpperCase()+sp.cl.rd.name.slice(1)}: well ahead of the hands that call.`;}
+  else if(c==='thick'){
+    if(!scare){q1=true;q1why=`${pfCap(sp.cl.rd.name)} on a ${last} that changes little: ahead of the worse pairs and draws that call.`;}
+    else if(t.fish){q1=true;q1why=`The ${last} puts ${scare==='flush'?'three of a suit':'four to a straight'} on the board, but ${pfA(t.name)}’s range is wide and full of weak pairs that still call. You’re still ahead when called.`;}
+    else {q1=false;q1why=`The ${last} puts ${scare==='flush'?'three of a suit':'four to a straight'} on the board. ${pfCap(pfA(t.name))} called tightly, so his range holds more of those draws, and he folds his weak pairs to another bet. You’re behind when called.`;}
+  }else{ // thin
+    if(!sp.river||!sp.ip||t.aggro||t.tight)return null;
+    if(scare){q1=false;q1why=`A thin hand on a scary river: the ${scare} came in and improved the hands you were beating.`;}
+    else if(t.calls||sp.vill[0].type==='ff'){q1=true;q1why=`${pfCap(sp.cl.rd.name)} is thin value, but ${pfA(t.name)} (WTSD ${sp.vill[0].wtsd}%) calls down light with worse.`;}
+    else if(sp.capped){q1=true;q1why=`${pfCap(sp.cl.rd.name)} is thin value. He checked the turn, where he would bet his strong hands, so his range is capped and weighted to the medium hands you beat.`;}
+    else {q1=false;q1why=`${pfCap(sp.cl.rd.name)} against a Reg who called the flop and turn: his range is uncapped and he doesn’t call light, so the hands that call beat you. Check behind and win at showdown when you’re best.`;}
+  }
+  out.q.push(['Q1. Is my relative hand strength enough?',q1,q1why]);
+  if(!q1){out.ans='x';out.kind='q1';return out;}
+  // Q2
+  const spr=sp.stack/sp.pot;
+  let q2=true,q2why;
+  if(sp.river)q2why='River: the only way to get more money in is to bet it.';
+  else if(spr>1.3)q2why=`${bbr(sp.stack)} behind in a ${bbr(sp.pot)} pot: the pot needs building for the river.`;
+  else {q2=false;q2why=`Only ${bbr(sp.stack)} behind in a ${bbr(sp.pot)} pot: one bet gets it all in, so the pot doesn’t need building.`;}
+  out.q.push(['Q2. Do I need to build the pot?',q2,q2why]);
+  if(!q2){
+    const oopAggro=!sp.ip&&t.aggro;
+    let q3=false,q3why;
+    if(oopAggro){q3=true;q3why='Out of position against an Aggro Fish who bets when checked to: the pot grows anyway and he bets his air too. Check.';}
+    else if(sp.tex<=2&&!scare&&c==='strong'){q3=true;q3why='Short stack, dry board, a very strong hand: you have a street to spare and few free cards hurt you. Check.';}
+    else {q3=false;q3why=t.fish&&!t.aggro?'No: a passive player calls wider than he bets, a free card can cost you, and draws that would call now won’t on the river. Bet.':'No: betting gets the money in while worse hands still call, and a free card can hurt. Bet.';}
+    out.q.push(['Q3. Should I slowplay?',q3,q3why]);
+    if(q3){out.ans='x';out.kind='q3';return out;}
+  }
+  // sizing
+  const allin=sp.stack<=sp.pot*1.05;
+  if(allin){out.ans='l';out.size=`Your ${bbr(sp.stack)} is less than a pot-size bet: put it all in now rather than leave an awkward amount for the ${sp.river?'next hand':'river'}.`;}
+  else if(t.fish){out.ans='l';out.size=`${pfCap(pfA(t.name))}’s range is inelastic: he calls about as often whatever the size, so bet big. Pot.`;}
+  else if(c==='thin'){out.ans='s';out.size='A Reg’s range is elastic: he folds more to bigger bets. For thin value bet small so his worse hands still call: ½ pot.';}
+  else {out.ans='m';out.size='Against a Reg keep your normal, balanced size: ⅔ pot.';}
+  out.kind='bet';out.allin=allin;
+  return out;
+}
+function vbBuild(sp,g){
+  const v=sp.vill[0],t=PF_TYPES[v.type],allin=sp.stack<=sp.pot*1.05;
+  const opts=PF_OPTS.map(([k,tx])=>{if(k==='x')return [k,tx];const amt=sp.pot*SIZES[k][0];
+    if(k==='l'&&allin)return [k,'All-in',bbr(sp.stack)];if(amt>=sp.stack)return [k,tx,'all-in'];return [k,tx,bbr(amt)];});
+  const st=sp.river?'River':'Turn';
+  const info=`You open ${bbr(sp.open)} ${pfSeat(sp.seat)}, ${v.seat==='BB'?'the BB':v.seat} calls. ${sp.lines.join(' ')} ${st} ${pfCard(sp.board[sp.board.length-1])}: ${bbr(sp.pot)} in the pot, ${bbr(sp.stack)} behind${sp.ip?', he checks to you':', you act first'}.`;
+  const hud=`<b>${v.seat}</b>: ${pfHud(v)}, WTSD ${v.wtsd}%${v.rcb?`, raises c-bets ${v.rcb}%`:''}`;
+  const did={[v.seat]:sp.ip?'Check':t.short},sub={[v.seat]:t.short};
+  const qs=g.q.map(([q,a,w])=>`<b>${q}</b> ${a?'Yes':'No'}. ${w}`).join(' ');
+  const verdict=g.ans==='x'?'Check.':g.ans==='l'&&allin?'All-in.':`Bet ${{s:'½ pot',m:'⅔ pot',l:'pot'}[g.ans]}.`;
+  const why=`${pfCards(sp.hole)}: ${sp.cl.rd.name}. ${g.q.map(([q,a,w])=>w).join(' ')}${g.size?' '+g.size:''}`;
+  const principle=g.kind==='q1'?'A bet is for value only if it’s ahead of the hands that call.':g.kind==='q3'?'Slowplay only when the pot doesn’t need building and checking gets more in.':'Yes to Q1 and Q2 (or no to Q3): bet, sized for how elastic his range is.';
+  const notes={};
+  opts.forEach(([k])=>{if(k===g.ans)return;
+    if(g.ans==='x')notes[k]=g.kind==='q1'?'The hands that call this bet mostly beat you: a bet here folds out worse and gets called by better.':'Here checking gets more money in than betting.';
+    else if(k==='x')notes[k]=sp.river?'Checking behind wins nothing more from the worse hands that would call.':'Checking skips a street of value and shrinks every bet after it: the Exponential Mistake.';
+    else if(g.allin&&k!=='l')notes[k]='That leaves an awkward amount behind: one bet gets it all in.';
+    else if(g.ans==='l')notes[k]='Too small: his range calls about as often whatever the size, so the bigger bet wins more.';
+    else if(g.ans==='s')notes[k]='Too big for thin value: an elastic range folds the worse hands you want calls from.';
+    else notes[k]=k==='s'?'Too small for this hand against a Reg: use your normal balanced size.':'Too big: against an aware Reg keep your normal balanced size.';
+  });
+  return {mode:sp.mode,kind:'vb',seat:sp.seat,vill:sp.vill,hole:sp.hole,board:sp.board,pot:sp.pot,stack:sp.stack,did,sub,
+    info,hud,opts,ans:g.ans,why,principle,notes,verdict,q:g.q,cls:sp.cl.c,scare:sp.cl.scare,size:g.size||''};
+}
+const PMODES={
+  'cb-ip':{grp:'C-bet',label:'In position',gen:()=>cbGen('cb-ip')},
+  'cb-oop':{grp:'C-bet',label:'Out of position',gen:()=>cbGen('cb-oop')},
+  'cb-mw':{grp:'C-bet',label:'Multiway',gen:()=>cbGen('cb-mw')},
+  'vb-turn':{grp:'Value bet',label:'Turn',gen:()=>vbGen('vb-turn')},
+  'vb-river':{grp:'Value bet',label:'River',gen:()=>vbGen('vb-river')},
+};
+
+/* ---------- spaced repetition for the trainer ----------
+   A missed spot is saved whole (spots are plain JSON) and comes back in the topic you're drilling: 3-4 spots later,
+   then about 15 spots later, then after 1, 3 and 7 days. A right answer moves it up one step, a miss sends it back to
+   the start, and after the last step it's learnt and leaves the list. At most one spot in four is a review (REV_GAP).
+   Counts are in spots dealt (S.rvN), days in real time. */
+const LADDER=[{n:3},{n:15},{d:1},{d:3},{d:7}];
+const REV_GAP=3,REV_MAX=200;
+function revSched(it,step,now,count){it.step=step;const L=LADDER[step];if(L.n){it.n=count+L.n+pfRand(2);it.t=0;}else{it.t=now+L.d*864e5;it.n=0;}return it;}
+function revAdd(list,k,s,now,count){list.push(revSched({id:now.toString(36)+pfRand(1e6).toString(36),k,s},0,now,count));while(list.length>REV_MAX)list.shift();}
+function revAnswer(list,id,ok,now,count){const i=list.findIndex(x=>x.id===id);if(i<0)return;const it=list[i];
+  if(!ok)revSched(it,0,now,count);else if(it.step+1>=LADDER.length)list.splice(i,1);else revSched(it,it.step+1,now,count);}
+const revIsDue=(it,now,count)=>it.t?now>=it.t:count>=it.n;
+function revDue(list,keys,now,count){return list.filter(it=>keys.includes(it.k)&&revIsDue(it,now,count));}
+
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.10.0",at:"2026-11-20T02:17Z"};
+var BUILD={v:"2.11.0",at:"2026-11-20T08:15Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- storage (same key and shape as v1, so existing progress carries over) ---------- */
 const KEY='gm-trainer-v1';
-const BLANK=()=>({lessons:{},quiz:{},drills:{},days:[],math:{},log:{},theme:'auto'});
+const BLANK=()=>({lessons:{},quiz:{},drills:{},days:[],math:{},log:{},rev:[],rvN:0,theme:'auto'});
 let S=BLANK();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(BLANK(),JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
@@ -1094,7 +1557,7 @@ document.addEventListener('pointerdown',e=>{
 if(mqDark&&mqDark.addEventListener)mqDark.addEventListener('change',applyTheme);
 
 /* ---------- routing ---------- */
-const TITLES={home:'Course',lesson:'Course',ranges:'Range trainer',math:'Math drills',progress:'Progress',settings:'Settings'};
+const TITLES={home:'Course',lesson:'Course',ranges:'Trainer',math:'Math drills',progress:'Progress',settings:'Settings'};
 let VIEW='home';
 function go(h){location.hash=h;}
 function parseHash(){
@@ -1107,7 +1570,7 @@ function route(){
   Object.keys(TITLES).forEach(x=>{$('#v-'+x).hidden=x!==VIEW;});
   $$('#nav button').forEach(b=>b.setAttribute('aria-current',(b.dataset.v===VIEW||(VIEW==='lesson'&&b.dataset.v==='home'))?'page':'false'));
   $('#setBtn').setAttribute('aria-current',VIEW==='settings'?'page':'false');
-  if(VIEW==='ranges'&&r.arg&&(MODES[r.arg]||(r.arg.startsWith('mix-')&&GROUPS.includes(r.arg.slice(4))))&&r.arg!==RT.mode){RT.mode=r.arg;RT.streak=0;dealHand();}
+  if(VIEW==='ranges'&&r.arg&&(SPOTS[r.arg]||(r.arg.startsWith('mix-')&&GROUPS.includes(r.arg.slice(4))))&&r.arg!==RT.mode){RT.mode=r.arg;RT.streak=0;RT.since=REV_GAP;dealHand();}
   if(VIEW==='lesson')LS.want=r.id;
   render();window.scrollTo(0,0);
 }
@@ -1146,7 +1609,7 @@ function renderHome(){
     <div>
       <div class="tiles">
         <a class="tile" href="#lesson-${nl.id}"><b>${done}/${LESSONS.length}</b><span>chapters done</span></a>
-        <a class="tile" href="#ranges"><b>${acc.n?pct(acc.c/acc.n):'–'}</b><span>range accuracy</span></a>
+        <a class="tile" href="#ranges"><b>${acc.n?pct(acc.c/acc.n):'–'}</b><span>trainer accuracy</span></a>
         <a class="tile" href="#math"><b>${mAcc.n?pct(mAcc.c/mAcc.n):'–'}</b><span>math accuracy</span></a>
         <a class="tile" href="#progress"><b>${streak}</b><span>day streak</span></a>
       </div>
@@ -1203,7 +1666,7 @@ function quizHTML(l){
     const missed=l.quiz.map((q,i)=>LS.res[i]===false?`<div><b>${q[0]}</b>Answer: <span>${q[1][q[2]]}</span><br><span class="muted" style="color:var(--muted);font-weight:400">${q[3]}</span></div>`:'').join('');
     return `<div class="result ${s===t?'good':f>=.7?'warn':'bad'}"><small>Chapter ${l.ch} quiz</small><b>${s}/${t}</b><p>${s===t?'Clean sweep. On to the next chapter.':f>=.7?'Solid. Look over the misses below, then move on.':'Worth another pass through the chapter before moving on.'}</p></div>
     ${missed?`<div class="sec">What you missed</div><div class="missed">${missed}</div>`:''}
-    <div class="actions"><button class="btn alt" id="retry">Retry</button>${nxt?`<a class="btn" href="#lesson-${nxt.id}">Chapter ${nxt.ch} →</a>`:`<a class="btn" href="#ranges">Range trainer →</a>`}</div>`;
+    <div class="actions"><button class="btn alt" id="retry">Retry</button>${nxt?`<a class="btn" href="#lesson-${nxt.id}">Chapter ${nxt.ch} →</a>`:`<a class="btn" href="#ranges">Trainer →</a>`}</div>`;
   }
   const q=l.quiz[LS.qi],a=LS.answered;
   const dots=l.quiz.map((_,i)=>`<i class="${LS.res[i]===true?'r':LS.res[i]===false?'w':''}${i===LS.qi?' c':''}"></i>`).join('');
@@ -1235,22 +1698,33 @@ function nextQuiz(){
 }
 
 /* ---------- range trainer ---------- */
-const GROUPS=[...new Set(Object.values(MODES).map(x=>x.grp))];
+const SPOTS=Object.assign({},MODES,PMODES);   // pre-flop chart spots and the generated post-flop spots
+const GROUPS=[...new Set(Object.values(SPOTS).map(x=>x.grp))];
 const SEATS6=['UTG','HJ','CO','BU','SB','BB'];
-let RT={mode:'open-UTG',cur:'open-UTG',hand:null,suits:null,answered:null,peek:false,streak:0,sc:0,sn:0};
-const grpOf=m=>m.startsWith('mix-')?m.slice(4):MODES[m].grp;
+let RT={mode:'open-UTG',cur:'open-UTG',hand:null,suits:null,ps:null,rev:null,since:REV_GAP,answered:null,peek:false,streak:0,sc:0,sn:0};
+const grpOf=m=>m.startsWith('mix-')?m.slice(4):SPOTS[m].grp;
+const modeKeys=m=>m.startsWith('mix-')?Object.keys(SPOTS).filter(k=>SPOTS[k].grp===m.slice(4)):[m];
+const dueHere=()=>revDue(S.rev,modeKeys(RT.mode),Date.now(),S.rvN).length;
 function inSet(m,h){return answerOf(m,h)!=='f';}
 /* Hands next to a hand with a different answer: where the decisions are. */
 function edgeHands(m,pool){const P=new Set(pool),out=[];for(let i=0;i<13;i++)for(let j=0;j<13;j++){const h=cellName(i,j);if(!P.has(h))continue;const nb=[[i-1,j],[i+1,j],[i,j-1],[i,j+1]].filter(([a,b])=>a>=0&&b>=0&&a<13&&b<13).map(([a,b])=>cellName(a,b)).filter(x=>P.has(x));if(nb.some(x=>answerOf(m,x)!==answerOf(m,h)))out.push(h);}return out;}
+/* A new spot: a due review from this topic (at most one spot in four), else a fresh one. */
 function dealHand(){
-  if(RT.mode.startsWith('mix-')){const ks=Object.keys(MODES).filter(k=>MODES[k].grp===grpOf(RT.mode));RT.cur=ks[Math.floor(Math.random()*ks.length)];}else RT.cur=RT.mode;
+  RT.answered=null;RT.fresh=true;RT.rev=null;RT.ps=null;S.rvN=(S.rvN||0)+1;
+  const keys=modeKeys(RT.mode);
+  if(RT.since>=REV_GAP){const due=revDue(S.rev,keys,Date.now(),S.rvN);
+    if(due.length){const it=due[0];RT.rev=it.id;RT.cur=it.k;RT.since=0;
+      if(PMODES[it.k])RT.ps=it.s;else{RT.hand=it.s.h;RT.suits=it.s.u;}return;}}
+  RT.since++;
+  RT.cur=keys[Math.floor(Math.random()*keys.length)];
+  if(PMODES[RT.cur]){RT.ps=PMODES[RT.cur].gen();return;}
   const pool=MODES[RT.cur].pool||allHands();let h;
   const e=edgeHands(RT.cur,pool);
   if(e.length&&Math.random()<0.6)h=e[Math.floor(Math.random()*e.length)];
   else{let tot=0;const w=pool.map(x=>tot+=combos(x));const r=Math.random()*tot;h=pool[w.findIndex(x=>x>r)];}
   const su=['s','h','d','c'];const a=su[Math.floor(Math.random()*4)];let b;
   if(h.length===2||h[2]==='o'){do b=su[Math.floor(Math.random()*4)];while(b===a);}else b=a;
-  RT.hand=h;RT.suits=[a,b];RT.answered=null;RT.fresh=true;
+  RT.hand=h;RT.suits=[a,b];
 }
 const SUIT={s:'♠',h:'♥',d:'♦',c:'♣'};
 function cardHTML(r,s,x){return `<div class="pc${s==='h'||s==='d'?' r':''}${x||''}" aria-label="${r==='T'?'10':r} of ${{s:'spades',h:'hearts',d:'diamonds',c:'clubs'}[s]}">${r==='T'?'<span class="ten">10</span>':r}<small aria-hidden="true">${SUIT[s]}</small></div>`;}
@@ -1273,8 +1747,8 @@ function tableHTML(md){
   });
   return h+'</div>';
 }
-const SWATCH={in:'background:var(--felt)',t2:'background:var(--cell-t2)',t3:'background:var(--cell-t3)',cl:'background:var(--cell-call)','':'background:var(--cell-fold)',
-  dyn:'background:repeating-linear-gradient(135deg,var(--cell-fold) 0 3px,var(--cell-t2) 3px 5px)',nr:'background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)'};
+const SWATCH={in:'background:var(--cell-r1)',in2:'background:var(--cell-r2)',in3:'background:var(--cell-r3)',cl:'background:var(--cell-c1)',cl2:'background:var(--cell-c2)',cl3:'background:var(--cell-c3)','':'background:var(--cell-fold)',
+  dyn:'background:repeating-linear-gradient(135deg,var(--cell-fold) 0 3px,var(--cell-r3) 3px 5px)',nr:'background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)'};
 function gridHTML(m,cur){
   const md=MODES[m];let h='<div class="rg" role="img" aria-label="'+md.label+' range chart">';
   for(let i=0;i<13;i++)for(let j=0;j<13;j++){const n=cellName(i,j),t=tierOf(m,n);
@@ -1290,18 +1764,19 @@ function gridHTML(m,cur){
    the picker (on a spot change), the spot (new hand or answer) and the chart (peek or answer).
    Cards play the deal animation only when a new hand is dealt (RT.fresh). */
 function renderRanges(){
-  if(!RT.hand)dealHand();
+  if(!RT.hand&&!RT.ps)dealHand();
   const g=grpOf(RT.mode);
   $('#v-ranges').innerHTML=`
-  <div class="seg" role="group" aria-label="Spot type">${GROUPS.map(x=>`<button data-g="${x}" aria-pressed="${x===g}">${x}</button>`).join('')}</div>
-  <div class="chips" role="group" aria-label="Spot">${[['mix-'+g,'Mix']].concat(Object.entries(MODES).filter(([k,v])=>v.grp===g).map(([k,v])=>[k,v.label])).map(([k,t])=>`<button class="chip" data-m="${k}" aria-pressed="${k===RT.mode}">${t}</button>`).join('')}</div>
+  <div class="seg gseg" role="group" aria-label="Spot type">${GROUPS.map(x=>`<button data-g="${x}" aria-pressed="${x===g}">${x}</button>`).join('')}</div>
+  <div class="chips" role="group" aria-label="Spot">${[['mix-'+g,'Mix']].concat(Object.entries(SPOTS).filter(([k,v])=>v.grp===g).map(([k,v])=>[k,v.label])).map(([k,t])=>`<button class="chip" data-m="${k}" aria-pressed="${k===RT.mode}">${t}</button>`).join('')}</div>
   <div class="drill"><div class="left" id="rt-spot"></div><div class="box chartbox" id="rt-chart"></div></div>`;
   $$('#v-ranges [data-g]').forEach(b=>b.onclick=()=>setMode('mix-'+b.dataset.g));
   $$('#v-ranges [data-m]').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
-  const sel=$('#v-ranges .chip[aria-pressed="true"]');if(sel){const pr=sel.parentNode.getBoundingClientRect(),r=sel.getBoundingClientRect();if(r.right>pr.right-14)sel.parentNode.scrollLeft+=r.right-pr.right+28;}
+  $$('#v-ranges [aria-pressed="true"]').forEach(sel=>{const pr=sel.parentNode.getBoundingClientRect(),r=sel.getBoundingClientRect();if(r.right>pr.right-14)sel.parentNode.scrollLeft+=r.right-pr.right+28;});
   drawSpot();drawChart();
 }
 function drawSpot(){
+  if(RT.ps)return drawPost();
   const m=RT.cur,md=MODES[m],a=RT.answered,st=S.drills[m]||{c:0,n:0},right=answerOf(m,RT.hand);
   const ok=a!==null&&a===right,deal=RT.fresh?' deal':'';RT.fresh=false;
   const btn=([k,t],i)=>`<button class="opt${i===0?' go':''}${a===null?'':(k===right?' right':k===a?' wrong':' dim')+(k===a?' picked':'')}" data-k="${k}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${i+1}</span>${t}</button>`;
@@ -1309,20 +1784,21 @@ function drawSpot(){
   const why=md.opts.length===2&&!md.scene?` ${RT.hand} is ${right!=='f'?(md.act==='Call'?'a call':'a '+md.act.toLowerCase().replace(/ .*/,''))+' in this spot: it sits inside the '+pct(rangePct(md.set))+' range.':'a fold in this spot'+(tr&&tr[1]==='dyn'?': it opens at a normal table, not with this player behind you.':': it is outside the '+pct(rangePct(md.set))+' range.')}`
     :` ${RT.hand}: ${right==='f'?'fold.':tr[2].toLowerCase()===lab.toLowerCase()?lab.toLowerCase()+'.':`${lab.toLowerCase()} (“${tr[2]}” in the book’s chart).`}`;
   $('#rt-spot').innerHTML=`<div class="spot">
-      <div class="shead"><span class="topic">${md.label}</span><span class="stag"><span>Streak <b>${RT.streak}</b></span><span>Here <b>${st.n?pct(st.c/st.n):'–'}</b></span></span></div>
+      ${sheadHTML(md.label,st)}
       ${tableHTML(md)}
       <div class="hand">${cardHTML(RT.hand[0],RT.suits[0],deal)}${cardHTML(RT.hand[1],RT.suits[1],deal)}<span class="badge">${RT.hand}</span></div>
       <p class="sinfo">${md.info}</p>
       <div class="acts${md.opts.length===3?' n3':''}">${md.opts.map(btn).join('')}</div>
       ${a!==null?whyHTML(ok,why):''}
     </div>
-    ${a!==null?`<div class="actions"><button class="btn" id="rt-next">Next hand →</button></div>`:''}`;
+    ${a!==null?nextBtn('Next hand →'):''}`;
   $$('#rt-spot [data-k]').forEach(b=>b.onclick=()=>answerRT(b.dataset.k));
   const nx=$('#rt-next');if(nx)nx.onclick=nextRT;
 }
 function drawChart(){
+  if(RT.ps)return drawRead();
   const m=RT.cur,md=MODES[m],a=RT.answered,show=a!==null||RT.peek;
-  $('#rt-chart').innerHTML=`<div class="ch"><b>${md.label} chart</b>${a===null?`<button class="peek" id="rt-peek" aria-pressed="${RT.peek}">${RT.peek?'Hide':'Peek'}</button>`:''}</div>
+  $('#rt-chart').innerHTML=`<div class="ch"><b>${md.label} chart</b>${a===null?peekBtn():''}</div>
     ${show?gridHTML(m,RT.hand):`<div class="hidden-chart">The chart is hidden while you decide. It opens after each answer.</div>`}
     ${chartNote(md)}`;
   const pk=$('#rt-peek');if(pk)pk.onclick=()=>{RT.peek=!RT.peek;drawChart();$('#rt-peek').focus({preventScroll:true});};
@@ -1334,11 +1810,68 @@ function chartNote(md){
   if(md.grp==='vs 3-bet')return `<p class="note">${f}From Ch. 11. Outlined squares are hands you would not have opened, so they are never dealt here.</p>`;
   return `<p class="note">${f}These are the book’s Ch. 6 calling charts, before 3-betting is introduced. Ch. 10 moves some of the top hands into 3-bet ranges depending on the spot.</p>`;
 }
-function setMode(m){if(m===RT.mode)return;RT.mode=m;RT.streak=0;dealHand();history.replaceState(null,'','#ranges/'+m);renderRanges();}
+const nextBtn=t=>`<div class="actions"><button class="btn" id="rt-next">${t}</button></div>`;
+const peekBtn=()=>`<button class="peek" id="rt-peek" aria-pressed="${RT.peek}">${RT.peek?'Hide':'Peek'}</button>`;
+function sheadHTML(label,st){const due=dueHere();
+  return `<div class="shead"><span class="topic">${RT.rev?'<span class="rvtag">Review</span>':''}${label}</span><span class="stag"><span>Streak <b>${RT.streak}</b></span><span>Here <b>${st.n?pct(st.c/st.n):'–'}</b></span>${due?`<span title="Missed spots due again in this topic">Due <b>${due}</b></span>`:''}</span></div>`;}
+/* Post-flop table: pot and board in the middle, you and the players in the hand, everyone else folded. */
+function postTableHTML(p,deal){
+  const hi=SEATS6.indexOf(p.seat),inn=new Set([p.seat,...p.vill.map(v=>v.seat)]);
+  let h=`<div class="ptable post" role="img" aria-label="${esc(p.info.replace(/<[^>]+>/g,''))}"><div class="oval"></div><div class="tcenter"><span class="pot"><small>Pot</small><b>${bb(p.pot)}bb</b></span><span class="pboard">${p.board.map(c=>cardHTML(c[0],c[1],' mini'+deal)).join('')}</span></div>`;
+  SEATS6.forEach((s,j)=>{
+    const a=(90+(j-hi)*360/6)*Math.PI/180,cx=Math.cos(a),cy=Math.sin(a),you=s===p.seat,inh=inn.has(s);
+    const sub=you?'You':inh?(p.sub[s]+(p.did[s]==='Check'?' · Check':'')):'Fold';
+    h+=`<div class="st${you?' you':''}${inh?'':' fold'}${inh&&!you?' acted':''}" style="left:${(50+43*cx).toFixed(1)}%;top:${(50+41*cy).toFixed(1)}%">${s==='BU'?'<span class="dbtn" aria-label="dealer button">D</span>':''}<b>${s}</b><i>${sub}</i></div>`;
+  });
+  return h+'</div>';
+}
+const handName=h=>{const v=h.map(pfV).sort((a,b)=>b-a);return pfRV(v[0])+pfRV(v[1])+(v[0]===v[1]?'':h[0][1]===h[1][1]?'s':'o');};
+function drawPost(){
+  const p=RT.ps,md=PMODES[RT.cur],a=RT.answered,st=S.drills[RT.cur]||{c:0,n:0},ok=a!==null&&a===p.ans,deal=RT.fresh?' deal':'';RT.fresh=false;
+  const lab=k=>{const o=p.opts.find(x=>x[0]===k);return o[1].replace(/^Bet ([½⅔])$/,'bet $1 pot')+(o[2]&&o[2]!=='all-in'?' ('+o[2]+')':'');};
+  const btn=([k,t,sub],i)=>`<button class="opt${a===null?'':(k===p.ans?' right':k===a?' wrong':' dim')+(k===a?' picked':'')}" data-k="${k}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${i+1}</span><span class="ol">${t}${sub?`<small>${sub}</small>`:''}</span></button>`;
+  const why=a===null?'':` <b class="verd">${p.verdict}</b> ${p.why}${!ok?`<span class="wnot"><b>Why not ${lab(a).toLowerCase()}?</b> ${p.notes[a]}</span>`:''}<span class="wprin">${p.principle}</span>`;
+  $('#rt-spot').innerHTML=`<div class="spot">
+      ${sheadHTML(md.grp+' · '+md.label,st)}
+      ${postTableHTML(p,deal)}
+      <div class="hand">${cardHTML(p.hole[0][0],p.hole[0][1],deal)}${cardHTML(p.hole[1][0],p.hole[1][1],deal)}<span class="badge">${handName(p.hole)}</span></div>
+      <p class="sinfo">${p.info}</p><p class="pfhud">${p.hud}</p>
+      <div class="acts pacts">${p.opts.map(btn).join('')}</div>
+      ${a!==null?whyHTML(ok,why):''}
+    </div>
+    ${a!==null?nextBtn('Next spot →'):''}`;
+  $$('#rt-spot [data-k]').forEach(b=>b.onclick=()=>answerRT(b.dataset.k));
+  const nx=$('#rt-next');if(nx)nx.onclick=nextRT;
+}
+/* The read: Ch. 4's factor checklist and Figure 22's sizing zones, or Ch. 5's three questions. Hidden until you answer. */
+function drawRead(){
+  const p=RT.ps,a=RT.answered,show=a!==null||RT.peek,cb=p.kind==='cb';
+  let body='';
+  if(show&&cb){
+    const zone=['s','m','l'].map(k=>`<span class="${k===p.sz.k&&p.ans!=='x'?'on':''}">${{s:'Small<small>½–⅗ pot</small>',m:'Medium<small>⅗–⅔ pot</small>',l:'Large<small>⅔–1× pot</small>'}[k]}</span>`).join('');
+    body=`${p.read?`<p class="pread">${p.read}</p>`:''}${p.factors.length?`<ul class="chk">${p.factors.map(([g,t])=>`<li data-v="${g?'+':'-'}">${t}</li>`).join('')}</ul>`:''}
+      ${p.need!=null?`<div class="fmeter"><div><span>Expected folds</span><b>${p.fold}%</b></div><div><span>Folds needed</span><b>${p.need}%</b></div></div>`:''}
+      ${p.ans!=='x'?`<div class="zones" aria-label="C-bet sizing guide">${zone}</div>`:''}
+      <p class="note">${p.ans==='x'?'':p.sz.fish?'Against Fish who don’t watch sizes: big with value, small with light c-bets.':'Drier board and weaker range → smaller; wetter and stronger → bigger (Figure 22).'}</p>`;
+  }else if(show){
+    body=`<ol class="qflow">${p.q.map(([q,y,w])=>`<li class="${y?'y':'n'}"><b>${q}</b><span class="yn">${y?'Yes':'No'}</span></li>`).join('')}<li class="end"><b>${p.verdict}</b></li></ol>
+      ${p.size?`<p class="note">${p.size}</p>`:''}`;
+  }
+  const lk=cb?'<a href="#lesson-cbet">Ch. 4 C-betting</a>':'<a href="#lesson-value">Ch. 5 Value betting</a>';
+  $('#rt-chart').innerHTML=`<div class="ch"><b>${cb?'The read':'The three questions'}</b>${a===null?peekBtn():''}</div>
+    ${show?body:`<div class="hidden-chart">The read of this spot is hidden while you decide. It opens after each answer.</div>`}
+    <p class="note">Spots are dealt by code from ${lk}. ${cb?'Fold estimates start from his HUD stat and move with the board, his range and position: rough, like reads at the table.':'Your hand, his type and the runout decide each answer.'}</p>`;
+  const pk=$('#rt-peek');if(pk)pk.onclick=()=>{RT.peek=!RT.peek;drawRead();$('#rt-peek').focus({preventScroll:true});};
+}
+function setMode(m){if(m===RT.mode)return;RT.mode=m;RT.streak=0;RT.since=REV_GAP;dealHand();history.replaceState(null,'','#ranges/'+m);renderRanges();}
 function nextRT(){dealHand();drawSpot();drawChart();const s=$('#v-ranges .spot');if(s&&s.getBoundingClientRect().top<0)s.scrollIntoView({block:'start'});}
 function answerRT(k){
-  const md=MODES[RT.cur];if(RT.answered!==null||VIEW!=='ranges'||!md.opts.some(o=>o[0]===k))return;const right=answerOf(RT.cur,RT.hand)===k;
-  const st=S.drills[RT.cur]||{c:0,n:0};st.n++;if(right)st.c++;S.drills[RT.cur]=st;logAnswer(right);markDay();
+  const opts=RT.ps?RT.ps.opts:MODES[RT.cur].opts;if(RT.answered!==null||VIEW!=='ranges'||!opts.some(o=>o[0]===k))return;
+  const right=(RT.ps?RT.ps.ans:answerOf(RT.cur,RT.hand))===k;
+  const st=S.drills[RT.cur]||{c:0,n:0};st.n++;if(right)st.c++;S.drills[RT.cur]=st;
+  if(RT.rev)revAnswer(S.rev,RT.rev,right,Date.now(),S.rvN);
+  else if(!right)revAdd(S.rev,RT.cur,RT.ps||{h:RT.hand,u:RT.suits},Date.now(),S.rvN);
+  logAnswer(right);markDay();
   RT.streak=right?RT.streak+1:0;RT.answered=k;drawSpot();drawChart();
   const nx=$('#rt-next');if(nx)nx.focus({preventScroll:true});
 }
@@ -1386,18 +1919,21 @@ function renderProgress(){
     cells.push(`<i class="${lv}${ds===today?' today':''}" title="${ds}${n?' · '+plural(n,'answer'):''}"></i>`);}
   // what to work on next
   const items=[];
-  Object.entries(MODES).map(([k,m])=>[k,m,S.drills[k]]).filter(([k,m,x])=>x&&x.n>=8&&x.c/x.n<.85).sort((a,b)=>a[2].c/a[2].n-b[2].c/b[2].n).slice(0,3)
-    .forEach(([k,m,x])=>items.push(['Range',`#ranges/${k}`,`${m.label}`,`${pct(x.c/x.n)} over ${plural(x.n,'hand')} · ${m.grp}`]));
+  const dueAll=revDue(S.rev,Object.keys(SPOTS),Date.now(),S.rvN);
+  GROUPS.map(g=>[g,dueAll.filter(it=>SPOTS[it.k].grp===g).length]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]).slice(0,2)
+    .forEach(([g,n])=>items.push(['Review',`#ranges/mix-${g}`,`${g}: ${plural(n,'missed spot')} due`,'Spaced repetition: missed spots come back until you get them right']));
+  Object.entries(SPOTS).map(([k,m])=>[k,m,S.drills[k]]).filter(([k,m,x])=>x&&x.n>=8&&x.c/x.n<.85).sort((a,b)=>a[2].c/a[2].n-b[2].c/b[2].n).slice(0,3)
+    .forEach(([k,m,x])=>items.push(['Trainer',`#ranges/${k}`,`${PMODES[k]?m.grp+' · ':''}${m.label}`,`${pct(x.c/x.n)} over ${plural(x.n,'spot')} · ${m.grp}`]));
   LESSONS.filter(l=>S.quiz[l.id]!=null&&S.quiz[l.id]/l.quiz.length<.7).slice(0,2)
     .forEach(l=>items.push(['Quiz',`#lesson-${l.id}`,`Ch. ${l.ch} ${esc(l.title)}`,`Best score ${S.quiz[l.id]}/${l.quiz.length}: reread and retake`]));
   Object.entries(MATH).filter(([k])=>(S.math[k]||{n:0}).n>=5&&S.math[k].c/S.math[k].n<.75).slice(0,2)
     .forEach(([k,v])=>items.push(['Math','#math',v.label,`${pct(S.math[k].c/S.math[k].n)} over ${plural(S.math[k].n,'question')}`,k]));
-  GROUPS.filter(g=>!Object.entries(MODES).some(([k,m])=>m.grp===g&&(S.drills[k]||{n:0}).n)).slice(0,2)
+  GROUPS.filter(g=>!Object.entries(SPOTS).some(([k,m])=>m.grp===g&&(S.drills[k]||{n:0}).n)).slice(0,2)
     .forEach(g=>items.push(['New',`#ranges/mix-${g}`,`Try the ${g} spots`,'Not played yet']));
-  // the range trainer by group
-  const groups=GROUPS.map(g=>{const ms=Object.entries(MODES).filter(([k,m])=>m.grp===g);let n=0,c=0;ms.forEach(([k])=>{const x=S.drills[k];if(x){n+=x.n;c+=x.c;}});
-    return `<details class="gcard"><summary><span class="pn">${g}<small>${plural(ms.length,'spot')} · ${plural(n,'hand')}</small></span>${n?barHTML(c/n):'<span></span>'}<span class="pv">${n?pct(c/n):'–'}</span></summary>
-      <div class="glist">${ms.filter(([k])=>S.drills[k]).sort((a,b)=>S.drills[a[0]].c/S.drills[a[0]].n-S.drills[b[0]].c/S.drills[b[0]].n).map(([k,m])=>{const x=S.drills[k];return `<a class="prow" href="#ranges/${k}"><span class="pn">${m.label}<small>${plural(x.n,'hand')}</small></span>${barHTML(x.c/x.n)}<span class="pv">${pct(x.c/x.n)}</span></a>`;}).join('')}
+  // the trainer by group
+  const groups=GROUPS.map(g=>{const ms=Object.entries(SPOTS).filter(([k,m])=>m.grp===g);let n=0,c=0;ms.forEach(([k])=>{const x=S.drills[k];if(x){n+=x.n;c+=x.c;}});
+    return `<details class="gcard"><summary><span class="pn">${g}<small>${plural(ms.length,'topic')} · ${plural(n,'spot')}</small></span>${n?barHTML(c/n):'<span></span>'}<span class="pv">${n?pct(c/n):'–'}</span></summary>
+      <div class="glist">${ms.filter(([k])=>S.drills[k]).sort((a,b)=>S.drills[a[0]].c/S.drills[a[0]].n-S.drills[b[0]].c/S.drills[b[0]].n).map(([k,m])=>{const x=S.drills[k];return `<a class="prow" href="#ranges/${k}"><span class="pn">${m.label}<small>${plural(x.n,'spot')}</small></span>${barHTML(x.c/x.n)}<span class="pv">${pct(x.c/x.n)}</span></a>`;}).join('')}
       ${ms.some(([k])=>!S.drills[k])?`<div class="unplayed">Not played yet: ${ms.filter(([k])=>!S.drills[k]).map(([k,m])=>`<a href="#ranges/${k}">${m.label}</a>`).join(' ')}</div>`:''}</div></details>`;}).join('');
   const maths=Object.entries(MATH).map(([k,v])=>{const x=S.math[k]||{c:0,n:0};return `<a class="tile" href="#math" data-mt="${k}"><b>${x.n?pct(x.c/x.n):'–'}</b><span>${v.label}<br>${plural(x.n,'question')}</span></a>`;}).join('');
   const lv=c=>`<i class="${c}" style="${c?'':'background:var(--track)'}"></i>`;
@@ -1406,8 +1942,8 @@ function renderProgress(){
     <div class="wdays" aria-label="Days studied this week">${strip.join('')}</div></div>
   <div class="sec">Work on next</div>
   ${items.length?items.slice(0,5).map(([kind,href,what,why,mt])=>`<a class="nextrow" href="${href}"${mt?` data-mt="${mt}"`:''}><span class="kind">${kind}</span><span class="what">${what}<small>${why}</small></span><span class="go" aria-hidden="true">›</span></a>`).join('')
-    :`<div class="box small muted">Nothing weak yet. Spots show up here once you’ve played 8 hands of them below 85%, a quiz under 70%, or a math drill under 75%.</div>`}
-  <div class="sec">Range trainer<span>tap a group for its spots</span></div>${groups}
+    :`<div class="box small muted">Nothing weak yet. Spots show up here once you’ve played 8 of them below 85%, a quiz under 70%, or a math drill under 75%.</div>`}
+  <div class="sec">Trainer<span>${S.rev.length?plural(S.rev.length,'missed spot')+' in review · ':''}tap a group</span></div>${groups}
   <div class="sec">Math drills</div><div class="mtiles">${maths}</div>
   <div class="sec">Activity<span>last 16 weeks</span></div>
   <div class="box"><div class="heat" aria-label="Study days, last 16 weeks">${cells.join('')}</div>
@@ -1448,8 +1984,9 @@ document.addEventListener('keydown',e=>{
     if(LS.step===l.blocks.length&&LS.qi<l.quiz.length){if(num>=0)answerQuiz(num);else if(k==='Enter')nextQuiz();}
     else if(LS.step<l.blocks.length){if(k==='ArrowRight'){e.preventDefault();lessonStep(1);}else if(k==='ArrowLeft'){e.preventDefault();lessonStep(-1);}}
   }else if(VIEW==='ranges'){
-    const op=MODES[RT.cur].opts,lk=k.toLowerCase();
-    if(/^[1-3]$/.test(k)&&op[+k-1])answerRT(op[+k-1][0]);
+    const op=RT.ps?RT.ps.opts:MODES[RT.cur].opts,lk=k.toLowerCase();
+    if(/^[1-4]$/.test(k)&&op[+k-1])answerRT(op[+k-1][0]);
+    else if(RT.ps){if(lk==='x')answerRT('x');}
     else if(lk==='r')answerRT(op[0][0]);else if(lk==='c')answerRT('c');else if(lk==='f')answerRT('f');
     else if((k==='Enter'||k===' ')&&RT.answered!==null){e.preventDefault();nextRT();}
   }else if(VIEW==='math'){

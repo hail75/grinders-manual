@@ -6,7 +6,7 @@ const html = readFileSync(new URL("index.html", root), "utf8");
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 const cut = script.indexOf("/* ===================== UI");
 if (cut < 0) throw new Error("UI marker not found in index.html");
-const X = new Function(script.slice(0, cut) + "; return {RANGES,CALLS,MODES,LESSONS,MATH,rangePct,allHands,combos,toolHTML,eq2};")();
+const X = new Function(script.slice(0, cut) + "; return {RANGES,CALLS,MODES,LESSONS,MATH,rangePct,allHands,combos,toolHTML,eq2,PMODES,pfTexture,pfRead,pfOuts,pfScore,pfVillain,cbGrade,vbClass,vbGrade,revAdd,revAnswer,revDue,LADDER,PF_TYPES};")();
 
 let fails = 0;
 const ok = (c, m) => { if (!c) { fails++; console.log("FAIL:", m); } };
@@ -29,7 +29,7 @@ for (const [k, m] of Object.entries(X.MODES)) {
   ok(m.opts.length >= 2 && m.opts.length <= 3 && m.opts[m.opts.length - 1][0] === "f", `${k}: options end with Fold`);
   const keys = m.opts.map(o => o[0]), seen = new Set();
   m.tiers.forEach(([key, css, lab, hs]) => {
-    ok(keys.includes(key) && lab && ["in", "t2", "t3", "cl", "dyn", ""].includes(css), `${k}: tier ${lab}`);
+    ok(keys.includes(key) && lab && ["in", "in2", "in3", "cl", "cl2", "cl3", "dyn", ""].includes(css), `${k}: tier ${lab}`);
     hs.forEach(h => { ok(hands.has(h), `${k}: unknown hand ${h}`); ok(!seen.has(h), `${k}: ${h} in two tiers`); seen.add(h); });
   });
   keys.filter(x => x !== "f").forEach(x => ok(m.tiers.some(t => t[0] === x && t[3].length), `${k}: no hand answers ${x}`));
@@ -82,7 +82,8 @@ X.LESSONS.forEach((l, i) => {
   ok(!/undefined|NaN|\[object/.test(txt), `lesson ${l.id}: broken text`);
   (txt.match(/href="#([^"]+)"/g) || []).forEach(a => { const h = a.slice(7, -1), [v, arg] = h.split("/");
     ok(["home", "ranges", "math", "progress", "settings"].includes(v) || v.startsWith("lesson-"), `lesson ${l.id}: link ${h}`);
-    if (v === "ranges" && arg) ok(!!X.MODES[arg] || (arg.startsWith("mix-") && Object.values(X.MODES).some(m => m.grp === arg.slice(4))), `lesson ${l.id}: link to unknown spot ${arg}`); });
+    if (v === "ranges" && arg) { const g = decodeURIComponent(arg); const all = { ...X.MODES, ...X.PMODES };
+      ok(!!all[g] || (g.startsWith("mix-") && Object.values(all).some(m => m.grp === g.slice(4))), `lesson ${l.id}: link to unknown spot ${arg}`); } });
 });
 ok(X.LESSONS.length === 14, "14 chapters");
 
@@ -119,6 +120,64 @@ ok(idsInHtml.length === new Set(idsInHtml).size, "no duplicate ids in the page s
   const clash = [...mods].filter(n => own.has(n) && !["num"].includes(n));
   ok(clash.length === 0, "class names used both on their own and as a modifier: " + clash.join(", "));
   ok(own.size > 40, "found the stylesheet's classes"); }
+
+
+// 9. Chart colours mean the same action in every chart: navy family = raise, teal = call, grey = fold
+for (const [k, m] of Object.entries(X.MODES)) m.tiers.forEach(([key, css, lab]) => {
+  const label = (m.opts.find(o => o[0] === key) || ["", ""])[1];
+  const fam = key === "f" ? ["", "dyn"] : /^call/i.test(label) ? ["cl", "cl2", "cl3"] : ["in", "in2", "in3"];
+  ok(fam.includes(css), `${k}: “${lab}” (${label || "fold"}) is coloured ${css || "grey"}`);
+});
+
+// 10. Post-flop engine (Ch. 4 and 5): texture types match the lesson's examples, outs match the book's
+const C = s => s.split(" ").map(c => c.replace("10", "T").replace("♠", "s").replace("♥", "h").replace("♦", "d").replace("♣", "c"));
+const tblock = X.LESSONS.find(l => l.id === "cbet").blocks.find(b => b[0] === "Factor 1: board texture")[1];
+let texN = 0;
+tblock.split("<div><b>").slice(1).forEach(part => {
+  const t = +part[0];
+  [...part.matchAll(/aria-label="([^"]+)"/g)].forEach(m => { texN++; ok(X.pfTexture(C(m[1])) === t, `texture of ${m[1]} should be type ${t}, got ${X.pfTexture(C(m[1]))}`); });
+});
+ok(texN === 10, "the c-bet lesson shows ten example flops");
+const outs = (h, b) => { const rd = X.pfRead(C(h), C(b)); return X.pfOuts(C(h), C(b), rd).outs; };
+ok(outs("K♠ J♦", "Q♦ T♣ 4♥") === 11, "KJ on Q-T-4: 11 outs (Ch. 4)");
+ok(outs("7♠ 7♦", "J♥ T♣ 4♦") === 2, "77 on J-T-4: 2 outs (Ch. 4)");
+ok(outs("A♠ Q♦", "J♥ T♣ 4♦") === 10, "AQ on J-T-4: 10 outs (Ch. 4)");
+ok(outs("9♥ 8♥", "T♥ 7♥ 2♣") === 15, "flush draw + open-ender: 15 outs");
+ok(X.pfScore(C("A♠ 2♦ 3♣ 4♥ 5♠"))[0] === 4 && X.pfScore(C("A♠ K♠ 9♠ 4♠ 2♠ 2♥ 3♦"))[0] === 5 && X.pfScore(C("7♠ 7♦ 7♣ 2♥ 2♠"))[0] === 6, "hand evaluator");
+// the book's worked c-bet spots
+const V = (type, seat, extra) => Object.assign(X.pfVillain(type, seat), extra);
+const cb = (seat, vill, hole, board) => X.cbGrade({ seat, vill, hole: C(hole), board: C(board), tex: X.pfTexture(C(board)), pot: 5 });
+ok(cb("BU", [V("reg", "BB", { fcb: 58 })], "3♠ 2♠", "K♠ 8♦ 2♣").ans === "s", "BU vs BB Reg, bottom pair + backdoor flush, very dry: c-bet small");
+ok(cb("BU", [V("ff", "BB", { fcb: 65 })], "5♠ 5♦", "K♣ 7♦ 2♥").ans === "s", "passive fit-or-fold Fish, bone dry, underpair: bet small");
+ok(cb("CO", [V("ag", "BU", { fcb: 32, rcb: 25 }), V("reg", "BB", { fcb: 50 })], "A♣ 5♣", "9♥ 8♥ 6♦").ans === "x", "multiway, wet, Aggro Fish, a gutshot: check");
+ok(cb("BU", [V("reg", "BB", { fcb: 50 })], "K♠ 9♦", "K♣ 7♦ 2♥").ans === "s", "aware Reg, dry board, BU range: value bets use the small balanced size");
+ok(cb("UTG", [V("st", "BB", { fcb: 30 })], "K♠ K♦", "Q♥ 8♥ 4♣").ans === "l", "Station Fish: bet big with value");
+ok(cb("BU", [V("reg", "BB", { fcb: 50 })], "9♠ 9♦", "K♣ 7♦ 2♥").ans === "x", "stable SDV on a dry board: check");
+// Ch. 5: an overpair when a flush card comes on the turn: bet into the Fish, check against the Reg
+const vb = type => { const hole = C("K♠ K♣"), board = C("Q♥ 8♥ 4♣ 2♥"), sp = { vill: [V(type, "BB")], cl: X.vbClass(hole, board), river: false, ip: true, stack: 90, pot: 17, tex: 2, board, hole }; return X.vbGrade(sp); };
+ok(vb("st").ans === "l" && vb("reg").ans === "x", "Ch. 5: overpair on a flush turn: bet the Fish, check the Reg");
+// every generated spot: plain JSON, one right answer, a why-not note on every other option, and a spread of answers
+for (const [k, m] of Object.entries(X.PMODES)) {
+  const tally = {}; let bad = 0;
+  for (let i = 0; i < 400; i++) {
+    const sp = m.gen();
+    if (!sp || !sp.opts.some(o => o[0] === sp.ans) || sp.opts.some(o => o[0] !== sp.ans && !sp.notes[o[0]]) || !sp.why || !sp.verdict || !sp.info
+      || JSON.stringify(JSON.parse(JSON.stringify(sp))) !== JSON.stringify(sp) || sp.hole.concat(sp.board).length !== new Set(sp.hole.concat(sp.board)).size) bad++;
+    else tally[sp.ans] = (tally[sp.ans] || 0) + 1;
+  }
+  ok(!bad, `${k}: ${bad} broken spots`);
+  ok((tally.x || 0) >= 40 && Object.keys(tally).length >= 3, `${k}: answers spread ${JSON.stringify(tally)}`);
+}
+
+// 11. Spaced repetition: a miss comes back 3-4 spots later, climbs the ladder on right answers, resets on a miss
+{
+  const L = [], now = 1e12; X.revAdd(L, "cb-ip", { a: 1 }, now, 10);
+  ok(!X.revDue(L, ["cb-ip"], now, 12).length && X.revDue(L, ["cb-ip"], now, 14).length === 1 && !X.revDue(L, ["vb-turn"], now, 14).length, "review due 3-4 spots later, only in its topic");
+  X.revAnswer(L, L[0].id, true, now, 14); ok(L[0].step === 1 && L[0].n >= 29, "a right answer moves it to the next step");
+  X.revAnswer(L, L[0].id, false, now, 30); ok(L[0].step === 0, "a miss sends it back to the start");
+  for (let i = 0; i < X.LADDER.length; i++) X.revAnswer(L, L[0].id, true, now, 40);
+  ok(L.length === 0, "after the last step the spot is learnt and leaves");
+}
 
 console.log(fails ? `${fails} check(s) failed` : "All checks passed");
 process.exit(fails ? 1 : 0);
