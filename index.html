@@ -582,10 +582,10 @@ const rangePct=set=>set.reduce((a,h)=>a+combos(h),0)/1326;
 const XMODES={
   'open-UTG-fish':{grp:'Open',label:'UTG · Fish',fig:6,seat:'UTG',info:'Folded to you UTG. The tight table has one big Fish in the BB who rarely folds.',opts:[['y','Raise 3x'],['f','Fold']],base:'UTG',add:L("66 55 44 33 22 A9s A8s A7s A6s A5s A4s A3s A2s 98s 87s ATo KJo")},
   'open-HJ-fish':{grp:'Open',label:'HJ · Fish/Nit',fig:8,seat:'HJ',info:'Folded to you in the HJ. A Fish or a Nit sits in the blinds, and nobody behind 3-bets light.',opts:[['y','Raise 3x'],['f','Fold']],base:'HJ',add:L("55 44 33 22 K9s Q9s J9s T8s 87s 76s KTo QJo")},
-  'open-HJ-def':{grp:'Open',label:'HJ · 3-bettor',fig:9,seat:'HJ',info:'Folded to you in the HJ. An aggressive Reg behind you 3-bets light.',opts:[['y','Raise 3x'],['f','Fold']],base:'HJ',drop:L("66 A8s A7s A6s 98s ATo KJo")},
+  'open-HJ-def':{grp:'Open',label:'HJ · 3-bettor',fig:9,seat:'HJ',info:'Folded to you in the HJ. An aggressive Reg on the BU 3-bets light.',opts:[['y','Raise 3x'],['f','Fold']],base:'HJ',drop:L("66 A8s A7s A6s 98s ATo KJo")},
   'open-CO-fish':{grp:'Open',label:'CO · Fish/Nit',fig:11,seat:'CO',info:'Folded to you in the CO. A Fish or a Nit sits in the blinds.',opts:[['y','Raise 3x'],['f','Fold']],base:'CO',add:L("K7s K6s K5s K4s K3s K2s Q8s J8s 86s 75s A8o A7o A6o A5o A4o A3o A2o K9o Q9o J9o")},
   'open-CO-nit':{grp:'Open',label:'CO · BU Nit',fig:12,seat:'CO',info:'Folded to you in the CO. The BU is a Nit, so the CO plays like a second button.',opts:[['y','Raise 2x'],['f','Fold']],base:'CO',add:L("K7s K6s K5s K4s K3s K2s Q8s Q7s Q6s J8s J7s T7s 86s 75s 64s 54s 43s A8o A7o A6o A5o A4o A3o A2o K9o K8o K7o Q9o Q8o Q7o J9o J8o T8o 98o")},
-  'open-CO-def':{grp:'Open',label:'CO · 3-bettor',fig:13,seat:'CO',info:'Folded to you in the CO. A light 3-bettor sits behind you.',opts:[['y','Raise 2.5x'],['f','Fold']],base:'CO',drop:L("55 44 33 22 K8s T8s 97s 76s 65s A9o KTo QTo JTo T9o")},
+  'open-CO-def':{grp:'Open',label:'CO · 3-bettor',fig:13,seat:'CO',info:'Folded to you in the CO. A light 3-bettor sits on the BU.',opts:[['y','Raise 2.5x'],['f','Fold']],base:'CO',drop:L("55 44 33 22 K8s T8s 97s 76s 65s A9o KTo QTo JTo T9o")},
   'call-SBvUTG':{grp:'Flat',label:'SB vs UTG',fig:33,seat:'SB',info:'UTG opens 3x, folds to you in the SB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs UTG',"AA KK QQ JJ TT 99 88 AKs AQs AKo"]],scene:{bets:{UTG:3},did:{UTG:'Raise 3'}}},
   'call-SBvHJ':{grp:'Flat',label:'SB vs HJ',fig:33,seat:'SB',info:'HJ opens 3x, folds to you in the SB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs UTG',"AA KK QQ JJ TT 99 88 AKs AQs AKo"],['c','t2','+ vs HJ',"AJs KQs AQo"]],scene:{bets:{HJ:3},did:{HJ:'Raise 3'}}},
   'call-SBvCO-fish':{grp:'Flat',label:'SB vs CO · Fish BB',fig:34,seat:'SB',info:'CO opens 3x, folds to you in the SB. A Fish is in the BB.',opts:[['c','Call'],['f','Fold']],tiers:[['c','in','Call vs CO 3x',"AA KK QQ JJ TT 99 88 77 66 AKs AQs AJs ATs A9s KQs KJs KTs QJs QTs JTs T9s AKo AQo AJo KQo"]],scene:{bets:{CO:3},did:{CO:'Raise 3'}}},
@@ -607,9 +607,17 @@ const XMODES={
   'f3-COvSB':{grp:'vs 3-bet',label:'CO vs SB',fig:64,seat:'CO',info:'You open 2.5x in the CO. A Reg in the SB 3-bets to 9. Everyone else folds.',opts:[['r','4-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','4-bet, call a shove',"AA KK QQ AKs AKo"],['r','t3','4-bet, fold to a shove',"A9s A8s A5s A4s A3s A2s KTs KJo"],['c','cl','Call',"JJ TT 99 AQs AJs ATs KQs KJs QJs JTs AQo AJo KQo"],['f','','Fold',"88 77 66 55 44 33 22 A7s A6s K9s K8s QTs Q9s J9s T9s T8s 98s 97s 87s 76s 65s ATo A9o KTo QJo QTo JTo T9o"]],scene:{bets:{SB:9},did:{SB:'3-bet 9'},me:2.5,after:true},pool:true},
   'f3-BUvBB':{grp:'vs 3-bet',label:'BU vs BB',fig:65,seat:'BU',info:'You open 2x on the BU. A Reg in the BB (13% 3-bet) re-raises to 8.',opts:[['r','4-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','4-bet, call a shove',"AA KK QQ JJ AKs AKo"],['r','t3','4-bet, fold to a shove',"K8s K7s K6s K5s K4s K3s K2s A9o A8o A5o K9o K8o"],['c','cl','Call',"TT 99 88 77 AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs K9s QJs QTs Q9s JTs J9s T9s T8s 98s 97s 87s 76s AQo AJo ATo KQo KJo KTo QJo QTo"],['f','','Fold',"66 55 44 33 22 Q8s Q7s Q6s Q5s Q4s Q3s Q2s J8s J7s J6s T7s T6s 96s 86s 75s 65s 64s 54s 53s 43s 32s A7o A6o A4o A3o A2o Q9o Q8o JTo J9o J8o T9o T8o 98o 87o"]],scene:{bets:{BB:8},did:{BB:'3-bet 8'},me:2,after:true},pool:true},
   'f3-HJvSB':{grp:'vs 3-bet',label:'HJ vs SB Fish',fig:66,seat:'HJ',info:'You open 3x in the HJ. A passive Fish in the SB, who almost never 3-bets, makes it 8.',opts:[['r','4-bet'],['c','Call'],['f','Fold']],tiers:[['r','in','4-bet, call a shove',"AA"],['c','cl','Call',"KK QQ JJ TT 99 88 77 66 T9s 98s"],['f','','Fold',"AKs AQs AJs ATs A9s A8s A7s A6s A5s A4s A3s A2s KQs KJs KTs QJs QTs JTs AKo AQo AJo ATo KQo KJo"]],scene:{bets:{SB:8},did:{SB:'3-bet 8'},me:3,after:true},pool:true},
-  'f3-COvBU40':{grp:'vs 3-bet',label:'CO vs BU 40bb',fig:80,seat:'CO',info:'You open 2.5x in the CO. The BU, who has only 40bb, 3-bets to 6.',opts:[['r','Shove'],['c','Call'],['f','Fold']],tiers:[['r','in','Shove',"AA KK QQ JJ TT 99 88 77 66 55 44 33 22 AKs AQs AJs ATs AKo AQo"],['c','cl','Call',"KQs KJs KTs QJs QTs JTs T9s AJo KQo"],['f','','Fold',"A9s A8s A7s A6s A5s A4s A3s A2s K9s K8s Q9s J9s T8s 98s 97s 87s 76s 65s ATo A9o KJo KTo QJo QTo JTo T9o"]],scene:{bets:{BU:6},did:{BU:'3-bet 6 · 40bb'},me:2.5,after:true},pool:true},
+  'f3-COvBU40':{grp:'vs 3-bet',label:'CO vs BU 40bb',fig:80,seat:'CO',info:'You open 2.5x in the CO. The BU, who has only 40bb, 3-bets to 6.',who:{BU:'40bb'},opts:[['r','Shove'],['c','Call'],['f','Fold']],tiers:[['r','in','Shove',"AA KK QQ JJ TT 99 88 77 66 55 44 33 22 AKs AQs AJs ATs AKo AQo"],['c','cl','Call',"KQs KJs KTs QJs QTs JTs T9s AJo KQo"],['f','','Fold',"A9s A8s A7s A6s A5s A4s A3s A2s K9s K8s Q9s J9s T8s 98s 97s 87s 76s 65s ATo A9o KJo KTo QJo QTo JTo T9o"]],scene:{bets:{BU:6},did:{BU:'3-bet 6'},me:2.5,after:true},pool:true},
 };
 Object.assign(MODES,XMODES);
+/* Who sits where, when the spot depends on it: shown on the table as "type · action", like the post-flop spots
+   (short names as in PF_TYPES: Reg, Nit, Fish, Station, Aggro). */
+const WHO={'open-UTG-fish':{BB:'Station'},'open-HJ-fish':{BB:'Fish/Nit'},'open-CO-fish':{BB:'Fish/Nit'},'open-CO-nit':{BU:'Nit'},
+  'open-HJ-def':{BU:'3-bettor'},'open-CO-def':{BU:'3-bettor'},'call-SBvCO-fish':{BB:'Fish'},'call-SBvBU-fish':{BB:'Fish'},
+  'call-SBvCO-nit':{BB:'Nit'},'call-SBvBU-nit':{BB:'Nit'},'3b-BUvHJ':{HJ:'Reg'},'3b-BBvBU':{BU:'Reg'},'3b-COvUTG':{UTG:'Aggro'},
+  '3b-SBvCO':{CO:'Reg'},'sq-BB':{BU:'Reg',SB:'Reg'},'sq-SB':{HJ:'Reg',BU:'Fish'},'f3-COvSB':{SB:'Reg'},'f3-BUvBB':{BB:'Reg'},
+  'f3-HJvSB':{SB:'Fish'}};
+Object.entries(WHO).forEach(([k,w])=>{MODES[k].who=Object.assign(MODES[k].who||{},w);});
 /* Every spot in one shape: opts = the answers [key, label]; tiers = [key, css, legend, hands] colour the chart and
    give each hand its answer (first tier wins, anything else is a fold); ans = hand -> key; pool = the only hands dealt
    (vs-3-bet spots deal only hands from your opening range). The original Ch. 2 and Ch. 6 spots are two-answer spots. */
@@ -1521,7 +1529,7 @@ const revIsDue=(it,now,count)=>it.t?now>=it.t:count>=it.n;
 function revDue(list,keys,now,count){return list.filter(it=>keys.includes(it.k)&&revIsDue(it,now,count));}
 
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.11.0",at:"2026-11-20T08:15Z"};
+var BUILD={v:"2.11.1",at:"2026-11-20T17:18Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -1732,6 +1740,8 @@ const bb=x=>(x%1?x.toFixed(1):x)+'';
 /* The table for a spot. scene: bets (chips in front), did (what each player did), me (your chips when you opened
    first), after (you opened and now face a 3-bet: everyone who did not act has folded). Without a scene, the original
    spots: blinds posted and, for a call spot, a 3bb raise from md.vill. Folded blinds' chips sit in the pot. */
+/* A seat's label on every table: its player type (when the spot names one) on one line, what it did on the next. */
+const seatLines=(who,act)=>[who,act].filter(Boolean).map(x=>`<i>${x}</i>`).join('')||'<i></i>';
 function tableHTML(md){
   const sc=md.scene||{bets:md.vill?{[md.vill]:3}:{},did:md.vill?{[md.vill]:'Raise 3'}:{}};
   const hi=SEATS6.indexOf(md.seat),n=6,chips=Object.assign({SB:.5,BB:1},sc.bets);
@@ -1740,9 +1750,9 @@ function tableHTML(md){
   let h=`<div class="ptable" role="img" aria-label="${md.info.replace(/"/g,'')}"><div class="oval"></div><div class="tcenter"><span class="pot"><small>Pot</small><b>${bb(pot)}bb</b></span></div>`;
   SEATS6.forEach((s,j)=>{
     const a=(90+(j-hi)*360/n)*Math.PI/180,cx=Math.cos(a),cy=Math.sin(a);
-    const you=j===hi,did=sc.did&&sc.did[s],fold=!you&&!did&&(sc.after||j<hi);
-    const sub=you?(sc.after?'You · '+bb(sc.me):'You'):did||(fold?'Fold':'');
-    h+=`<div class="st${you?' you':''}${fold?' fold':''}${did?' acted':''}" style="left:${(50+43*cx).toFixed(1)}%;top:${(50+41*cy).toFixed(1)}%">${s==='BU'?'<span class="dbtn" aria-label="dealer button">D</span>':''}<b>${s}</b><i>${sub}</i></div>`;
+    const you=j===hi,did=sc.did&&sc.did[s],fold=!you&&!did&&(sc.after||j<hi),who=!fold&&md.who&&md.who[s];
+    const sub=you?(sc.after?'You · '+bb(sc.me):'You'):seatLines(who,did||(fold?'Fold':''));
+    h+=`<div class="st${you?' you':''}${fold?' fold':''}${did||who?' acted':''}" style="left:${(50+43*cx).toFixed(1)}%;top:${(50+41*cy).toFixed(1)}%">${s==='BU'?'<span class="dbtn" aria-label="dealer button">D</span>':''}<b>${s}</b>${you?`<i>${sub}</i>`:sub}</div>`;
     if(chips[s]&&!fold)h+=`<span class="stk ${chips[s]>=2?'d2':'d1'}" style="left:${(50+25*cx).toFixed(1)}%;top:${(50+21*cy).toFixed(1)}%">${bb(chips[s])}</span>`;
   });
   return h+'</div>';
@@ -1820,8 +1830,8 @@ function postTableHTML(p,deal){
   let h=`<div class="ptable post" role="img" aria-label="${esc(p.info.replace(/<[^>]+>/g,''))}"><div class="oval"></div><div class="tcenter"><span class="pot"><small>Pot</small><b>${bb(p.pot)}bb</b></span><span class="pboard">${p.board.map(c=>cardHTML(c[0],c[1],' mini'+deal)).join('')}</span></div>`;
   SEATS6.forEach((s,j)=>{
     const a=(90+(j-hi)*360/6)*Math.PI/180,cx=Math.cos(a),cy=Math.sin(a),you=s===p.seat,inh=inn.has(s);
-    const sub=you?'You':inh?(p.sub[s]+(p.did[s]==='Check'?' · Check':'')):'Fold';
-    h+=`<div class="st${you?' you':''}${inh?'':' fold'}${inh&&!you?' acted':''}" style="left:${(50+43*cx).toFixed(1)}%;top:${(50+41*cy).toFixed(1)}%">${s==='BU'?'<span class="dbtn" aria-label="dealer button">D</span>':''}<b>${s}</b><i>${sub}</i></div>`;
+    const sub=you?'<i>You</i>':seatLines(inh&&p.sub[s],inh?(p.did[s]==='Check'?'Check':''):'Fold');
+    h+=`<div class="st${you?' you':''}${inh?'':' fold'}${inh&&!you?' acted':''}" style="left:${(50+43*cx).toFixed(1)}%;top:${(50+41*cy).toFixed(1)}%">${s==='BU'?'<span class="dbtn" aria-label="dealer button">D</span>':''}<b>${s}</b>${sub}</div>`;
   });
   return h+'</div>';
 }

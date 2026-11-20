@@ -179,5 +179,11 @@ for (const [k, m] of Object.entries(X.PMODES)) {
   ok(L.length === 0, "after the last step the spot is learnt and leaves");
 }
 
+// 12. The table names the players a spot depends on, the same way on every table ("type · action")
+for (const [k, m] of Object.entries(X.MODES)) {
+  if (/\b(Fish|Nit|Reg|3-bettor|40bb)\b/.test(m.info)) ok(m.who && Object.keys(m.who).length, `${k}: the info names a player type but the table doesn't show it`);
+  Object.keys(m.who || {}).forEach(s => ok(SEATS.includes(s) && s !== m.seat, `${k}: player type on seat ${s}`));
+}
+
 console.log(fails ? `${fails} check(s) failed` : "All checks passed");
 process.exit(fails ? 1 : 0);
