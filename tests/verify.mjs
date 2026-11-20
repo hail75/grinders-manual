@@ -77,6 +77,7 @@ X.LESSONS.forEach((l, i) => {
     ok(q[3] && q[3].length > 10, `lesson ${l.id} q${j + 1}: explanation`);
   });
   if (l.tool) ok(X.toolHTML(l.tool).length > 50, `lesson ${l.id}: tool ${l.tool} renders`);
+  if (l.toolAt) ok(l.blocks.some(b => b[0] === l.toolAt), `lesson ${l.id}: toolAt names a part`);
   const txt = l.blocks.map(b => b[1]).join("");
   ok(!/undefined|NaN|\[object/.test(txt), `lesson ${l.id}: broken text`);
   (txt.match(/href="#([^"]+)"/g) || []).forEach(a => { const h = a.slice(7, -1), [v, arg] = h.split("/");
