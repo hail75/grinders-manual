@@ -6,7 +6,7 @@ const html = readFileSync(new URL("index.html", root), "utf8");
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 const cut = script.indexOf("/* ===================== UI");
 if (cut < 0) throw new Error("UI marker not found in index.html");
-const X = new Function(script.slice(0, cut) + "; return {RANGES,CALLS,MODES,LESSONS,MATH,rangePct,allHands,combos,toolHTML,eq2,PMODES,pfTexture,pfRead,pfOuts,pfScore,pfVillain,cbGrade,vbClass,vbGrade,revAdd,revAnswer,revDue,LADDER,PF_TYPES};")();
+const X = new Function(script.slice(0, cut) + "; return {RANGES,CALLS,MODES,LESSONS,MATH,rangePct,allHands,combos,toolHTML,eq2,PMODES,pfTexture,pfRead,pfOuts,pfScore,pfVillain,cbGrade,vbClass,vbGrade,revAdd,revAnswer,revDue,LADDER,PF_TYPES,cbSize};")();
 
 let fails = 0;
 const ok = (c, m) => { if (!c) { fails++; console.log("FAIL:", m); } };
@@ -183,6 +183,16 @@ for (const [k, m] of Object.entries(X.PMODES)) {
 for (const [k, m] of Object.entries(X.MODES)) {
   if (/\b(Fish|Nit|Reg|3-bettor|40bb)\b/.test(m.info)) ok(m.who && Object.keys(m.who).length, `${k}: the info names a player type but the table doesn't show it`);
   Object.keys(m.who || {}).forEach(s => ok(SEATS.includes(s) && s !== m.seat, `${k}: player type on seat ${s}`));
+}
+
+// 13. The trainer sizes c-bets with the same grid the Ch. 4 lesson shows (rows dry/semi-wet/wet, columns BU / CO,SB / UTG,HJ)
+{
+  const GRID = { 1: "ssm", 2: "ssm", 3: "sml", 4: "mll", 5: "mll" }, COLS = { BU: 0, CO: 1, SB: 1, UTG: 2, HJ: 2 };
+  for (const tex of [1, 2, 3, 4, 5]) for (const [seat, c] of Object.entries(COLS))
+    ok(X.cbSize({ tex, seat, vill: [{ type: "reg" }] }, false).k === GRID[tex][c], `c-bet size for type ${tex} from ${seat}`);
+  const les = X.LESSONS.find(l => l.id === "cbet").blocks.find(b => b[0] === "Sizing: small, medium or large")[1];
+  const rows = [...les.matchAll(/<tr><td><b>[^<]+<\/b>[^<]*<\/td>((?:<td>\w+<\/td>){3})<\/tr>/g)].map(m => [...m[1].matchAll(/<td>(\w)/g)].map(x => x[1].toLowerCase()).join(""));
+  ok(rows.join() === "ssm,sml,mll", "the lesson's sizing grid matches the trainer: " + rows.join());
 }
 
 console.log(fails ? `${fails} check(s) failed` : "All checks passed");
