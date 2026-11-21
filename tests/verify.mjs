@@ -195,5 +195,12 @@ for (const [k, m] of Object.entries(X.MODES)) {
   ok(rows.join() === "ssm,sml,mll", "the lesson's sizing grid matches the trainer: " + rows.join());
 }
 
+// 14. Flat and BB defend add Ch. 10's value 3-bets to Ch. 6's calling charts: [QQ+ AK], Figure 54's value hands vs a BU min-raise
+for (const [k, m] of Object.entries(X.MODES)) if (m.grp === "Flat" || m.grp === "BB defend") {
+  ok(m.opts.map(o => o[0]).join() === "r,c,f", `${k}: 3-bet / Call / Fold`);
+  ["AA", "KK", "QQ", "AKs", "AKo"].filter(h => m.set.includes(h)).forEach(h => ok(m.ans[h] === "r", `${k}: ${h} 3-bets for value`));
+  ok(!m.set.includes("JJ") || m.ans.JJ === (k === "bb-BU2" ? "r" : "c"), `${k}: JJ ${k === "bb-BU2" ? "3-bets vs a min-raise (Figure 54)" : "calls"}`);
+}
+
 console.log(fails ? `${fails} check(s) failed` : "All checks passed");
 process.exit(fails ? 1 : 0);

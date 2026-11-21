@@ -342,6 +342,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 /* Touch screens: no keyboard hints */
 @media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt,.acts.n3 .opt{padding:0 8px}.kbd-only{display:none!important}}
 @media (max-width:440px){#v-ranges>.seg button{font-size:12.5px;padding:0 9px}}
+@media (max-width:440px){.acts.n3 .opt{padding:0 6px;font-size:15.5px}.acts.n3 .opt .k{display:none}}
 /* Trainer: group row scrolls on phones; post-flop spots */
 .gseg{overflow-x:auto;scrollbar-width:none}
 .gseg::-webkit-scrollbar{display:none}
@@ -641,6 +642,14 @@ Object.entries(WHO).forEach(([k,w])=>{MODES[k].who=Object.assign(MODES[k].who||{
     }else{
       m.opts=[['y',m.act],['f','Fold']];
       m.tiers=k.startsWith('open-')?[['y','in',m.act,m.set]]:callTiers(k,m);
+    }
+    // Flat and BB defend: Ch. 6 prints calling charts only, before 3-betting is taught. Ch. 10 then 3-bets the top of
+    // them for value: the book's "common tight 3-bet value model" [QQ+ AK], or, against a BU min-raise, the value hands
+    // of its BB vs BU chart (Figure 54). So these spots answer 3-bet / Call / Fold. Bluff 3-bets need reads: 3-bet group.
+    if(m.grp==='Flat'||m.grp==='BB defend'){
+      const f54=MODES['3b-BBvBU'].tiers[0][3],val=(k==='bb-BU2'?(typeof f54==='string'?L(f54):f54):L("AA KK QQ AKs AKo")).filter(h=>m.set.includes(h));
+      m.opts=[['r','3-bet'],['c','Call'],['f','Fold']];m.value3=k==='bb-BU2'?54:'qq';
+      m.tiers=[['r','in','3-bet for value (Ch. 10)',val],...m.tiers.map(([a,c,l,hs])=>[a==='y'?'c':a,c,l,hs.filter(h=>!val.includes(h))])];
     }
     // One colour family per action in every chart: navy = raise (open, 3-bet, squeeze, 4-bet, shove), teal = call,
     // grey = fold. A chart's second and third tiers of the same action get lighter shades.
@@ -1535,7 +1544,7 @@ const revIsDue=(it,now,count)=>it.t?now>=it.t:count>=it.n;
 function revDue(list,keys,now,count){return list.filter(it=>keys.includes(it.k)&&revIsDue(it,now,count));}
 
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.11.2",at:"2026-11-21T06:48Z"};
+var BUILD={v:"2.12.0",at:"2026-11-21T16:33Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -1821,10 +1830,10 @@ function drawChart(){
 }
 function chartNote(md){
   const f=md.fig?`Book figure ${md.fig}. `:'';
-  if(md.grp==='Open')return md.fig?`<p class="note">${f}Striped and gold squares are the book’s dynamic hands: they change with who is at the table.</p>`:'';
+  if(md.grp==='Open')return md.fig?`<p class="note">${f}Light navy squares open only at this table; striped squares are default opens you fold here. Both are the book’s dynamic hands: they change with who is at the table.</p>`:'';
   if(md.grp==='3-bet')return `<p class="note">${f}From Ch. 10. Each range is built for the reads in the spot description; other opponents call for other ranges.</p>`;
   if(md.grp==='vs 3-bet')return `<p class="note">${f}From Ch. 11. Outlined squares are hands you would not have opened, so they are never dealt here.</p>`;
-  return `<p class="note">${f}These are the book’s Ch. 6 calling charts, before 3-betting is introduced. Ch. 10 moves some of the top hands into 3-bet ranges depending on the spot.</p>`;
+  return `<p class="note">${f}The book’s Ch. 6 calling chart, with Ch. 10’s value 3-bets on top: ${md.value3===54?'the value hands of its BB vs BU chart (Figure 54), since a min-raise opens wide':'[QQ+ AK], the book’s standard tight value range'}. 3-bet bluffs depend on reads about the opener, so they’re drilled in the <a href="#ranges/mix-3-bet">3-bet</a> group.</p>`;
 }
 const nextBtn=t=>`<div class="actions"><button class="btn" id="rt-next">${t}</button></div>`;
 const peekBtn=()=>`<button class="peek" id="rt-peek" aria-pressed="${RT.peek}">${RT.peek?'Hide':'Peek'}</button>`;
