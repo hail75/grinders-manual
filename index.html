@@ -34,7 +34,7 @@
   --card-edge:0 0 0 1px rgba(18,28,44,.22),0 2px 0 rgba(18,28,44,.28),0 6px 14px rgba(18,28,44,.22);
   --shadow:0 1px 2px rgba(18,28,44,.06),0 6px 20px rgba(18,28,44,.08);
   --cell-fold:#dde4ee; --cell-fold-ink:#67748a; --cell-call:#2e8b7f;
-  --cell-r1:#1d3a5e; --cell-r2:#4c72a6; --cell-r3:#a8bedb; --cell-r3-ink:#1d3a5e; --cell-c1:#2e8b7f; --cell-c2:#5fb2a6; --cell-c3:#b3dcd5; --cell-c3-ink:#134d45;
+  --cell-r1:#1d3a5e; --cell-r2:#7d55c7; --cell-dy:#d9a53a; --cell-dy-ink:#3a2a00; --cell-c1:#2e8b7f; --cell-c2:#e48a3a; --cell-c2-ink:#3a1e00; --cell-c3:#c4547e;
   --hud-green:#1f8a4c; --hud-red:#c2372f; --hud-blue:#2f72d6; --hud-purple:#8a4fd1; --hud-pink:#d1489a;
   --serif:"Fraunces",Georgia,"Times New Roman",serif;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -50,7 +50,7 @@
     --warn:#f0c46a; --warn-bg:#3a2d12; --txt-red:#ff8a8f;
     --card-edge:0 2px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.18); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
     --cell-fold:#19253a; --cell-fold-ink:#7d8ca5; --cell-call:#2a7d72;
-  --cell-r1:#3f78c2; --cell-r2:#2f5a92; --cell-r3:#24416a; --cell-r3-ink:#c9d8ee; --cell-c1:#2fa290; --cell-c2:#237a6d; --cell-c3:#1b5951; --cell-c3-ink:#c5ece6;
+  --cell-r1:#3f78c2; --cell-r2:#9475e0; --cell-dy:#d9a84c; --cell-dy-ink:#2b1d00; --cell-c1:#2fa290; --cell-c2:#e39a52; --cell-c2-ink:#2b1600; --cell-c3:#d46a93;
     --hud-green:#5fd38a; --hud-red:#ff7a6e; --hud-blue:#6aa6ff; --hud-purple:#b68cff; --hud-pink:#ff7cc3;
   }
 }
@@ -62,7 +62,7 @@
   --warn:#f0c46a; --warn-bg:#3a2d12; --txt-red:#ff8a8f;
   --card-edge:0 2px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.18); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
   --cell-fold:#19253a; --cell-fold-ink:#7d8ca5; --cell-call:#2a7d72;
-  --cell-r1:#3f78c2; --cell-r2:#2f5a92; --cell-r3:#24416a; --cell-r3-ink:#c9d8ee; --cell-c1:#2fa290; --cell-c2:#237a6d; --cell-c3:#1b5951; --cell-c3-ink:#c5ece6;
+  --cell-r1:#3f78c2; --cell-r2:#9475e0; --cell-dy:#d9a84c; --cell-dy-ink:#2b1d00; --cell-c1:#2fa290; --cell-c2:#e39a52; --cell-c2-ink:#2b1600; --cell-c3:#d46a93;
   --hud-green:#5fd38a; --hud-red:#ff7a6e; --hud-blue:#6aa6ff; --hud-purple:#b68cff; --hud-pink:#ff7cc3;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -391,11 +391,11 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 @media (min-width:400px){.rc{font-size:9.5px}}
 .rc.in{background:var(--cell-r1);color:#fff}
 .rc.in2{background:var(--cell-r2);color:#fff}
-.rc.in3{background:var(--cell-r3);color:var(--cell-r3-ink)}
+.rc.dy{background:var(--cell-dy);color:var(--cell-dy-ink)}
 .rc.cl{background:var(--cell-c1);color:#fff}
-.rc.cl2{background:var(--cell-c2);color:#fff}
-.rc.cl3{background:var(--cell-c3);color:var(--cell-c3-ink)}
-.rc.dyn{background:repeating-linear-gradient(135deg,var(--cell-fold) 0 4px,var(--cell-r3) 4px 8px);color:var(--cell-fold-ink)}
+.rc.cl2{background:var(--cell-c2);color:var(--cell-c2-ink)}
+.rc.cl3{background:var(--cell-c3);color:#fff}
+.rc.dyn{background:repeating-linear-gradient(135deg,var(--cell-fold) 0 4px,color-mix(in srgb,var(--cell-dy) 70%,var(--cell-fold)) 4px 8px);color:var(--cell-fold-ink)}
 .rc.nr{background:transparent;color:color-mix(in srgb,var(--muted) 50%,transparent);box-shadow:inset 0 0 0 1px var(--line)}
 .rc.cur{outline:2.5px solid var(--gold);outline-offset:0;position:relative;z-index:1;box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;margin-top:10px;align-items:center;color:var(--muted)}
@@ -657,11 +657,13 @@ Object.entries(WHO).forEach(([k,w])=>{MODES[k].who=Object.assign(MODES[k].who||{
       m.opts=[['r','3-bet'],['c','Call'],['f','Fold']];m.value3=k==='bb-BU2'?54:'qq';
       m.tiers=[['r','in','3-bet for value (Ch. 10)',val],...m.tiers.map(([a,c,l,hs])=>[a==='y'?'c':a,c,l,hs.filter(h=>!val.includes(h))])];
     }
-    // One colour family per action in every chart: navy = raise (open, 3-bet, squeeze, 4-bet, shove), teal = call,
-    // grey = fold. A chart's second and third tiers of the same action get lighter shades.
+    // Each colour means one thing in every chart. Raise: navy = value or default open, violet = light raise (bluff,
+    // raise-then-fold), gold = opens only at this table (dynamic). Call: teal, then orange and rose for the wider
+    // tiers (vs later seats or smaller opens). Grey = fold; gold stripes = a default open you fold here.
     const fam=key=>key==='f'?'f':/^call/i.test((m.opts.find(o=>o[0]===key)||['',''])[1])?'c':'r',used={r:0,c:0};
     m.tiers=m.tiers.map(([a,c,l,hs])=>{const f=fam(a);if(f==='f')return [a,c==='dyn'?'dyn':'',l,hs];
-      const i=Math.min(used[f]++,2);return [a,(f==='r'?['in','in2','in3']:['cl','cl2','cl3'])[i],l,hs];});
+      if(f==='r'&&/dynamic/i.test(l))return [a,'dy',l,hs];
+      const i=used[f]++;return [a,(f==='r'?['in','in2','in2']:['cl','cl2','cl3'])[Math.min(i,2)],l,hs];});
     m.ans={};m.tiers.forEach(t=>t[3].forEach(h=>{if(!(h in m.ans))m.ans[h]=t[0];}));
     m.pool=m.pool?Object.keys(m.ans):null;
   }
@@ -1550,7 +1552,7 @@ const revIsDue=(it,now,count)=>it.t?now>=it.t:count>=it.n;
 function revDue(list,keys,now,count){return list.filter(it=>keys.includes(it.k)&&revIsDue(it,now,count));}
 
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.13.0",at:"2026-11-22T12:31Z"};
+var BUILD={v:"2.13.1",at:"2026-11-22T18:48Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -1782,8 +1784,8 @@ function tableHTML(md){
   });
   return h+'</div>';
 }
-const SWATCH={in:'background:var(--cell-r1)',in2:'background:var(--cell-r2)',in3:'background:var(--cell-r3)',cl:'background:var(--cell-c1)',cl2:'background:var(--cell-c2)',cl3:'background:var(--cell-c3)','':'background:var(--cell-fold)',
-  dyn:'background:repeating-linear-gradient(135deg,var(--cell-fold) 0 3px,var(--cell-r3) 3px 5px)',nr:'background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)'};
+const SWATCH={in:'background:var(--cell-r1)',in2:'background:var(--cell-r2)',dy:'background:var(--cell-dy)',cl:'background:var(--cell-c1)',cl2:'background:var(--cell-c2)',cl3:'background:var(--cell-c3)','':'background:var(--cell-fold)',
+  dyn:'background:repeating-linear-gradient(135deg,var(--cell-fold) 0 3px,var(--cell-dy) 3px 5px)',nr:'background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)'};
 function gridHTML(m,cur){
   const md=MODES[m];let h='<div class="rg" role="img" aria-label="'+md.label+' range chart">';
   for(let i=0;i<13;i++)for(let j=0;j<13;j++){const n=cellName(i,j),t=tierOf(m,n);
@@ -1846,7 +1848,7 @@ function drawChart(){
 }
 function chartNote(md){
   const f=md.fig?`Book figure ${md.fig}. `:'';
-  if(md.grp==='Open')return md.fig?`<p class="note">${f}Light navy squares open only at this table; striped squares are default opens you fold here. Both are the book’s dynamic hands: they change with who is at the table.</p>`:'';
+  if(md.grp==='Open')return md.fig?`<p class="note">${f}Gold squares open only at this table; gold-striped squares are default opens you fold here. Both are the book’s dynamic hands: they change with who is at the table.</p>`:'';
   if(md.grp==='3-bet')return `<p class="note">${f}From Ch. 10. Each range is built for the reads in the spot description; other opponents call for other ranges.</p>`;
   if(md.grp==='vs 3-bet')return `<p class="note">${f}From Ch. 11. Outlined squares are hands you would not have opened, so they are never dealt here.</p>`;
   return `<p class="note">${f}The book’s Ch. 6 calling chart, with Ch. 10’s value 3-bets on top: ${md.value3===54?'the value hands of its BB vs BU chart (Figure 54), since a min-raise opens wide':'[QQ+ AK], the book’s standard tight value range'}. 3-bet bluffs depend on reads about the opener, so they’re drilled in the <a href="#ranges/mix-3-bet">3-bet</a> group.</p>`;

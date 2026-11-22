@@ -29,7 +29,7 @@ for (const [k, m] of Object.entries(X.MODES)) {
   ok(m.opts.length >= 2 && m.opts.length <= 3 && m.opts[m.opts.length - 1][0] === "f", `${k}: options end with Fold`);
   const keys = m.opts.map(o => o[0]), seen = new Set();
   m.tiers.forEach(([key, css, lab, hs]) => {
-    ok(keys.includes(key) && lab && ["in", "in2", "in3", "cl", "cl2", "cl3", "dyn", ""].includes(css), `${k}: tier ${lab}`);
+    ok(keys.includes(key) && lab && ["in", "in2", "dy", "cl", "cl2", "cl3", "dyn", ""].includes(css), `${k}: tier ${lab}`);
     hs.forEach(h => { ok(hands.has(h), `${k}: unknown hand ${h}`); ok(!seen.has(h), `${k}: ${h} in two tiers`); seen.add(h); });
   });
   keys.filter(x => x !== "f").forEach(x => ok(m.tiers.some(t => t[0] === x && t[3].length), `${k}: no hand answers ${x}`));
@@ -125,8 +125,9 @@ ok(idsInHtml.length === new Set(idsInHtml).size, "no duplicate ids in the page s
 // 9. Chart colours mean the same action in every chart: navy family = raise, teal = call, grey = fold
 for (const [k, m] of Object.entries(X.MODES)) m.tiers.forEach(([key, css, lab]) => {
   const label = (m.opts.find(o => o[0] === key) || ["", ""])[1];
-  const fam = key === "f" ? ["", "dyn"] : /^call/i.test(label) ? ["cl", "cl2", "cl3"] : ["in", "in2", "in3"];
+  const fam = key === "f" ? ["", "dyn"] : /^call/i.test(label) ? ["cl", "cl2", "cl3"] : /dynamic/i.test(lab) ? ["dy"] : ["in", "in2"];
   ok(fam.includes(css), `${k}: “${lab}” (${label || "fold"}) is coloured ${css || "grey"}`);
+  ok(!/dynamic/i.test(lab) || css === "dy" || css === "dyn", `${k}: dynamic hands are gold`);
 });
 
 // 10. Post-flop engine (Ch. 4 and 5): texture types match the lesson's examples, outs match the book's
