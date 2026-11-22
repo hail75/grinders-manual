@@ -343,6 +343,11 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 @media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt,.acts.n3 .opt{padding:0 8px}.kbd-only{display:none!important}}
 @media (max-width:440px){#v-ranges>.seg button{font-size:12.5px;padding:0 9px}}
 @media (max-width:440px){.acts.n3 .opt{padding:0 6px;font-size:15.5px}.acts.n3 .opt .k{display:none}}
+.tabseg{margin-bottom:8px;max-width:320px}
+.chinfo p{margin:8px 0 0;font-size:15px;line-height:1.5;color:var(--muted)}
+.chinfo .cpick{color:var(--ink);min-height:46px;padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);margin:12px 0}
+.chinfo .btn{width:100%}
+#v-charts .rc{cursor:pointer}
 /* Trainer: group row scrolls on phones; post-flop spots */
 .gseg{overflow-x:auto;scrollbar-width:none}
 .gseg::-webkit-scrollbar{display:none}
@@ -512,6 +517,7 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
     <section class="view" id="v-home"></section>
     <section class="view" id="v-lesson" hidden></section>
     <section class="view" id="v-ranges" hidden></section>
+    <section class="view" id="v-charts" hidden></section>
     <section class="view" id="v-math" hidden></section>
     <section class="view" id="v-progress" hidden></section>
     <section class="view" id="v-settings" hidden></section>
@@ -1544,13 +1550,13 @@ const revIsDue=(it,now,count)=>it.t?now>=it.t:count>=it.n;
 function revDue(list,keys,now,count){return list.filter(it=>keys.includes(it.k)&&revIsDue(it,now,count));}
 
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.12.0",at:"2026-11-21T16:33Z"};
+var BUILD={v:"2.13.0",at:"2026-11-22T12:31Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- storage (same key and shape as v1, so existing progress carries over) ---------- */
 const KEY='gm-trainer-v1';
-const BLANK=()=>({lessons:{},quiz:{},drills:{},days:[],math:{},log:{},rev:[],rvN:0,theme:'auto'});
+const BLANK=()=>({lessons:{},quiz:{},drills:{},days:[],math:{},log:{},rev:[],rvN:0,mixG:[],theme:'auto'});
 let S=BLANK();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(BLANK(),JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
@@ -1580,7 +1586,7 @@ document.addEventListener('pointerdown',e=>{
 if(mqDark&&mqDark.addEventListener)mqDark.addEventListener('change',applyTheme);
 
 /* ---------- routing ---------- */
-const TITLES={home:'Course',lesson:'Course',ranges:'Trainer',math:'Math drills',progress:'Progress',settings:'Settings'};
+const TITLES={home:'Course',lesson:'Course',ranges:'Trainer',charts:'Charts',math:'Math drills',progress:'Progress',settings:'Settings'};
 let VIEW='home';
 function go(h){location.hash=h;}
 function parseHash(){
@@ -1591,15 +1597,16 @@ function parseHash(){
 function route(){
   const r=parseHash();VIEW=r.v;
   Object.keys(TITLES).forEach(x=>{$('#v-'+x).hidden=x!==VIEW;});
-  $$('#nav button').forEach(b=>b.setAttribute('aria-current',(b.dataset.v===VIEW||(VIEW==='lesson'&&b.dataset.v==='home'))?'page':'false'));
+  $$('#nav button').forEach(b=>b.setAttribute('aria-current',(b.dataset.v===VIEW||(VIEW==='lesson'&&b.dataset.v==='home')||(VIEW==='charts'&&b.dataset.v==='ranges'))?'page':'false'));
   $('#setBtn').setAttribute('aria-current',VIEW==='settings'?'page':'false');
-  if(VIEW==='ranges'&&r.arg&&(SPOTS[r.arg]||(r.arg.startsWith('mix-')&&GROUPS.includes(r.arg.slice(4))))&&r.arg!==RT.mode){RT.mode=r.arg;RT.streak=0;RT.since=REV_GAP;dealHand();}
+  if(VIEW==='ranges'&&r.arg&&(SPOTS[r.arg]||(r.arg.startsWith('mix-')&&(GROUPS.includes(r.arg.slice(4))||r.arg==='mix-All')))&&r.arg!==RT.mode){RT.mode=r.arg;RT.streak=0;RT.since=REV_GAP;dealHand();}
   if(VIEW==='lesson')LS.want=r.id;
+  if(VIEW==='charts'&&r.arg&&MODES[r.arg])CH.mode=r.arg;
   render();window.scrollTo(0,0);
 }
 function render(){
   $('#ptitle').textContent=TITLES[VIEW];
-  ({home:renderHome,lesson:()=>renderLesson(LS.want),ranges:renderRanges,math:renderMath,progress:renderProgress,settings:renderSettings})[VIEW]();
+  ({home:renderHome,lesson:()=>renderLesson(LS.want),ranges:renderRanges,charts:renderCharts,math:renderMath,progress:renderProgress,settings:renderSettings})[VIEW]();
   updateChrome();
 }
 function updateChrome(){
@@ -1726,7 +1733,9 @@ const GROUPS=[...new Set(Object.values(SPOTS).map(x=>x.grp))];
 const SEATS6=['UTG','HJ','CO','BU','SB','BB'];
 let RT={mode:'open-UTG',cur:'open-UTG',hand:null,suits:null,ps:null,rev:null,since:REV_GAP,answered:null,peek:false,streak:0,sc:0,sn:0};
 const grpOf=m=>m.startsWith('mix-')?m.slice(4):SPOTS[m].grp;
-const modeKeys=m=>m.startsWith('mix-')?Object.keys(SPOTS).filter(k=>SPOTS[k].grp===m.slice(4)):[m];
+/* Mix (mode mix-All) deals from every topic, or only the topics ticked in S.mixG (empty = all). */
+const mixGroups=()=>{const g=(S.mixG||[]).filter(x=>GROUPS.includes(x));return g.length?g:GROUPS;};
+const modeKeys=m=>m==='mix-All'?Object.keys(SPOTS).filter(k=>mixGroups().includes(SPOTS[k].grp)):m.startsWith('mix-')?Object.keys(SPOTS).filter(k=>SPOTS[k].grp===m.slice(4)):[m];
 const dueHere=()=>revDue(S.rev,modeKeys(RT.mode),Date.now(),S.rvN).length;
 function inSet(m,h){return answerOf(m,h)!=='f';}
 /* Hands next to a hand with a different answer: where the decisions are. */
@@ -1739,7 +1748,8 @@ function dealHand(){
     if(due.length){const it=due[0];RT.rev=it.id;RT.cur=it.k;RT.since=0;
       if(PMODES[it.k])RT.ps=it.s;else{RT.hand=it.s.h;RT.suits=it.s.u;}return;}}
   RT.since++;
-  RT.cur=keys[Math.floor(Math.random()*keys.length)];
+  if(RT.mode==='mix-All'){const gs=mixGroups(),g=gs[Math.floor(Math.random()*gs.length)],ks=keys.filter(k=>SPOTS[k].grp===g);RT.cur=ks[Math.floor(Math.random()*ks.length)];}
+  else RT.cur=keys[Math.floor(Math.random()*keys.length)];
   if(PMODES[RT.cur]){RT.ps=PMODES[RT.cur].gen();return;}
   const pool=MODES[RT.cur].pool||allHands();let h;
   const e=edgeHands(RT.cur,pool);
@@ -1790,13 +1800,19 @@ function gridHTML(m,cur){
    Cards play the deal animation only when a new hand is dealt (RT.fresh). */
 function renderRanges(){
   if(!RT.hand&&!RT.ps)dealHand();
-  const g=grpOf(RT.mode);
-  $('#v-ranges').innerHTML=`
-  <div class="seg gseg" role="group" aria-label="Spot type">${GROUPS.map(x=>`<button data-g="${x}" aria-pressed="${x===g}">${x}</button>`).join('')}</div>
-  <div class="chips" role="group" aria-label="Spot">${[['mix-'+g,'Mix']].concat(Object.entries(SPOTS).filter(([k,v])=>v.grp===g).map(([k,v])=>[k,v.label])).map(([k,t])=>`<button class="chip" data-m="${k}" aria-pressed="${k===RT.mode}">${t}</button>`).join('')}</div>
+  const g=grpOf(RT.mode),mg=mixGroups();
+  const row2=g==='All'?`<div class="chips" role="group" aria-label="Topics in the mix">${GROUPS.map(x=>`<button class="chip tgl" data-tg="${x}" aria-pressed="${mg.includes(x)}">${mg.includes(x)?'✓ ':''}${x}</button>`).join('')}</div>`
+    :`<div class="chips" role="group" aria-label="Spot">${[['mix-'+g,'Mix']].concat(Object.entries(SPOTS).filter(([k,v])=>v.grp===g).map(([k,v])=>[k,v.label])).map(([k,t])=>`<button class="chip" data-m="${k}" aria-pressed="${k===RT.mode}">${t}</button>`).join('')}</div>`;
+  $('#v-ranges').innerHTML=`${tabsHTML('ranges')}
+  <div class="seg gseg" role="group" aria-label="Spot type">${['All',...GROUPS].map(x=>`<button data-g="${x}" aria-pressed="${x===g}">${x==='All'?'Mix':x}</button>`).join('')}</div>
+  ${row2}
   <div class="drill"><div class="left" id="rt-spot"></div><div class="box chartbox" id="rt-chart"></div></div>`;
+  bindTabs();
   $$('#v-ranges [data-g]').forEach(b=>b.onclick=()=>setMode('mix-'+b.dataset.g));
   $$('#v-ranges [data-m]').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+  $$('#v-ranges [data-tg]').forEach(b=>b.onclick=()=>{const x=b.dataset.tg;let cur=mixGroups().slice();
+    if(cur.includes(x)){if(cur.length===1){toast('Keep at least one topic in the mix');return;}cur=cur.filter(y=>y!==x);}else cur.push(x);
+    S.mixG=cur.length===GROUPS.length?[]:cur;save();RT.since=REV_GAP;dealHand();renderRanges();});
   $$('#v-ranges [aria-pressed="true"]').forEach(sel=>{const pr=sel.parentNode.getBoundingClientRect(),r=sel.getBoundingClientRect();if(r.right>pr.right-14)sel.parentNode.scrollLeft+=r.right-pr.right+28;});
   drawSpot();drawChart();
 }
@@ -1807,9 +1823,9 @@ function drawSpot(){
   const btn=([k,t],i)=>`<button class="opt${i===0?' go':''}${a===null?'':(k===right?' right':k===a?' wrong':' dim')+(k===a?' picked':'')}" data-k="${k}"${a!==null?' disabled':''}><span class="k" aria-hidden="true">${i+1}</span>${t}</button>`;
   const tr=tierOf(m,RT.hand),lab=(md.opts.find(o=>o[0]===right)||md.opts[md.opts.length-1])[1];
   const why=md.opts.length===2&&!md.scene?` ${RT.hand} is ${right!=='f'?(md.act==='Call'?'a call':'a '+md.act.toLowerCase().replace(/ .*/,''))+' in this spot: it sits inside the '+pct(rangePct(md.set))+' range.':'a fold in this spot'+(tr&&tr[1]==='dyn'?': it opens at a normal table, not with this player behind you.':': it is outside the '+pct(rangePct(md.set))+' range.')}`
-    :` ${RT.hand}: ${right==='f'?'fold.':tr[2].toLowerCase()===lab.toLowerCase()?lab.toLowerCase()+'.':`${lab.toLowerCase()} (“${tr[2]}” in the book’s chart).`}`;
+    :` ${RT.hand}: ${right==='f'?'fold.':actText(lab,tr[2])+'.'}`;
   $('#rt-spot').innerHTML=`<div class="spot">
-      ${sheadHTML(md.label,st)}
+      ${sheadHTML(RT.mode==='mix-All'?md.grp+' · '+md.label:md.label,st)}
       ${tableHTML(md)}
       <div class="hand">${cardHTML(RT.hand[0],RT.suits[0],deal)}${cardHTML(RT.hand[1],RT.suits[1],deal)}<span class="badge">${RT.hand}</span></div>
       <p class="sinfo">${md.info}</p>
@@ -1900,6 +1916,32 @@ function answerRT(k){
   RT.streak=right?RT.streak+1:0;RT.answered=k;drawSpot();drawChart();
   const nx=$('#rt-next');if(nx)nx.focus({preventScroll:true});
 }
+
+/* ---------- charts: look up any range without dealing hands ---------- */
+const tabsHTML=v=>`<div class="seg tabseg" role="group" aria-label="Trainer view"><button data-view="ranges" aria-pressed="${v==='ranges'}">Practice</button><button data-view="charts" aria-pressed="${v==='charts'}">Charts</button></div>`;
+const bindTabs=()=>$$('[data-view]').forEach(b=>b.onclick=()=>go(b.dataset.view==='charts'?'charts/'+CH.mode:'ranges/'+RT.mode));
+const CGROUPS=[...new Set(Object.values(MODES).map(x=>x.grp))];
+let CH={mode:'open-UTG',pick:null};
+function renderCharts(){
+  const md=MODES[CH.mode],g=md.grp;
+  $('#v-charts').innerHTML=`${tabsHTML('charts')}
+  <div class="seg gseg" role="group" aria-label="Chart group">${CGROUPS.map(x=>`<button data-cg="${x}" aria-pressed="${x===g}">${x}</button>`).join('')}</div>
+  <div class="chips" role="group" aria-label="Chart">${Object.entries(MODES).filter(([k,v])=>v.grp===g).map(([k,v])=>`<button class="chip" data-cm="${k}" aria-pressed="${k===CH.mode}">${v.label}</button>`).join('')}</div>
+  <div class="drill"><div class="box chartbox"><div class="ch"><b>${md.label} chart</b></div>${gridHTML(CH.mode,CH.pick)}${chartNote(md)}</div>
+    <div class="box chinfo"><b class="num" style="font-size:17px">${g} · ${md.label}</b><p>${md.info}</p>
+      <p class="cpick" aria-live="polite">${CH.pick?pickText(CH.mode,CH.pick):'Tap a square to see what the book does with that hand.'}</p>
+      <a class="btn" href="#ranges/${CH.mode}">Practise this chart →</a></div></div>`;
+  bindTabs();
+  $$('#v-charts [data-cg]').forEach(b=>b.onclick=()=>{CH.mode=Object.keys(MODES).find(k=>MODES[k].grp===b.dataset.cg);CH.pick=null;history.replaceState(null,'','#charts/'+CH.mode);renderCharts();});
+  $$('#v-charts [data-cm]').forEach(b=>b.onclick=()=>{CH.mode=b.dataset.cm;CH.pick=null;history.replaceState(null,'','#charts/'+CH.mode);renderCharts();});
+  $$('#v-charts .rc').forEach(c=>c.onclick=()=>{CH.pick=c.textContent;renderCharts();});
+  $$('#v-charts [aria-pressed="true"]').forEach(sel=>{const pr=sel.parentNode.getBoundingClientRect(),r=sel.getBoundingClientRect();if(r.right>pr.right-14)sel.parentNode.scrollLeft+=r.right-pr.right+28;});
+}
+function pickText(m,h){const md=MODES[m],t=tierOf(m,h),a=answerOf(m,h),lab=(md.opts.find(o=>o[0]===a)||['','Fold'])[1];
+  if(md.pool&&!md.pool.includes(h))return `<b>${h}</b>: not in your opening range, so this spot never comes up with it.`;
+  return `<b>${h}</b>: ${a==='f'?'fold':actText(lab,t?t[2]:lab)}. ${combos(h)} combos.`;}
+/* "3-bet" + chart label "3-bet for value (Ch. 10)" → the label; "Call" + "+ vs 2.5x" → "call (+ vs 2.5x in the book’s chart)". */
+function actText(lab,leg){const a=lab.toLowerCase(),l=leg.toLowerCase();return l===a||l.startsWith(a)?l:`${a} (“${leg}” in the book’s chart)`;}
 
 /* ---------- math drills ---------- */
 let MT={type:'rfe',cur:null,answered:null,score:0,n:0};
