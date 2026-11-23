@@ -343,15 +343,50 @@ select,input[type=number]{background:var(--surface);border:1.5px solid var(--lin
 @media (hover:none) and (pointer:coarse){.opt .k{display:none}.acts .opt,.acts.n3 .opt{padding:0 8px}.kbd-only{display:none!important}}
 @media (max-width:440px){#v-ranges>.seg button{font-size:12.5px;padding:0 9px}}
 @media (max-width:440px){.acts.n3 .opt{padding:0 6px;font-size:15.5px}.acts.n3 .opt .k{display:none}}
-.tabseg{margin-bottom:8px;max-width:320px}
+.tabseg{margin-bottom:10px;max-width:320px}
+#v-ranges .tpk-bar,#v-charts .tpk-bar{margin-bottom:4px}
 .chinfo p{margin:8px 0 0;font-size:15px;line-height:1.5;color:var(--muted)}
 .chinfo .cpick{color:var(--ink);min-height:46px;padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);margin:12px 0}
 .chinfo .btn{width:100%}
 #v-charts .rc{cursor:pointer}
-/* Trainer: group row scrolls on phones; post-flop spots */
-.gseg{overflow-x:auto;scrollbar-width:none}
-.gseg::-webkit-scrollbar{display:none}
-.gseg button{flex:1 0 auto}
+/* topic picker */
+.tpk-bar{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:8px 14px;border-radius:16px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);text-align:left;box-shadow:var(--shadow);touch-action:manipulation}
+.tpk-bar:active,.tpk-bar.press{transform:scale(.99);border-color:var(--felt-2)}
+.tpk-txt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.tpk-txt small{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.tpk-txt b{font-size:16.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tpk-chg{flex:none;font-size:14px;font-weight:700;color:var(--felt-ink);background:var(--felt);padding:8px 14px;border-radius:999px}
+.tpk{position:fixed;inset:0;z-index:60;background:rgba(8,14,24,.5);display:flex;align-items:flex-end;justify-content:center;animation:tpkfade .15s ease-out}
+.tpk-sheet{background:var(--bg);width:100%;max-width:560px;max-height:88vh;border-radius:22px 22px 0 0;display:flex;flex-direction:column;box-shadow:0 -6px 30px rgba(0,0,0,.3);animation:tpkup .2s ease-out;padding-bottom:env(safe-area-inset-bottom)}
+@media (min-width:960px){.tpk{align-items:center}.tpk-sheet{border-radius:22px;max-height:80vh}}
+@keyframes tpkup{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+@keyframes tpkfade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.tpk,.tpk-sheet{animation:none}}
+.tpk-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.tpk-head b{font-size:17px}
+.tpk-body{overflow-y:auto;padding:4px 14px 18px;overscroll-behavior:contain}
+.tpk-sec{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:16px 4px 8px}
+.tpk-grp{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.tpk-grp summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:50px;padding:0 14px;cursor:pointer}
+.tpk-grp summary::-webkit-details-marker{display:none}
+.tpk-grp summary::after{content:"›";margin-left:auto;font-size:20px;color:var(--muted);transition:transform .15s}
+.tpk-grp[open] summary::after{transform:rotate(90deg)}
+.tpk-grp summary b{font-size:16px}
+.tpk-grp summary small{font-size:13px;color:var(--muted)}
+.tpk-row{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:6px 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);text-align:left;touch-action:manipulation}
+.tpk-body>.tpk-row{border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.tpk-row .tpk-txt b{font-size:15px;font-weight:600}
+.tpk-row .tpk-txt small{text-transform:none;letter-spacing:0;font-weight:500;color:var(--muted);font-size:12.5px}
+.tpk-row[aria-current="true"]{background:color-mix(in srgb,var(--felt-2) 13%,var(--surface));box-shadow:inset 3px 0 0 var(--felt-2)}
+.tpk-row[aria-current="true"] .tpk-txt b{font-weight:800}
+.tpk-row:active,.tpk-row.press{background:color-mix(in srgb,var(--felt-2) 10%,var(--surface))}
+.tpk-acc{flex:none;min-width:40px;text-align:right;font-family:var(--serif);font-weight:700;font-size:14px;color:var(--muted)}
+.tpk-due{flex:none;font-size:11.5px;font-weight:700;color:var(--gold-ink);background:var(--gold);padding:2px 8px;border-radius:999px}
+.tpk-tg{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.tpk-tg .chip{min-height:40px;padding:0 12px;font-size:13.5px}
+.tpk-tg .chip[aria-pressed="true"]{background:var(--felt);border-color:var(--felt);color:var(--felt-ink)}
+body.tpk-on{overflow:hidden}
+/* Trainer: post-flop spots */
 .rvtag{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:999px;background:var(--gold);color:var(--gold-ink);font-size:10.5px;letter-spacing:.06em}
 .ptable.post{height:206px}
 .pboard{display:flex;gap:3px;margin-top:5px}
@@ -1552,7 +1587,7 @@ const revIsDue=(it,now,count)=>it.t?now>=it.t:count>=it.n;
 function revDue(list,keys,now,count){return list.filter(it=>keys.includes(it.k)&&revIsDue(it,now,count));}
 
 /* ===================== UI (everything below needs a browser) ===================== */
-var BUILD={v:"2.13.1",at:"2026-11-22T18:48Z"};
+var BUILD={v:"2.14.0",at:"2026-11-23T03:37Z"};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -1578,7 +1613,7 @@ function applyTheme(){
 }
 /* iOS Safari only shows :active press styles when the page has a touchstart listener. */
 document.addEventListener('touchstart',()=>{},{passive:true});
-const PRESSABLE='.opt,.btn,.chip,.seg button,.peek,.tile,.lrow,.prow,.iconbtn';
+const PRESSABLE='.opt,.btn,.chip,.seg button,.peek,.tile,.lrow,.prow,.iconbtn,.tpk-bar,.tpk-row';
 document.addEventListener('pointerdown',e=>{
   if(e.button>0)return;const t=e.target.closest(PRESSABLE);if(!t||t.disabled)return;
   t.classList.add('press');
@@ -1803,19 +1838,12 @@ function gridHTML(m,cur){
 function renderRanges(){
   if(!RT.hand&&!RT.ps)dealHand();
   const g=grpOf(RT.mode),mg=mixGroups();
-  const row2=g==='All'?`<div class="chips" role="group" aria-label="Topics in the mix">${GROUPS.map(x=>`<button class="chip tgl" data-tg="${x}" aria-pressed="${mg.includes(x)}">${mg.includes(x)?'✓ ':''}${x}</button>`).join('')}</div>`
-    :`<div class="chips" role="group" aria-label="Spot">${[['mix-'+g,'Mix']].concat(Object.entries(SPOTS).filter(([k,v])=>v.grp===g).map(([k,v])=>[k,v.label])).map(([k,t])=>`<button class="chip" data-m="${k}" aria-pressed="${k===RT.mode}">${t}</button>`).join('')}</div>`;
+  const cur=RT.mode==='mix-All'?['Mix',mg.length===GROUPS.length?'All topics':mg.join(', ')]:RT.mode.startsWith('mix-')?[g,'Mix of all '+plural(modeKeys(RT.mode).length,'spot')]:[g,SPOTS[RT.mode].label];
   $('#v-ranges').innerHTML=`${tabsHTML('ranges')}
-  <div class="seg gseg" role="group" aria-label="Spot type">${['All',...GROUPS].map(x=>`<button data-g="${x}" aria-pressed="${x===g}">${x==='All'?'Mix':x}</button>`).join('')}</div>
-  ${row2}
+  ${pickBarHTML(cur[0],cur[1])}
   <div class="drill"><div class="left" id="rt-spot"></div><div class="box chartbox" id="rt-chart"></div></div>`;
   bindTabs();
-  $$('#v-ranges [data-g]').forEach(b=>b.onclick=()=>setMode('mix-'+b.dataset.g));
-  $$('#v-ranges [data-m]').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
-  $$('#v-ranges [data-tg]').forEach(b=>b.onclick=()=>{const x=b.dataset.tg;let cur=mixGroups().slice();
-    if(cur.includes(x)){if(cur.length===1){toast('Keep at least one topic in the mix');return;}cur=cur.filter(y=>y!==x);}else cur.push(x);
-    S.mixG=cur.length===GROUPS.length?[]:cur;save();RT.since=REV_GAP;dealHand();renderRanges();});
-  $$('#v-ranges [aria-pressed="true"]').forEach(sel=>{const pr=sel.parentNode.getBoundingClientRect(),r=sel.getBoundingClientRect();if(r.right>pr.right-14)sel.parentNode.scrollLeft+=r.right-pr.right+28;});
+  $('#v-ranges .tpk-bar').onclick=()=>openPicker('ranges');
   drawSpot();drawChart();
 }
 function drawSpot(){
@@ -1919,6 +1947,47 @@ function answerRT(k){
   const nx=$('#rt-next');if(nx)nx.focus({preventScroll:true});
 }
 
+/* ---------- topic picker: one bar shows what you're on; tapping it opens a list of every topic ----------
+   Groups are an accordion (yours open), each spot shows your accuracy and due reviews. Practice adds Mix rows and the
+   topics in the all-topics mix; Charts lists the chart spots only. */
+const pickBarHTML=(g,label)=>`<button class="tpk-bar" aria-haspopup="dialog"><span class="tpk-txt"><small>${g}</small><b>${label}</b></span><span class="tpk-chg">Change</span></button>`;
+function openPicker(view){
+  const charts=view==='charts',now=Date.now(),cur=charts?CH.mode:RT.mode,curG=charts?MODES[CH.mode].grp:grpOf(RT.mode);
+  const groups=charts?CGROUPS:GROUPS,src=charts?MODES:SPOTS,mg=mixGroups();
+  const acc=k=>{const x=S.drills[k];return x&&x.n?pct(x.c/x.n):'';};
+  const due=ks=>charts?0:revDue(S.rev,ks,now,S.rvN).length;
+  const row=(k,t,sub,d)=>`<button class="tpk-row" data-pick="${k}"${k===cur?' aria-current="true"':''}><span class="tpk-txt"><b>${t}</b>${sub?`<small>${sub}</small>`:''}</span>${d?`<span class="tpk-due">${d} due</span>`:''}<span class="tpk-acc">${acc(k)}</span></button>`;
+  const grp=g=>{const ks=Object.keys(src).filter(k=>src[k].grp===g),gd=due(ks);
+    return `<details class="tpk-grp"${g===curG?' open':''}><summary><b>${g}</b><small>${plural(ks.length,charts?'chart':'spot')}${gd?` · ${gd} due`:''}</small></summary>
+      ${charts?'':row('mix-'+g,'Mix all '+g,'',0)}${ks.map(k=>row(k,src[k].label,'',due([k]))).join('')}</details>`;};
+  const pre=groups.filter(g=>!['C-bet','Value bet'].includes(g)),post=groups.filter(g=>['C-bet','Value bet'].includes(g));
+  const el=document.createElement('div');el.className='tpk';el.id='tpk';
+  el.innerHTML=`<div class="tpk-sheet" role="dialog" aria-modal="true" aria-label="${charts?'Choose a chart':'Choose what to practise'}">
+    <div class="tpk-head"><b>${charts?'Choose a chart':'Choose what to practise'}</b><button class="iconbtn" id="tpk-x" aria-label="Close">✕</button></div>
+    <div class="tpk-body">
+    ${charts?'':`<div class="tpk-sec">Everything</div>${row('mix-All','Mix of all topics',mg.length===GROUPS.length?'Every topic':mg.length+' of '+GROUPS.length+' topics, tick below',due(modeKeys('mix-All')))}
+      <div class="tpk-tg" role="group" aria-label="Topics in the mix">${GROUPS.map(x=>`<button class="chip" data-tg="${x}" aria-pressed="${mg.includes(x)}">${mg.includes(x)?'✓ ':''}${x}</button>`).join('')}</div>`}
+    <div class="tpk-sec">Pre-flop${charts?' charts':''}</div>${pre.map(grp).join('')}
+    ${post.length?`<div class="tpk-sec">Post-flop</div>${post.map(grp).join('')}`:''}
+    </div></div>`;
+  document.body.appendChild(el);document.body.classList.add('tpk-on');
+  const close=()=>{el.remove();document.body.classList.remove('tpk-on');document.removeEventListener('keydown',esc,true);const b=$('#v-'+view+' .tpk-bar');if(b)b.focus({preventScroll:true});};
+  const esc=e=>{if(e.key==='Escape'){e.stopPropagation();close();}};
+  document.addEventListener('keydown',esc,true);
+  el.onclick=e=>{if(e.target===el)close();};
+  $('#tpk-x').onclick=close;
+  $$('#tpk [data-pick]').forEach(b=>b.onclick=()=>{const k=b.dataset.pick;close();
+    if(charts){CH.mode=k;CH.pick=null;history.replaceState(null,'','#charts/'+k);renderCharts();}
+    else if(k===RT.mode){}else setMode(k);
+    window.scrollTo(0,0);});
+  $$('#tpk [data-tg]').forEach(b=>b.onclick=()=>{const x=b.dataset.tg;let c=mixGroups().slice();
+    if(c.includes(x)){if(c.length===1){toast('Keep at least one topic in the mix');return;}c=c.filter(y=>y!==x);}else c.push(x);
+    S.mixG=c.length===GROUPS.length?[]:c;save();
+    const on=mixGroups();$$('#tpk [data-tg]').forEach(t=>{const i=on.includes(t.dataset.tg);t.setAttribute('aria-pressed',i);t.textContent=(i?'✓ ':'')+t.dataset.tg;});
+    const sub=$('#tpk [data-pick="mix-All"] small');if(sub)sub.textContent=on.length===GROUPS.length?'Every topic':on.length+' of '+GROUPS.length+' topics, tick below';
+    if(RT.mode==='mix-All'){RT.since=REV_GAP;dealHand();renderRanges();}});
+  const cr=$('#tpk [aria-current="true"]');if(cr)cr.scrollIntoView({block:'center'});else $('#tpk-x').focus();
+}
 /* ---------- charts: look up any range without dealing hands ---------- */
 const tabsHTML=v=>`<div class="seg tabseg" role="group" aria-label="Trainer view"><button data-view="ranges" aria-pressed="${v==='ranges'}">Practice</button><button data-view="charts" aria-pressed="${v==='charts'}">Charts</button></div>`;
 const bindTabs=()=>$$('[data-view]').forEach(b=>b.onclick=()=>go(b.dataset.view==='charts'?'charts/'+CH.mode:'ranges/'+RT.mode));
@@ -1927,17 +1996,14 @@ let CH={mode:'open-UTG',pick:null};
 function renderCharts(){
   const md=MODES[CH.mode],g=md.grp;
   $('#v-charts').innerHTML=`${tabsHTML('charts')}
-  <div class="seg gseg" role="group" aria-label="Chart group">${CGROUPS.map(x=>`<button data-cg="${x}" aria-pressed="${x===g}">${x}</button>`).join('')}</div>
-  <div class="chips" role="group" aria-label="Chart">${Object.entries(MODES).filter(([k,v])=>v.grp===g).map(([k,v])=>`<button class="chip" data-cm="${k}" aria-pressed="${k===CH.mode}">${v.label}</button>`).join('')}</div>
+  ${pickBarHTML(g,md.label)}
   <div class="drill"><div class="box chartbox"><div class="ch"><b>${md.label} chart</b></div>${gridHTML(CH.mode,CH.pick)}${chartNote(md)}</div>
     <div class="box chinfo"><b class="num" style="font-size:17px">${g} · ${md.label}</b><p>${md.info}</p>
       <p class="cpick" aria-live="polite">${CH.pick?pickText(CH.mode,CH.pick):'Tap a square to see what the book does with that hand.'}</p>
       <a class="btn" href="#ranges/${CH.mode}">Practise this chart →</a></div></div>`;
   bindTabs();
-  $$('#v-charts [data-cg]').forEach(b=>b.onclick=()=>{CH.mode=Object.keys(MODES).find(k=>MODES[k].grp===b.dataset.cg);CH.pick=null;history.replaceState(null,'','#charts/'+CH.mode);renderCharts();});
-  $$('#v-charts [data-cm]').forEach(b=>b.onclick=()=>{CH.mode=b.dataset.cm;CH.pick=null;history.replaceState(null,'','#charts/'+CH.mode);renderCharts();});
+  $('#v-charts .tpk-bar').onclick=()=>openPicker('charts');
   $$('#v-charts .rc').forEach(c=>c.onclick=()=>{CH.pick=c.textContent;renderCharts();});
-  $$('#v-charts [aria-pressed="true"]').forEach(sel=>{const pr=sel.parentNode.getBoundingClientRect(),r=sel.getBoundingClientRect();if(r.right>pr.right-14)sel.parentNode.scrollLeft+=r.right-pr.right+28;});
 }
 function pickText(m,h){const md=MODES[m],t=tierOf(m,h),a=answerOf(m,h),lab=(md.opts.find(o=>o[0]===a)||['','Fold'])[1];
   if(md.pool&&!md.pool.includes(h))return `<b>${h}</b>: not in your opening range, so this spot never comes up with it.`;
